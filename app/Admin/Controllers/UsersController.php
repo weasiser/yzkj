@@ -84,10 +84,13 @@ class UsersController extends Controller
         $grid->id('ID');
         $grid->name('用户名');
         $grid->email('邮箱');
-        $grid->email_verified_at('已验证邮箱')->display(function ($value) {
-            return $value ? '是' : '否';
-        });
+//        $grid->email_verified_at('已验证邮箱')->display(function ($value) {
+//            return $value ? '是' : '否';
+//        });
+//        $grid->password('Password');
+//        $grid->remember_token('Remember token');
         $grid->created_at('注册时间');
+//        $grid->updated_at('Updated at');
 
         // 不在页面显示 `新建` 按钮，因为我们不需要在后台新建用户
         $grid->disableCreateButton();

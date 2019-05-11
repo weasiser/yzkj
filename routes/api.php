@@ -13,6 +13,39 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+$api = app('Dingo\Api\Routing\Router');
+
+$api->version('v1', [
+    'namespace' => 'App\Http\Controllers\Api',
+], function($api) {
+    $api->group([
+        'middleware' => 'api.throttle',
+        'limit' => config('api.rate_limits.sign.limit'),
+        'expires' => config('api.rate_limits.sign.expires'),
+    ], function($api) {
+        // 登录
+        $api->post('authorizations', 'AuthorizationsController@store')
+            ->name('api.authorizations.store');
+        // 刷新token
+        $api->put('authorizations/current', 'AuthorizationsController@update')
+            ->name('api.authorizations.update');
+        // 删除token
+        $api->delete('authorizations/current', 'AuthorizationsController@destroy')
+            ->name('api.authorizations.destroy');
+    });
+
+    // 需要 token 验证的接口
+    $api->group([
+        'middleware' => 'api.auth',
+        'limit' => config('api.rate_limits.access.expires'),
+        'expires' => config('api.rate_limits.access.expires'),
+    ], function($api) {
+        // 当前登录用户信息
+        $api->get('user', 'UsersController@me')
+            ->name('api.user.show');
+    });
 });

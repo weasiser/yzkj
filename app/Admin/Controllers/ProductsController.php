@@ -35,13 +35,13 @@ class ProductsController extends Controller
      * @param Content $content
      * @return Content
      */
-    public function show($id, Content $content)
-    {
-        return $content
-            ->header('商品')
-            ->description('展示')
-            ->body($this->detail($id));
-    }
+//    public function show($id, Content $content)
+//    {
+//        return $content
+//            ->header('商品')
+//            ->description('展示')
+//            ->body($this->detail($id));
+//    }
 
     /**
      * Edit interface.
@@ -115,23 +115,23 @@ class ProductsController extends Controller
      * @param mixed $id
      * @return Show
      */
-    protected function detail($id)
-    {
-        $show = new Show(Product::findOrFail($id));
-
-        $show->id('Id');
-        $show->title('Title');
-        $show->image('Image');
-        $show->buying_price('Buying price');
-        $show->selling_price('Selling price');
-        $show->quality_guarantee_period('Quality guarantee period');
-        $show->total_stock('Total stock');
-        $show->sold_count('Sold count');
-        $show->created_at('Created at');
-        $show->updated_at('Updated at');
-
-        return $show;
-    }
+//    protected function detail($id)
+//    {
+//        $show = new Show(Product::findOrFail($id));
+//
+//        $show->id('Id');
+//        $show->title('Title');
+//        $show->image('Image');
+//        $show->buying_price('Buying price');
+//        $show->selling_price('Selling price');
+//        $show->quality_guarantee_period('Quality guarantee period');
+//        $show->total_stock('Total stock');
+//        $show->sold_count('Sold count');
+//        $show->created_at('Created at');
+//        $show->updated_at('Updated at');
+//
+//        return $show;
+//    }
 
     /**
      * Make a form builder.
@@ -142,13 +142,11 @@ class ProductsController extends Controller
     {
         $form = new Form(new Product);
 
-        $form->text('title', 'Title');
-        $form->image('image', 'Image');
-        $form->decimal('buying_price', 'Buying price');
-        $form->decimal('selling_price', 'Selling price');
-        $form->switch('quality_guarantee_period', 'Quality guarantee period');
-        $form->number('total_stock', 'Total stock');
-        $form->number('sold_count', 'Sold count');
+        $form->text('title', '商品名称')->rules('required');
+        $form->image('image', '商品图片')->rules('required|image');
+        $form->decimal('buying_price', '进货价')->rules('required|numeric|min:0.01');
+        $form->decimal('selling_price', '销售价')->rules('required|numeric|min:0.01');
+        $form->number('quality_guarantee_period', '保质期（月）')->rules('required|integer|min:1');
 
         return $form;
     }

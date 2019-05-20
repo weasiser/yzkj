@@ -21,7 +21,7 @@
 
 LOCK TABLES `admin_menu` WRITE;
 /*!40000 ALTER TABLE `admin_menu` DISABLE KEYS */;
-INSERT INTO `admin_menu` VALUES (1,0,1,'首页','fa-bar-chart','/',NULL,NULL,'2019-05-07 09:23:14'),(2,0,3,'系统管理','fa-tasks',NULL,NULL,NULL,'2019-05-07 09:30:47'),(3,2,4,'管理员','fa-users','auth/users',NULL,NULL,'2019-05-07 09:30:47'),(4,2,5,'角色','fa-user','auth/roles',NULL,NULL,'2019-05-07 09:30:47'),(5,2,6,'权限','fa-ban','auth/permissions',NULL,NULL,'2019-05-07 09:30:47'),(6,2,7,'菜单','fa-bars','auth/menu',NULL,NULL,'2019-05-07 09:30:47'),(7,2,8,'操作日志','fa-history','auth/logs',NULL,NULL,'2019-05-07 09:30:47'),(8,0,2,'用户管理','fa-users','/users',NULL,'2019-05-07 09:30:15','2019-05-07 09:30:47');
+INSERT INTO `admin_menu` VALUES (1,0,1,'首页','fa-bar-chart','/',NULL,NULL,'2019-05-07 09:23:14'),(2,0,4,'系统管理','fa-tasks',NULL,NULL,NULL,'2019-05-20 04:07:22'),(3,2,5,'管理员','fa-users','auth/users',NULL,NULL,'2019-05-20 04:07:22'),(4,2,6,'角色','fa-user','auth/roles',NULL,NULL,'2019-05-20 04:07:22'),(5,2,7,'权限','fa-ban','auth/permissions',NULL,NULL,'2019-05-20 04:07:22'),(6,2,8,'菜单','fa-bars','auth/menu',NULL,NULL,'2019-05-20 04:07:22'),(7,2,9,'操作日志','fa-history','auth/logs',NULL,NULL,'2019-05-20 04:07:22'),(8,0,2,'用户管理','fa-users','/users',NULL,'2019-05-07 09:30:15','2019-05-07 09:30:47'),(9,0,3,'商品管理','fa-cubes','/products',NULL,'2019-05-20 04:07:17','2019-05-20 04:07:22');
 /*!40000 ALTER TABLE `admin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +90,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `admin_users` WRITE;
 /*!40000 ALTER TABLE `admin_users` DISABLE KEYS */;
-INSERT INTO `admin_users` VALUES (1,'admin','$2y$10$YRfD6vPUway.ZJQwnjzL/erBiNDTUr/P8./Uvbv4otq5Ws/zBqIJ2','Administrator',NULL,'Il4Zq9B2kbH38jLCJd3CseJivA4CRXatICV16C5ryAsRAD39IjZY7LS06kmQ','2019-05-07 09:06:49','2019-05-07 09:06:49');
+INSERT INTO `admin_users` VALUES (1,'admin','$2y$10$YRfD6vPUway.ZJQwnjzL/erBiNDTUr/P8./Uvbv4otq5Ws/zBqIJ2','管理员','images/role_administor.png','Il4Zq9B2kbH38jLCJd3CseJivA4CRXatICV16C5ryAsRAD39IjZY7LS06kmQ','2019-05-07 09:06:49','2019-05-20 06:21:50');
 /*!40000 ALTER TABLE `admin_users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -103,4 +103,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-18 14:04:16
+-- Dump completed on 2019-05-20 18:24:40

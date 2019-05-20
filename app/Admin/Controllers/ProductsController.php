@@ -2,7 +2,7 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\User;
+use App\Models\Product;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Form;
@@ -10,7 +10,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 
-class UsersController extends Controller
+class ProductsController extends Controller
 {
     use HasResourceActions;
 
@@ -23,7 +23,7 @@ class UsersController extends Controller
     public function index(Content $content)
     {
         return $content
-            ->header('用户')
+            ->header('商品')
             ->description('列表')
             ->body($this->grid());
     }
@@ -38,8 +38,8 @@ class UsersController extends Controller
     public function show($id, Content $content)
     {
         return $content
-            ->header('Detail')
-            ->description('description')
+            ->header('商品')
+            ->description('展示')
             ->body($this->detail($id));
     }
 
@@ -53,8 +53,8 @@ class UsersController extends Controller
     public function edit($id, Content $content)
     {
         return $content
-            ->header('Edit')
-            ->description('description')
+            ->header('商品')
+            ->description('编辑')
             ->body($this->form()->edit($id));
     }
 
@@ -67,8 +67,8 @@ class UsersController extends Controller
     public function create(Content $content)
     {
         return $content
-            ->header('Create')
-            ->description('description')
+            ->header('商品')
+            ->description('创建')
             ->body($this->form());
     }
 
@@ -79,32 +79,24 @@ class UsersController extends Controller
      */
     protected function grid()
     {
-        $grid = new Grid(new User);
+        $grid = new Grid(new Product);
 
         $grid->id('ID');
-        $grid->name('用户名');
-        $grid->email('邮箱');
-        $grid->weapp_openid('小程序用户')->display(function ($value) {
-            return $value ? '微信' : '';
-        });
-//        $grid->email_verified_at('已验证邮箱')->display(function ($value) {
-//            return $value ? '是' : '否';
-//        });
-//        $grid->password('Password');
-//        $grid->remember_token('Remember token');
-        $grid->created_at('注册时间');
+        $grid->title('名称');
+        $grid->image('缩略图')->image('', 50, 50);
+        $grid->buying_price('进货价');
+        $grid->selling_price('销售价');
+        $grid->quality_guarantee_period('保质期（月）');
+        $grid->total_stock('总库存');
+        $grid->sold_count('销量（件）');
+        $grid->sold_value('销售额');
+        $grid->sold_profit('利润');
+        $grid->created_at('创建时间');
 //        $grid->updated_at('Updated at');
-
-        // 不在页面显示 `新建` 按钮，因为我们不需要在后台新建用户
-        $grid->disableCreateButton();
 
         $grid->actions(function ($actions) {
             // 不在每一行后面展示查看按钮
             $actions->disableView();
-            // 不在每一行后面展示删除按钮
-            $actions->disableDelete();
-            // 不在每一行后面展示编辑按钮
-            $actions->disableEdit();
         });
 
         $grid->tools(function ($tools) {
@@ -125,14 +117,16 @@ class UsersController extends Controller
      */
     protected function detail($id)
     {
-        $show = new Show(User::findOrFail($id));
+        $show = new Show(Product::findOrFail($id));
 
         $show->id('Id');
-        $show->name('Name');
-        $show->email('Email');
-        $show->email_verified_at('Email verified at');
-        $show->password('Password');
-        $show->remember_token('Remember token');
+        $show->title('Title');
+        $show->image('Image');
+        $show->buying_price('Buying price');
+        $show->selling_price('Selling price');
+        $show->quality_guarantee_period('Quality guarantee period');
+        $show->total_stock('Total stock');
+        $show->sold_count('Sold count');
         $show->created_at('Created at');
         $show->updated_at('Updated at');
 
@@ -146,13 +140,15 @@ class UsersController extends Controller
      */
     protected function form()
     {
-        $form = new Form(new User);
+        $form = new Form(new Product);
 
-        $form->text('name', 'Name');
-        $form->email('email', 'Email');
-        $form->datetime('email_verified_at', 'Email verified at')->default(date('Y-m-d H:i:s'));
-        $form->password('password', 'Password');
-        $form->text('remember_token', 'Remember token');
+        $form->text('title', 'Title');
+        $form->image('image', 'Image');
+        $form->decimal('buying_price', 'Buying price');
+        $form->decimal('selling_price', 'Selling price');
+        $form->switch('quality_guarantee_period', 'Quality guarantee period');
+        $form->number('total_stock', 'Total stock');
+        $form->number('sold_count', 'Sold count');
 
         return $form;
     }

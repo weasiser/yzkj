@@ -143,8 +143,6 @@ class ProductsController extends Controller
     {
         $form = new Form(new Product);
 
-
-
         $headers = ['名称', '进货价', '销售价', '保质期（月）'];
         $tableRow = new TableRow();
         $tableRow->text('title', '名称')->rules('required')->placeholder('名称');
@@ -165,6 +163,8 @@ class ProductsController extends Controller
             $form->date('expiration_date', '有效日期')->rules('required')->placeholder('有效日期');
             $form->number('stock', '库存')->rules('required|integer|min:0')->placeholder('库存');
         });
+
+        $form->html(view('admin.utils.expiration_date_calculate'));
 
         return $form;
     }

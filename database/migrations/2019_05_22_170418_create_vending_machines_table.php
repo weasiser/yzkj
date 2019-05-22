@@ -19,6 +19,8 @@ class CreateVendingMachinesTable extends Migration
             $table->string('code');
             $table->string('address')->nullable();
             $table->string('iot_card_no')->nullable();
+            $table->unsignedTinyInteger('cabinet_id')->default(1);
+            $table->unsignedTinyInteger('cabinet_type')->default(1);
             $table->boolean('is_opened')->default(false);
             $table->timestamps();
         });

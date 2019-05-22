@@ -13,4 +13,9 @@ class VendingMachine extends Model
     protected $casts = [
         'is_opened' => 'boolean'
     ];
+
+    public function aisles()
+    {
+        return $this->hasMany(VendingMachineAisle::class)->orderBy('ordinal');
+    }
 }

@@ -113,6 +113,15 @@ class ProductsController extends Controller
             });
         });
 
+        $grid->filter(function($filter){
+            $filter->column(1/2, function ($filter) {
+            });
+            $filter->column(1/2, function ($filter) {
+                $filter->like('title', '名称');
+            });
+//            $filter->expand();
+        });
+
         return $grid;
     }
 
@@ -161,7 +170,7 @@ class ProductsController extends Controller
         ]);
 
         $form->hasMany('pes', '日期库存列表', function (Form\NestedForm $form) {
-            $form->text('production_date', '生产日期')->icon('fa-calendar')->rules('required')->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31'])/*->symbol('<i class="fa fa-calendar fa-fw"></i>')*/;
+            $form->text('production_date', '生产日期')->icon('fa-calendar')->rules('required')->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
             $form->text('expiration_date', '有效日期')->icon('fa-calendar')->rules('required')->placeholder('有效日期')->attribute(['type' => 'date', 'readonly' => 'true', 'style' => 'width: 150px']);
             $form->number('stock', '库存')->rules('required|integer|min:0')->placeholder('库存');
             $form->datetime('created_at', '创建时间')->attribute(['disabled' => 'true'])->placeholder('无需输入，自动生成');

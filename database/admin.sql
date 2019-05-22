@@ -120,8 +120,17 @@ UNLOCK TABLES;
 
 LOCK TABLES `vending_machines` WRITE;
 /*!40000 ALTER TABLE `vending_machines` DISABLE KEYS */;
-INSERT INTO `vending_machines` VALUES (1,'114766','114766','通宝','123456',0,'2019-05-22 10:12:11','2019-05-22 10:19:12');
+INSERT INTO `vending_machines` VALUES (1,'114766','114766','通宝','123456',1,1,0,'2019-05-22 10:12:11','2019-05-22 16:50:25');
 /*!40000 ALTER TABLE `vending_machines` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `vending_machine_aisles`
+--
+
+LOCK TABLES `vending_machine_aisles` WRITE;
+/*!40000 ALTER TABLE `vending_machine_aisles` DISABLE KEYS */;
+/*!40000 ALTER TABLE `vending_machine_aisles` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -133,4 +142,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-22 18:20:29
+-- Dump completed on 2019-05-23  0:58:26

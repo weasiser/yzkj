@@ -9,6 +9,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use Encore\Admin\Widgets\Table;
 use Ichynul\RowTable\TableRow;
 
 class ProductsController extends Controller
@@ -82,17 +83,22 @@ class ProductsController extends Controller
     {
         $grid = new Grid(new Product);
 
-        $grid->id('ID');
+        $grid->id('ID')->sortable();
         $grid->title('名称')->editable();
         $grid->image('缩略图')->image('', 50, 50);
         $grid->buying_price('进货价')->editable();
         $grid->selling_price('销售价')->editable();
         $grid->quality_guarantee_period('保质期（月）')->editable();
-        $grid->total_stock('总库存');
-        $grid->sold_count('销量（件）');
-        $grid->sold_value('销售额');
-        $grid->sold_profit('利润');
-        $grid->created_at('创建时间');
+        $grid->total_stock('总库存')->sortable();
+        $grid->sold_count('销量（件）')->sortable();
+        $grid->sold_value('销售额')->sortable();
+        $grid->sold_profit('利润')->sortable();
+        $grid->min_expiration_date('最小有效日期')->sortable()->expand(function ($model) {
+            $pes = $model->pes()->get()->map(function ($pes) {
+                return $pes->only(['production_date', 'expiration_date', 'stock', 'created_at']);
+            });
+            return new Table(['生产日期', '有效日期', '库存', '创建时间'], $pes->toArray());
+        });
 //        $grid->updated_at('Updated at');
 
         $grid->actions(function ($actions) {
@@ -146,25 +152,27 @@ class ProductsController extends Controller
         $headers = ['名称', '进货价', '销售价', '保质期（月）'];
         $tableRow = new TableRow();
         $tableRow->text('title', '名称')->rules('required')->placeholder('名称');
-        $tableRow->decimal('buying_price', '进货价')->rules('required|numeric|min:0.01')->placeholder('进货价');
-        $tableRow->decimal('selling_price', '销售价')->rules('required|numeric|min:0.01')->placeholder('销售价');;
-        $tableRow->number('quality_guarantee_period', '保质期（月）')->rules('required|integer|min:1')->placeholder('保质期（月）');
+        $tableRow->currency('buying_price', '进货价')->rules('required|numeric|min:0.01')->placeholder('进货价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
+        $tableRow->currency('selling_price', '销售价')->rules('required|numeric|min:0.01')->placeholder('销售价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
+        $tableRow->number('quality_guarantee_period', '保质期（月）')->rules('required|integer|min:1')->placeholder('保质期（月）')->default(0);
         $form->rowtable('商品信息')->setHeaders($headers)->setRows([$tableRow]);
-//        $form->text('title', '商品名称')->rules('required');
-//        $form->decimal('buying_price', '进货价')->rules('required|numeric|min:0.01');
-//        $form->decimal('selling_price', '销售价')->rules('required|numeric|min:0.01');
-//        $form->number('quality_guarantee_period', '保质期（月）')->rules('required|integer|min:1');
         $form->image('image', '图片')->rules('required|image', [
             'required' => '请上传图片'
         ]);
 
         $form->hasMany('pes', '日期库存列表', function (Form\NestedForm $form) {
-            $form->date('production_date', '生产日期')->rules('required')->placeholder('生产日期');
-            $form->date('expiration_date', '有效日期')->rules('required')->placeholder('有效日期');
+            $form->text('production_date', '生产日期')->icon('fa-calendar')->rules('required')->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31'])/*->symbol('<i class="fa fa-calendar fa-fw"></i>')*/;
+            $form->text('expiration_date', '有效日期')->icon('fa-calendar')->rules('required')->placeholder('有效日期')->attribute(['type' => 'date', 'readonly' => 'true', 'style' => 'width: 150px']);
             $form->number('stock', '库存')->rules('required|integer|min:0')->placeholder('库存');
-        });
+            $form->datetime('created_at', '创建时间')->attribute(['disabled' => 'true'])->placeholder('无需输入，自动生成');
+        })->mode('table');
 
         $form->html(view('admin.utils.expiration_date_calculate'));
+
+        $form->saving(function (Form $form) {
+            $form->model()->min_expiration_date = collect($form->input('pes'))->where(Form::REMOVE_FLAG_NAME, 0)->min('expiration_date') ?: NULL;
+            $form->model()->total_stock = collect($form->input('pes'))->where(Form::REMOVE_FLAG_NAME, 0)->sum('stock') ?: 0;
+        });
 
         return $form;
     }

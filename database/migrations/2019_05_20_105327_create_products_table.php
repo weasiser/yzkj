@@ -21,6 +21,7 @@ class CreateProductsTable extends Migration
             $table->unsignedDecimal('selling_price', 8, 2);
             $table->unsignedTinyInteger('quality_guarantee_period');
             $table->unsignedSmallInteger('total_stock')->default(0);
+            $table->date('min_expiration_date')->nullable();
             $table->unsignedInteger('sold_count')->default(0);
             $table->unsignedDecimal('sold_value', 10, 2)->default(0);
             $table->unsignedDecimal('sold_profit', 10, 2)->default(0);

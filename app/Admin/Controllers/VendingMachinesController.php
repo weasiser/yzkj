@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Product;
 use App\Models\VendingMachine;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\HasResourceActions;
@@ -122,6 +123,8 @@ class VendingMachinesController extends Controller
 //            $filter->expand();
         });
 
+        $grid->paginate(10);
+
         return $grid;
     }
 
@@ -167,11 +170,19 @@ class VendingMachinesController extends Controller
         $tableRow->switch('is_opened', '状态')->states($this->states)->default(false);
         $form->rowtable('售货机信息')->setHeaders($headers)->setRows([$tableRow]);
 
-        $form->hasMany('aisles', '货道列表', function (Form\NestedForm $form) {
+        $products = Product::all();
+
+        $form->hasMany('aisles', '货道列表', function (Form\NestedForm $form) use ($products) {
             $form->number('ordinal', '货道号')->rules('required|integer|min:1|max:54')->placeholder('货道号')->attribute(['min' => '1', 'max' => '54']);
             $form->number('stock', '库存')->rules('required|integer|min:0')->placeholder('库存');
             $form->number('max_stock', '最大库存')->rules('required|integer|min:3')->placeholder('最大库存');
-            $form->currency('preferential_price', '优惠价')->rules('numeric')->placeholder('优惠价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
+            $form->select('product_id', '商品')->options(function ($id) use ($products) {
+                $product = $products->find($id);
+                if ($product) {
+                    return [$product->id => $product->title];
+                }
+            })->ajax('/admin/api/products');
+            $form->currency('preferential_price', '优惠价')->rules('numeric')->placeholder('优惠价')->symbol('<i class="fa fa-rmb fa-fw"></i>')->default(0);
             $form->switch('is_lead_rail', '导轨')->states($this->lead_rail)->default(false);
             $form->switch('is_opened', '状态')->states($this->states)->default(true);
         })->mode('table');

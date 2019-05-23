@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\Product;
 use App\Http\Controllers\Controller;
+use Encore\Admin\Admin;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -11,6 +12,7 @@ use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Encore\Admin\Widgets\Table;
 use Ichynul\RowTable\TableRow;
+use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
@@ -82,6 +84,7 @@ class ProductsController extends Controller
     protected function grid()
     {
         $grid = new Grid(new Product);
+//        $grid->model()->with('pes');
 
         $grid->id('ID')->sortable();
         $grid->title('名称')->editable();
@@ -93,13 +96,13 @@ class ProductsController extends Controller
         $grid->sold_count('销量（件）')->sortable();
         $grid->sold_value('销售额')->sortable();
         $grid->sold_profit('利润')->sortable();
-        $grid->min_expiration_date('最小有效日期')->sortable()->expand(function ($model) {
-            $pes = $model->pes()->get()->map(function ($pes) {
-                return $pes->only(['production_date', 'expiration_date', 'stock', 'created_at']);
-            });
-            return new Table(['生产日期', '有效日期', '库存', '创建时间'], $pes->toArray());
-        });
-//        $grid->updated_at('Updated at');
+        $grid->min_expiration_date('最小有效日期')->sortable();
+//            ->expand(function ($model) {
+//                $pes = $model->pes()->get()->map(function ($pes) {
+//                    return $pes->only(['production_date', 'expiration_date', 'stock', 'created_at']);
+//                });
+//                return new Table(['生产日期', '有效日期', '库存', '创建时间'], $pes->toArray());
+//            });
 
         $grid->actions(function ($actions) {
             // 不在每一行后面展示查看按钮
@@ -121,6 +124,8 @@ class ProductsController extends Controller
             });
 //            $filter->expand();
         });
+
+        $grid->paginate(10);
 
         return $grid;
     }
@@ -176,7 +181,7 @@ class ProductsController extends Controller
             $form->datetime('created_at', '创建时间')->attribute(['disabled' => 'true'])->placeholder('无需输入，自动生成');
         })->mode('table');
 
-        $form->html(view('admin.utils.expiration_date_calculate'));
+        $form->html(view('admin.utils.product_edit'));
 
         $form->saving(function (Form $form) {
             $form->model()->min_expiration_date = collect($form->input('pes'))->where(Form::REMOVE_FLAG_NAME, 0)->min('expiration_date') ?: NULL;
@@ -184,5 +189,23 @@ class ProductsController extends Controller
         });
 
         return $form;
+    }
+
+    // 定义商品下拉框搜索接口
+    public function apiIndex(Request $request)
+    {
+        // 用户输入的值通过 q 参数获取
+        $search = $request->input('q');
+        $result = Product::query()
+//            ->where('on_sale', true)
+            ->where('title', 'like', '%'.$search.'%')
+            ->paginate();
+
+        // 把查询出来的结果重新组装成 Laravel-Admin 需要的格式
+        $result->setCollection($result->getCollection()->map(function (Product $product) {
+            return ['id' => $product->id, 'text' => $product->title];
+        }));
+
+        return $result;
     }
 }

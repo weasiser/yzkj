@@ -4,13 +4,11 @@ namespace App\Admin\Controllers;
 
 use App\Models\Product;
 use App\Http\Controllers\Controller;
-use Encore\Admin\Admin;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
-use Encore\Admin\Widgets\Table;
 use Ichynul\RowTable\TableRow;
 use Illuminate\Http\Request;
 
@@ -184,8 +182,10 @@ class ProductsController extends Controller
         $form->html(view('admin.utils.product_edit'));
 
         $form->saving(function (Form $form) {
-            $form->model()->min_expiration_date = collect($form->input('pes'))->where(Form::REMOVE_FLAG_NAME, 0)->min('expiration_date') ?: NULL;
-            $form->model()->total_stock = collect($form->input('pes'))->where(Form::REMOVE_FLAG_NAME, 0)->sum('stock') ?: 0;
+            if ($form->input('pes')) {
+                $form->model()->min_expiration_date = collect($form->input('pes'))->where(Form::REMOVE_FLAG_NAME, 0)->min('expiration_date') ?: NULL;
+                $form->model()->total_stock = collect($form->input('pes'))->where(Form::REMOVE_FLAG_NAME, 0)->sum('stock') ?: 0;
+            }
         });
 
         return $form;

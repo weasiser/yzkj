@@ -83,9 +83,10 @@ class UsersController extends Controller
 
         $grid->id('ID');
         $grid->name('用户名');
+        $grid->phone('手机号');
         $grid->email('邮箱');
-        $grid->weapp_openid('小程序用户')->display(function ($value) {
-            return $value ? '微信' : '';
+        $grid->weapp_openid('小程序')->display(function ($value) {
+            return $value ? '<i class="fa fa-lg fa-weixin" style="color: #4caf50"></i>' : '';
         });
 //        $grid->email_verified_at('已验证邮箱')->display(function ($value) {
 //            return $value ? '是' : '否';

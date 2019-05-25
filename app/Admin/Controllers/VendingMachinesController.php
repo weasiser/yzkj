@@ -165,24 +165,24 @@ class VendingMachinesController extends Controller
         $tableRow->text('code', '机器码')->rules('required')->placeholder('机器码')->icon('fa-braille');
         $tableRow->text('address', '地址')->placeholder('地址')->icon('fa-map-marker');
         $tableRow->text('iot_card_no', '物联卡号')->placeholder('物联卡号')->icon('fa-microchip');
-        $tableRow->number('cabinet_id', '机柜 ID')->rules('required')->default(1)->placeholder('机柜 ID');
-        $tableRow->number('cabinet_type', '机柜类型')->rules('required')->default(1)->placeholder('机柜类型');
+        $tableRow->number('cabinet_id', '机柜 ID')->rules('required')->default(1)->placeholder('机柜 ID')->attribute(['style' => 'width: 50px']);
+        $tableRow->number('cabinet_type', '机柜类型')->rules('required')->default(1)->placeholder('机柜类型')->attribute(['style' => 'width: 50px']);
         $tableRow->switch('is_opened', '状态')->states($this->states)->default(false);
         $form->rowtable('售货机信息')->setHeaders($headers)->setRows([$tableRow]);
 
         $products = Product::all();
 
         $form->hasMany('aisles', '货道列表', function (Form\NestedForm $form) use ($products) {
-            $form->number('ordinal', '货道号')->rules('required|integer|min:1|max:54')->placeholder('货道号')->attribute(['min' => '1', 'max' => '54']);
-            $form->number('stock', '库存')->rules('required|integer|min:0')->placeholder('库存');
-            $form->number('max_stock', '最大库存')->rules('required|integer|min:3')->placeholder('最大库存');
+            $form->number('ordinal', '货道号')->rules('required|integer|min:1|max:54')->placeholder('货道号')->attribute(['min' => '1', 'max' => '54', 'style' => 'width: 50px']);
+            $form->number('stock', '库存')->rules('required|integer|min:0')->placeholder('库存')->default(5)->attribute(['style' => 'width: 50px']);
+            $form->number('max_stock', '最大库存')->rules('required|integer|min:3')->placeholder('最大库存')->default(5)->attribute(['style' => 'width: 50px']);
             $form->select('product_id', '商品')->options(function ($id) use ($products) {
                 $product = $products->find($id);
                 if ($product) {
                     return [$product->id => $product->title];
                 }
             })->ajax('/admin/api/products');
-            $form->currency('preferential_price', '优惠价')->rules('numeric')->placeholder('优惠价')->symbol('<i class="fa fa-rmb fa-fw"></i>')->default(0);
+            $form->currency('preferential_price', '优惠价')->rules('numeric')->placeholder('优惠价')->symbol('<i class="fa fa-rmb fa-fw"></i>')->default(0)->attribute(['style' => 'width: 60px']);
             $form->switch('is_lead_rail', '导轨')->states($this->lead_rail)->default(false);
             $form->switch('is_opened', '状态')->states($this->states)->default(true);
         })->mode('table');

@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\AuthorizationRequest;
-use App\Http\Requests\Api\WeappAuthorizationRequest;
 use App\Models\User;
-use App\Transformers\UserTransformer;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -24,7 +22,7 @@ class AuthorizationsController extends Controller
 //            ->setStatusCode(201);
 //    }
 
-    public function weappStore(WeappAuthorizationRequest $request)
+    public function weappStore(AuthorizationRequest $request)
     {
         $code = $request->code;
 
@@ -43,19 +41,36 @@ class AuthorizationsController extends Controller
         $attributes['weixin_session_key'] = $data['session_key'];
         $attributes['weapp_openid'] = $data['openid'];
 
-        // 未找到对应用户则直接创建用户
-        if (!$user) {
-            // 创建用户
-            $user = User::create($attributes);
-        } else {
-            // 更新用户数据
-            $user->update($attributes);
+        return $this->userStore($user, $attributes);
+    }
+
+    public function aliappStore(AuthorizationRequest $request)
+    {
+        $code = $request->code;
+
+        $keyPair = \Alipay\Key\AlipayKeyPair::create(env('ALIPAY_APP_PRIVATE_KEY'), env('ALIPAY_PUBLIC_KEY')
+        );
+        $aop = new \Alipay\AopClient(env('ALIPAY_MINI_PROGRAM_APPID'), $keyPair);
+        $response = (new \Alipay\AlipayRequestFactory)->create('alipay.system.oauth.token', [
+            'grant_type' => 'authorization_code',
+            'code' => $code
+        ]);
+//        $response = new \Alipay\Request\AlipaySystemOauthTokenRequest();
+//        $response->setCode($code);
+        $data = $aop->execute($response)->getData();
+
+        // 如果结果错误，说明 code 已过期或不正确，返回 401 错误
+        if (isset($data['code'])) {
+            return $this->response->errorUnauthorized($data['sub_msg']);
         }
 
-        // 为对应用户创建 JWT
-        $token = Auth::guard('api')->fromUser($user);
+        // 找到 openid 对应的用户
+        $user = User::where('alipay_user_id', $data['user_id'])->first();
 
-        return $this->respondWithToken($token)->setStatusCode(201);
+        $attributes['alipay_access_token'] = $data['access_token'];
+        $attributes['alipay_user_id'] = $data['user_id'];
+
+        return $this->userStore($user, $attributes);
     }
 
     public function update()
@@ -77,5 +92,22 @@ class AuthorizationsController extends Controller
             'token_type' => 'Bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
         ]);
+    }
+
+    protected function userStore($user, $attributes)
+    {
+        // 未找到对应用户则直接创建用户
+        if (!$user) {
+            // 创建用户
+            $user = User::create($attributes);
+        } else {
+            // 更新用户数据
+            $user->update($attributes);
+        }
+
+        // 为对应用户创建 JWT
+        $token = Auth::guard('api')->fromUser($user);
+
+        return $this->respondWithToken($token)->setStatusCode(201);
     }
 }

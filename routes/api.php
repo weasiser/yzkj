@@ -30,6 +30,8 @@ $api->version('v1', [
         // 登录
         $api->post('weapp/authorizations', 'AuthorizationsController@weappStore')
             ->name('api.weapp.authorizations.store');
+        $api->post('aliapp/authorizations', 'AuthorizationsController@aliappStore')
+            ->name('api.aliapp.authorizations.store');
         // 刷新token
         $api->put('authorizations/current', 'AuthorizationsController@update')
             ->name('api.authorizations.update');
@@ -45,7 +47,9 @@ $api->version('v1', [
         'expires' => config('api.rate_limits.access.expires'),
     ], function($api) {
         // 当前登录用户信息
-        $api->get('user', 'UsersController@me')
-            ->name('api.user.show');
+        $api->patch('user', 'UsersController@me')
+            ->name('api.user.patch');
+        $api->put('user', 'UsersController@me')
+            ->name('api.user.put');
     });
 });

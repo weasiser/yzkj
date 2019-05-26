@@ -82,9 +82,12 @@ class UsersController extends Controller
         $grid = new Grid(new User);
 
         $grid->id('ID');
-        $grid->name('用户名');
-        $grid->phone('手机号');
-        $grid->email('邮箱');
+//        $grid->name('用户名');
+//        $grid->phone('手机号');
+//        $grid->email('邮箱');
+        $grid->nick_name('昵称');
+        $grid->avatar('头像')->image('', 50, 50);
+        $grid->gender('性别');
         $grid->weapp_openid('小程序')->display(function ($value) {
             return $value ? '<i class="fa fa-lg fa-weixin" style="color: #4caf50"></i>' : '';
         });
@@ -114,6 +117,17 @@ class UsersController extends Controller
                 $batch->disableDelete();
             });
         });
+
+        $grid->filter(function($filter){
+            $filter->column(1/2, function ($filter) {
+            });
+            $filter->column(1/2, function ($filter) {
+                $filter->like('nick_name', '昵称');
+            });
+//            $filter->expand();
+        });
+
+        $grid->paginate(10);
 
         return $grid;
     }

@@ -12,7 +12,7 @@ class AuthorizationRequest extends FormRequest
     public function rules()
     {
         return [
-
+            'code' => 'required|string',
         ];
     }
 }

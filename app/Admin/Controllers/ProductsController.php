@@ -188,6 +188,11 @@ class ProductsController extends Controller
             }
         });
 
+        $form->tools(function (Form\Tools $tools) {
+            // 去掉`查看`按钮
+            $tools->disableView();
+        });
+
         return $form;
     }
 

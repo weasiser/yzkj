@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api;
 
-class WeappAuthorizationRequest extends FormRequest
+use Auth;
+
+class LoginAuthorizationRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -11,8 +13,9 @@ class WeappAuthorizationRequest extends FormRequest
      */
     public function rules()
     {
+        $userId = Auth::guard('api')->id();
         return [
-            'code' => 'required|string',
+            'user_info' => 'required|array',
         ];
     }
 }

@@ -187,6 +187,11 @@ class VendingMachinesController extends Controller
             $form->switch('is_opened', '状态')->states($this->states)->default(true);
         })->mode('table');
 
+        $form->tools(function (Form\Tools $tools) {
+            // 去掉`查看`按钮
+            $tools->disableView();
+        });
+
         return $form;
     }
 }

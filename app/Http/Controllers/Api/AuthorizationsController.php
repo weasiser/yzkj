@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use Alipay\AlipayRequestFactory;
+use Alipay\AopClient;
+use Alipay\Key\AlipayKeyPair;
 use App\Http\Requests\Api\AuthorizationRequest;
 use App\Models\User;
 use Auth;
@@ -9,19 +12,6 @@ use Illuminate\Http\Request;
 
 class AuthorizationsController extends Controller
 {
-//    public function store(AuthorizationRequest $authorizationRequest, UserTransformer $userTransformer)
-//    {
-//        $user = User::first();
-//        $token = Auth::guard('api')->fromUser($user);
-//        return $this->response->item($user, $userTransformer)
-//            ->setMeta([
-//                'access_token' => Auth::guard('api')->fromUser($user),
-//                'token_type' => 'Bearer',
-//                'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
-//            ])
-//            ->setStatusCode(201);
-//    }
-
     public function weappStore(AuthorizationRequest $request)
     {
         $code = $request->code;
@@ -48,27 +38,39 @@ class AuthorizationsController extends Controller
     {
         $code = $request->code;
 
-        $keyPair = \Alipay\Key\AlipayKeyPair::create(env('ALIPAY_APP_PRIVATE_KEY'), env('ALIPAY_PUBLIC_KEY')
+        $keyPair = AlipayKeyPair::create(
+            base_path(env('ALIPAY_APP_PRIVATE_KEY')),
+            base_path(env('ALIPAY_PUBLIC_KEY'))
         );
-        $aop = new \Alipay\AopClient(env('ALIPAY_MINI_PROGRAM_APPID'), $keyPair);
-        $response = (new \Alipay\AlipayRequestFactory)->create('alipay.system.oauth.token', [
+        $aop = new AopClient(env('ALIPAY_MINI_PROGRAM_APPID'), $keyPair);
+        $request = AlipayRequestFactory::create('alipay.system.oauth.token', [
             'grant_type' => 'authorization_code',
             'code' => $code
         ]);
 //        $response = new \Alipay\Request\AlipaySystemOauthTokenRequest();
 //        $response->setCode($code);
-        $data = $aop->execute($response)->getData();
-
+        $data = $aop->execute($request)->getData();
         // 如果结果错误，说明 code 已过期或不正确，返回 401 错误
         if (isset($data['code'])) {
             return $this->response->errorUnauthorized($data['sub_msg']);
         }
+//        $request = AlipayRequestFactory::create('alipay.user.info.share', [
+//            'auth_token' => $data['access_token']
+//        ]);
+//        $userInfo = $aop->execute($request)->getData();
+//        if (isset($userInfo['code'])) {
+//            return $this->response->errorUnauthorized($userInfo['sub_msg']);
+//        }
 
         // 找到 openid 对应的用户
         $user = User::where('alipay_user_id', $data['user_id'])->first();
 
         $attributes['alipay_access_token'] = $data['access_token'];
         $attributes['alipay_user_id'] = $data['user_id'];
+//        $attributes['nick_name'] = $userInfo['nick_name'];
+//        $attributes['avatar'] = $userInfo['avatar'];
+//        $attributes['gender'] = $userInfo['gender'] === 'F' ? '女' : '男';
+//        $attributes['user_info'] = json_encode($userInfo);
 
         return $this->userStore($user, $attributes);
     }
@@ -108,6 +110,6 @@ class AuthorizationsController extends Controller
         // 为对应用户创建 JWT
         $token = Auth::guard('api')->fromUser($user);
 
-        return $this->respondWithToken($token)->setStatusCode(201);
+        return $this->respondWithToken($token);
     }
 }

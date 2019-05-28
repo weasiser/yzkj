@@ -51,5 +51,7 @@ $api->version('v1', [
             ->name('api.user.patch');
         $api->put('user', 'UsersController@me')
             ->name('api.user.put');
+        $api->post('user', 'UsersController@me')
+            ->name('api.user.post');
     });
 });

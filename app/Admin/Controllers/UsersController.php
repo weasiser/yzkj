@@ -87,7 +87,6 @@ class UsersController extends Controller
 //        $grid->email('邮箱');
         $grid->nick_name('昵称');
         $grid->avatar('头像')->image('', 50, 50);
-        $grid->gender('性别');
         $grid->weapp_openid('小程序')->display(function ($value) {
             return $value ? '<i class="fa fa-lg fa-weixin" style="color: #4caf50"></i>' : '';
         });

@@ -87,8 +87,11 @@ class UsersController extends Controller
 //        $grid->email('邮箱');
         $grid->nick_name('昵称');
         $grid->avatar('头像')->image('', 50, 50);
-        $grid->weapp_openid('小程序')->display(function ($value) {
-            return $value ? '<i class="fa fa-lg fa-weixin" style="color: #4caf50"></i>' : '';
+//        $grid->weapp_openid('小程序')->display(function ($value) {
+//            return $value ? '<i class="fa fa-lg fa-weixin" style="color: #4caf50"></i>' : '';
+//        });
+        $grid->column('小程序')->display(function () {
+            return $this->weapp_openid ? '<img src="https://s2.ax1x.com/2019/05/29/Vnnzdg.png" class="img img-sm">' : $this->alipay_user_id ? '<img src="https://s2.ax1x.com/2019/05/29/VnuSoQ.png" class="img img-sm">' : '';
         });
 //        $grid->email_verified_at('已验证邮箱')->display(function ($value) {
 //            return $value ? '是' : '否';

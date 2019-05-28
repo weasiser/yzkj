@@ -13,6 +13,7 @@
         "doctrine/dbal": "^2.9",
         "encore/laravel-admin": "^1.6",
         "fideloper/proxy": "^4.0",
+        "guzzlehttp/guzzle": "^6.3",
         "ichynul/row-table": "^1.0",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",

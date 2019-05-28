@@ -85,7 +85,7 @@ class ProductsController extends Controller
 //        $grid->model()->with('pes');
 
         $grid->id('ID')->sortable();
-        $grid->title('名称')->editable();
+        $grid->column('title', '名称')->editable();
         $grid->image('缩略图')->image('', 50, 50);
         $grid->buying_price('进货价')->editable();
         $grid->selling_price('销售价')->editable();

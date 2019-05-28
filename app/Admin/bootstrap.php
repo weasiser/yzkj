@@ -21,3 +21,6 @@
 Encore\Admin\Form::forget(['map', 'editor']);
 
 //Admin::disablePjax();
+
+//Admin::js('https://lib.baomitu.com/font-awesome/5.8.2/js/all.min.js');
+//Admin::js('https://lib.baomitu.com/font-awesome/5.8.2/js/v4-shims.min.js');

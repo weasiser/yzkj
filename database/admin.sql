@@ -21,7 +21,7 @@
 
 LOCK TABLES `admin_menu` WRITE;
 /*!40000 ALTER TABLE `admin_menu` DISABLE KEYS */;
-INSERT INTO `admin_menu` VALUES (1,0,1,'首页','fa-bar-chart','/',NULL,NULL,'2019-05-07 09:23:14'),(2,0,5,'系统管理','fa-tasks',NULL,NULL,NULL,'2019-05-22 10:08:44'),(3,2,6,'管理员','fa-users','auth/users',NULL,NULL,'2019-05-22 10:08:44'),(4,2,7,'角色','fa-user','auth/roles',NULL,NULL,'2019-05-22 10:08:44'),(5,2,8,'权限','fa-ban','auth/permissions',NULL,NULL,'2019-05-22 10:08:44'),(6,2,9,'菜单','fa-bars','auth/menu',NULL,NULL,'2019-05-22 10:08:44'),(7,2,10,'操作日志','fa-history','auth/logs',NULL,NULL,'2019-05-22 10:08:44'),(8,0,2,'用户管理','fa-users','/users',NULL,'2019-05-07 09:30:15','2019-05-07 09:30:47'),(9,0,3,'商品管理','fa-cubes','/products',NULL,'2019-05-20 04:07:17','2019-05-20 04:07:22'),(10,0,4,'售货机管理','fa-building','/vending_machines',NULL,'2019-05-22 10:08:27','2019-05-22 10:11:35');
+INSERT INTO `admin_menu` VALUES (1,0,1,'首页','fa-bar-chart','/',NULL,NULL,'2019-05-07 09:23:14'),(2,0,5,'系统管理','fa-tasks',NULL,NULL,NULL,'2019-05-22 10:08:44'),(3,2,6,'管理员','fa-user-secret','auth/users',NULL,NULL,'2019-05-28 15:10:27'),(4,2,7,'角色','fa-tags','auth/roles',NULL,NULL,'2019-05-28 16:17:59'),(5,2,8,'权限','fa-ban','auth/permissions',NULL,NULL,'2019-05-22 10:08:44'),(6,2,9,'菜单','fa-bars','auth/menu',NULL,NULL,'2019-05-22 10:08:44'),(7,2,10,'操作日志','fa-history','auth/logs',NULL,NULL,'2019-05-22 10:08:44'),(8,0,2,'用户管理','fa-users','/users',NULL,'2019-05-07 09:30:15','2019-05-28 15:10:14'),(9,0,3,'商品管理','fa-cubes','/products',NULL,'2019-05-20 04:07:17','2019-05-20 04:07:22'),(10,0,4,'售货机管理','fa-building','/vending_machines',NULL,'2019-05-22 10:08:27','2019-05-22 10:11:35');
 /*!40000 ALTER TABLE `admin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -100,7 +100,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (1,'红牛','images/红牛.jpg',4.88,5.49,18,60,'2020-09-19',0,0.00,0.00,'2019-05-20 06:31:14','2019-05-22 08:50:37'),(2,'雀巢咖啡','images/2019052109492476766_看图王.jpg',4.00,5.49,12,24,'2020-04-07',0,0.00,0.00,'2019-05-23 03:17:23','2019-05-24 02:51:21');
+INSERT INTO `products` VALUES (1,'红牛','images/红牛.jpg',4.88,5.49,18,60,'2020-09-19',0,0.00,0.00,'2019-05-20 06:31:14','2019-05-28 14:12:23'),(2,'雀巢咖啡','images/2019052109492476766_看图王.jpg',4.00,5.49,12,24,'2020-04-07',0,0.00,0.00,'2019-05-23 03:17:23','2019-05-24 02:51:21');
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -143,4 +143,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-27  1:53:00
+-- Dump completed on 2019-05-29  3:23:59

@@ -35,9 +35,14 @@ $api->version('v1', [
         // 刷新token
         $api->put('authorizations/current', 'AuthorizationsController@update')
             ->name('api.authorizations.update');
+        $api->post('authorizations/current', 'AuthorizationsController@update')
+            ->name('api.authorizations.update');
+        // 更换ali_token
+        $api->post('authorizations/ali_token', 'AuthorizationsController@aliappReplaceToken')
+            ->name('api.authorizations.aliappReplaceToken');
         // 删除token
-        $api->delete('authorizations/current', 'AuthorizationsController@destroy')
-            ->name('api.authorizations.destroy');
+//        $api->delete('authorizations/current', 'AuthorizationsController@destroy')
+//            ->name('api.authorizations.destroy');
     });
 
     // 需要 token 验证的接口

@@ -38,41 +38,26 @@ class AuthorizationsController extends Controller
     {
         $code = $request->code;
 
-        $keyPair = AlipayKeyPair::create(
-            base_path(env('ALIPAY_APP_PRIVATE_KEY')),
-            base_path(env('ALIPAY_PUBLIC_KEY'))
-        );
-        $aop = new AopClient(env('ALIPAY_MINI_PROGRAM_APPID'), $keyPair);
-        $request = AlipayRequestFactory::create('alipay.system.oauth.token', [
-            'grant_type' => 'authorization_code',
-            'code' => $code
-        ]);
-//        $response = new \Alipay\Request\AlipaySystemOauthTokenRequest();
-//        $response->setCode($code);
-        $data = $aop->execute($request)->getData();
-        // 如果结果错误，说明 code 已过期或不正确，返回 401 错误
-        if (isset($data['code'])) {
-            return $this->response->errorUnauthorized($data['sub_msg']);
-        }
-//        $request = AlipayRequestFactory::create('alipay.user.info.share', [
-//            'auth_token' => $data['access_token']
-//        ]);
-//        $userInfo = $aop->execute($request)->getData();
-//        if (isset($userInfo['code'])) {
-//            return $this->response->errorUnauthorized($userInfo['sub_msg']);
-//        }
+        $data = $this->getAliAccessToken($code);
 
-        // 找到 openid 对应的用户
         $user = User::where('alipay_user_id', $data['user_id'])->first();
 
         $attributes['alipay_access_token'] = $data['access_token'];
         $attributes['alipay_user_id'] = $data['user_id'];
-//        $attributes['nick_name'] = $userInfo['nick_name'];
-//        $attributes['avatar'] = $userInfo['avatar'];
-//        $attributes['gender'] = $userInfo['gender'] === 'F' ? '女' : '男';
-//        $attributes['user_info'] = json_encode($userInfo);
 
         return $this->userStore($user, $attributes);
+    }
+
+    public function aliappReplaceToken(AuthorizationRequest $request)
+    {
+        $code = $request->code;
+        $data = $this->getAliAccessToken($code);
+        $user = User::where('alipay_user_id', $data['user_id'])->first();
+        $attributes['alipay_access_token'] = $data['access_token'];
+        $user->update($attributes);
+        return $this->response->array([
+            'replace_access_token' => 'success'
+        ]);
     }
 
     public function update()
@@ -81,11 +66,11 @@ class AuthorizationsController extends Controller
         return $this->respondWithToken($token);
     }
 
-    public function destroy()
-    {
-        Auth::guard('api')->logout();
-        return $this->response->noContent();
-    }
+//    public function destroy()
+//    {
+//        Auth::guard('api')->logout();
+//        return $this->response->noContent();
+//    }
 
     protected function respondWithToken($token)
     {
@@ -111,5 +96,33 @@ class AuthorizationsController extends Controller
         $token = Auth::guard('api')->fromUser($user);
 
         return $this->respondWithToken($token);
+    }
+
+    protected function getAliAccessToken($code)
+    {
+        $keyPair = AlipayKeyPair::create(
+            base_path(env('ALIPAY_APP_PRIVATE_KEY')),
+            base_path(env('ALIPAY_PUBLIC_KEY'))
+        );
+        $aop = new AopClient(env('ALIPAY_MINI_PROGRAM_APPID'), $keyPair);
+        $request = AlipayRequestFactory::create('alipay.system.oauth.token', [
+            'grant_type' => 'authorization_code',
+            'code' => $code
+        ]);
+//        $response = new \Alipay\Request\AlipaySystemOauthTokenRequest();
+//        $response->setCode($code);
+        $data = $aop->execute($request)->getData();
+        // 如果结果错误，说明 code 已过期或不正确，返回 401 错误
+        if (isset($data['code'])) {
+            return $this->response->errorUnauthorized($data['sub_msg']);
+        }
+//        $request = AlipayRequestFactory::create('alipay.user.info.share', [
+//            'auth_token' => $data['access_token']
+//        ]);
+//        $userInfo = $aop->execute($request)->getData();
+//        if (isset($userInfo['code'])) {
+//            return $this->response->errorUnauthorized($userInfo['sub_msg']);
+//        }
+        return $data;
     }
 }

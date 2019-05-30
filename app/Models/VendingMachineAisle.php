@@ -14,8 +14,13 @@ class VendingMachineAisle extends Model
         'is_opened' => 'boolean'
     ];
 
-    public function vending_machine()
+    public function vendingMachine()
     {
         return $this->belongsTo(VendingMachine::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
     }
 }

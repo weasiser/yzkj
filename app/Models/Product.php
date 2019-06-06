@@ -14,4 +14,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductPes::class)->orderBy('production_date');
     }
+
+    public function aisles()
+    {
+        return $this->hasMany(VendingMachineAisle::class);
+    }
 }

@@ -61,5 +61,8 @@ $api->version('v1', [
             ->name('api.user.put');
         $api->post('user', 'UsersController@me')
             ->name('api.user.post');
+        // 创建订单
+        $api->post('orders', 'OrdersController@store')
+            ->name('api.orders.store');
     });
 });

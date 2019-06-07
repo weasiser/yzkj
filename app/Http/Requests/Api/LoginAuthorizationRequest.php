@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests\Api;
 
-use Auth;
-
 class LoginAuthorizationRequest extends FormRequest
 {
     /**
@@ -13,7 +11,6 @@ class LoginAuthorizationRequest extends FormRequest
      */
     public function rules()
     {
-        $userId = Auth::guard('api')->id();
         return [
             'user_info' => 'required|array',
         ];

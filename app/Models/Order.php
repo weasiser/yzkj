@@ -8,6 +8,7 @@ class Order extends Model
 {
     const REFUND_STATUS_PENDING    = 'pending';
     const REFUND_STATUS_APPLIED    = 'applied';
+    const REFUND_STATUS_REFUSE     = 'refuse';
     const REFUND_STATUS_PROCESSING = 'processing';
     const REFUND_STATUS_SUCCESS    = 'success';
     const REFUND_STATUS_FAILED     = 'failed';
@@ -20,6 +21,7 @@ class Order extends Model
     public static $refundStatusMap = [
         self::REFUND_STATUS_PENDING    => '未退款',
         self::REFUND_STATUS_APPLIED    => '已申请退款',
+        self::REFUND_STATUS_REFUSE     => '拒绝退款',
         self::REFUND_STATUS_PROCESSING => '退款中',
         self::REFUND_STATUS_SUCCESS    => '退款成功',
         self::REFUND_STATUS_FAILED     => '退款失败',
@@ -34,27 +36,28 @@ class Order extends Model
 
     protected $fillable = [
         'no',
-        'address',
+        'ordinal',
+        'amount',
+        'sold_price',
         'total_amount',
-        'remark',
         'paid_at',
         'payment_method',
         'payment_no',
+        'refund_note',
+        'refund_picture',
+        'refund_refuse_note',
         'refund_status',
         'refund_no',
-        'closed',
-        'reviewed',
-        'ship_status',
-        'ship_data',
+        'is_closed',
+        'deliver_status',
+        'deliver_data',
         'extra',
     ];
 
     protected $casts = [
-        'closed'    => 'boolean',
-        'reviewed'  => 'boolean',
-        'address'   => 'json',
-        'ship_data' => 'json',
-        'extra'     => 'json',
+        'is_closed' => 'boolean',
+        'ship_data' => 'array',
+        'extra'     => 'array',
     ];
 
     protected $dates = [
@@ -76,5 +79,37 @@ class Order extends Model
                 }
             }
         });
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function vendingMachine()
+    {
+        return $this->belongsTo(VendingMachine::class);
+    }
+
+    public static function findAvailableNo()
+    {
+        // 订单流水号前缀
+        $prefix = date('YmdHis');
+        for ($i = 0; $i < 10; $i++) {
+            // 随机生成 6 位的数字
+            $no = $prefix.str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            // 判断是否已经存在
+            if (!static::query()->where('no', $no)->exists()) {
+                return $no;
+            }
+        }
+        \Log::warning('find order no failed');
+
+        return false;
     }
 }

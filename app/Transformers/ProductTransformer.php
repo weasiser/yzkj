@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Transformers;
 
 use App\Models\Product;
@@ -15,8 +14,8 @@ class ProductTransformer extends TransformerAbstract
             'id' => $product->id,
             'title' => $product->title,
             'image' => Storage::disk(config('admin.upload.disk'))->url($product->image),
-            'buying_price' => $product->buying_price,
-            'selling_price' => $product->selling_price,
+            'buying_price' => (float) $product->buying_price,
+            'selling_price' => (float) $product->selling_price,
             'quality_guarantee_period' => $product->quality_guarantee_period,
             'total_stock' => $product->total_stock,
             'min_expiration_date' => $product->min_expiration_date,

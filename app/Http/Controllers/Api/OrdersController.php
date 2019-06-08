@@ -7,11 +7,12 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\VendingMachine;
 use App\Models\VendingMachineAisle;
+use App\Transformers\OrderTransformer;
 use Illuminate\Http\Request;
 
 class OrdersController extends Controller
 {
-    public function store(OrderRequest $request)
+    public function store(OrderRequest $request, OrderTransformer $orderTransformer)
     {
         $user = $this->user();
         // 开启一个数据库事务
@@ -41,6 +42,6 @@ class OrdersController extends Controller
             return $order;
         });
 
-        return $order;
+        return $this->response->item($order, $orderTransformer);
     }
 }

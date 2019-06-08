@@ -23,4 +23,14 @@ class VendingMachineAisle extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function decreaseStock($amount)
+    {
+        return $this->where('id', $this->id)->where('stock', '>=', $amount)->decrement('stock', $amount);
+    }
+
+    public function addStock($amount)
+    {
+        $this->increment('stock', $amount);
+    }
 }

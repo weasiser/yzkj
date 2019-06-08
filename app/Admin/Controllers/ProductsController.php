@@ -9,6 +9,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use Encore\Admin\Widgets\Table;
 use Ichynul\RowTable\TableRow;
 use Illuminate\Http\Request;
 
@@ -94,13 +95,13 @@ class ProductsController extends Controller
         $grid->sold_count('销量（件）')->sortable();
         $grid->sold_value('销售额')->sortable();
         $grid->sold_profit('利润')->sortable();
-        $grid->min_expiration_date('最小有效日期')->sortable();
-//            ->expand(function ($model) {
-//                $pes = $model->pes()->get()->map(function ($pes) {
-//                    return $pes->only(['production_date', 'expiration_date', 'stock', 'created_at']);
-//                });
-//                return new Table(['生产日期', '有效日期', '库存', '创建时间'], $pes->toArray());
-//            });
+        $grid->min_expiration_date('最小有效日期')->sortable()
+            ->expand(function ($model) {
+                $pes = $model->pes()->get()->map(function ($pes) {
+                    return $pes->only(['production_date', 'expiration_date', 'stock', 'created_at']);
+                });
+                return new Table(['生产日期', '有效日期', '库存', '创建时间'], $pes->toArray());
+            });
 
         $grid->actions(function ($actions) {
             // 不在每一行后面展示查看按钮

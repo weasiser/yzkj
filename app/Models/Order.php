@@ -96,6 +96,11 @@ class Order extends Model
         return $this->belongsTo(VendingMachine::class);
     }
 
+    public function vendingMachineAisle()
+    {
+        return $this->belongsTo(VendingMachineAisle::class);
+    }
+
     public static function findAvailableNo()
     {
         // 订单流水号前缀

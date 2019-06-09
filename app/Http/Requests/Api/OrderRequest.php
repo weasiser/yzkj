@@ -30,11 +30,11 @@ class OrderRequest extends FormRequest
                         return $fail('该货道已关闭');
                     }
                     if ($aisles->stock === 0) {
-                        return $fail('该货道商品已售罄');
+                        return $fail('该货道的商品已售罄');
                     }
 
-                    if ($aisles->stock < $this->input('amount')) {
-                        return $fail('该货道商品库存不足');
+                    if ($aisles->stock < $value) {
+                        return $fail('该货道的商品库存不足');
                     }
                 },
             ]

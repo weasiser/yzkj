@@ -29,8 +29,8 @@ class VendingMachineAisle extends Model
         return $this->where('id', $this->id)->where('stock', '>=', $amount)->decrement('stock', $amount);
     }
 
-    public function addStock($amount)
+    public function increaseStock($amount)
     {
-        $this->increment('stock', $amount);
+        return $this->where('id', $this->id)->whereColumn('stock', '<', 'max_stock')->increment('stock', $amount);
     }
 }

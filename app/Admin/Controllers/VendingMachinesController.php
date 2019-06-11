@@ -10,7 +10,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
-use Ichynul\RowTable\TableRow;
+//use Ichynul\RowTable\TableRow;
 
 class VendingMachinesController extends Controller
 {
@@ -159,23 +159,41 @@ class VendingMachinesController extends Controller
     {
         $form = new Form(new VendingMachine);
 
-        $headers = ['名称', '机器码', '地址', '物联卡号', '机柜 ID', '机柜类型', '状态'];
-        $tableRow = new TableRow();
-        $tableRow->text('name', '名称')->rules('required')->placeholder('名称')->icon('fa-pencil');
-        $tableRow->text('code', '机器码')->rules('required')->placeholder('机器码')->icon('fa-braille');
-        $tableRow->text('address', '地址')->placeholder('地址')->icon('fa-map-marker');
-        $tableRow->text('iot_card_no', '物联卡号')->placeholder('物联卡号')->icon('fa-microchip');
-        $tableRow->number('cabinet_id', '机柜 ID')->rules('required')->default(1)->placeholder('机柜 ID')->attribute(['style' => 'width: 50px']);
-        $tableRow->number('cabinet_type', '机柜类型')->rules('required')->default(1)->placeholder('机柜类型')->attribute(['style' => 'width: 50px']);
-        $tableRow->switch('is_opened', '状态')->states($this->states)->default(false);
-        $form->rowtable('售货机信息')->setHeaders($headers)->setRows([$tableRow]);
+//        $headers = ['名称', '机器码', '地址', '物联卡号', '机柜 ID', '机柜类型', '状态'];
+//        $tableRow = new TableRow();
+//        $tableRow->text('name', '名称')->rules('required')->placeholder('名称')->icon('fa-pencil');
+//        $tableRow->text('code', '机器码')->rules('required')->placeholder('机器码')->icon('fa-braille');
+//        $tableRow->text('address', '地址')->placeholder('地址')->icon('fa-map-marker');
+//        $tableRow->text('iot_card_no', '物联卡号')->placeholder('物联卡号')->icon('fa-microchip');
+//        $tableRow->number('cabinet_id', '机柜 ID')->rules('required')->default(1)->placeholder('机柜 ID')->attribute(['style' => 'width: 50px']);
+//        $tableRow->number('cabinet_type', '机柜类型')->rules('required')->default(1)->placeholder('机柜类型')->attribute(['style' => 'width: 50px']);
+//        $tableRow->switch('is_opened', '状态')->states($this->states)->default(false);
+//        $form->rowtable('售货机信息')->setHeaders($headers)->setRows([$tableRow]);
+
+        $form->rowtable('商品信息：', function ($table) {
+            $table->row(function ($row) {
+                $row->text('name', '名称')->required()->placeholder('名称');
+                $row->text('code', '机器码')->required()->placeholder('机器码')->icon('fa-braille');
+                $row->text('address', '地址')->placeholder('地址')->icon('fa-map-marker');
+                $row->text('iot_card_no', '物联卡号')->placeholder('物联卡号')->icon('fa-microchip');
+                $row->number('cabinet_id', '机柜 ID')->required()->default(1)->placeholder('机柜 ID')->attribute(['style' => 'width: 50px']);
+                $row->number('cabinet_type', '机柜类型')->required()->default(1)->placeholder('机柜类型')->attribute(['style' => 'width: 50px']);
+                $row->switch('is_opened', '状态')->states($this->states)->default(false);
+            });
+            //$table->useDiv(false);
+            $table->setHeaders(['名称', '机器码', '地址', '物联卡号', '机柜 ID', '机柜类型', '状态']);
+            //$table->useDiv(false);
+            $table->headersTh(true);//使用table时 头部使用<th></th>，默认使用<td></td>样式有些差别
+            //$table->getTableWidget()//extends Encore\Admin\Widgets\Table
+            //->offsetSet("style", "width:1000px;");
+        });
 
         $products = Product::all();
 
         $form->hasMany('aisles', '货道列表', function (Form\NestedForm $form) use ($products) {
-            $form->number('ordinal', '货道号')->rules('required|integer|min:1|max:54')->placeholder('货道号')->attribute(['min' => '1', 'max' => '54', 'style' => 'width: 50px']);
-            $form->number('stock', '库存')->rules('required|integer|min:0')->placeholder('库存')->default(5)->attribute(['style' => 'width: 50px']);
-            $form->number('max_stock', '最大库存')->rules('required|integer|min:3')->placeholder('最大库存')->default(5)->attribute(['style' => 'width: 50px']);
+            $form->number('ordinal', '货道号')->required()->rules('integer|min:1|max:54')->placeholder('货道号')->attribute(['min' => '1', 'max' => '54', 'style' => 'width: 50px']);
+            $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存')->default(5)->attribute(['style' => 'width: 50px']);
+            $form->number('max_stock', '最大库存')->required()->rules('integer|min:3')->placeholder('最大库存')->default(5)->attribute(['style' => 'width: 50px']);
             $form->select('product_id', '商品')->options(function ($id) use ($products) {
                 $product = $products->find($id);
                 if ($product) {

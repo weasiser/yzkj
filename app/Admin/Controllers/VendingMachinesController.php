@@ -183,7 +183,7 @@ class VendingMachinesController extends Controller
             //$table->useDiv(false);
             $table->setHeaders(['名称', '机器码', '地址', '物联卡号', '机柜 ID', '机柜类型', '状态']);
             //$table->useDiv(false);
-            $table->headersTh(true);//使用table时 头部使用<th></th>，默认使用<td></td>样式有些差别
+            //$table->headersTh(true);//使用table时 头部使用<th></th>，默认使用<td></td>样式有些差别
             //$table->getTableWidget()//extends Encore\Admin\Widgets\Table
             //->offsetSet("style", "width:1000px;");
         });

@@ -13,6 +13,8 @@ class CloseOrder implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $deleteWhenMissingModels = true;
+
     protected $order;
 
     /**
@@ -42,8 +44,9 @@ class CloseOrder implements ShouldQueue
         // 通过事务执行 sql
         \DB::transaction(function() {
             // 将订单的 closed 字段标记为 true，即关闭订单
-            $this->order->update(['is_closed' => true]);
+//            $this->order->update(['is_closed' => true]);
             $this->order->vendingMachineAisle->increaseStock($this->order->amount);
+            $this->order->delete();
         });
     }
 }

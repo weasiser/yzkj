@@ -29,4 +29,6 @@ Route::group([
     $router->put('vending_machines/{id}', 'VendingMachinesController@update');
     $router->delete('vending_machines/{id}', 'VendingMachinesController@destroy');
 
+    $router->resource('productpes', ProductPesController::class);
+
 });

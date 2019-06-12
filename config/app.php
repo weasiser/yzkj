@@ -228,6 +228,6 @@ return [
 
     ],
 
-    'order_ttl' => 10,
+    'order_ttl' => 60,
 
 ];

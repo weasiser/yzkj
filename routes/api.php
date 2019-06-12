@@ -64,5 +64,8 @@ $api->version('v1', [
         // 创建订单
         $api->post('orders', 'OrdersController@store')
             ->name('api.orders.store');
+        // 删除订单
+        $api->post('orders/{order}', 'OrdersController@destroy')
+            ->name('api.orders.destroy');
     });
 });

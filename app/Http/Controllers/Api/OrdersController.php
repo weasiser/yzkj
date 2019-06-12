@@ -27,7 +27,7 @@ class OrdersController extends Controller
             $totalAmount = big_number($sold_price)->multiply($amount)->getValue();
 
             // 创建一个订单
-            $order   = new Order([
+            $order = new Order([
                 'amount'       => $amount,
                 'sold_price'   => $sold_price,
                 'total_amount' => $totalAmount,
@@ -49,6 +49,13 @@ class OrdersController extends Controller
             return $order;
         });
 
-        return $this->response->item($order, $orderTransformer);
+        return $this->response->item($order, $orderTransformer)->setStatusCode(201);
+    }
+
+    public function destroy(Order $order)
+    {
+        $order->vendingMachineAisle->increaseStock($order->amount);
+        $order->delete();
+        return $this->response->noContent();
     }
 }

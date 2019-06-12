@@ -183,14 +183,14 @@ class VendingMachinesController extends Controller
             //$table->useDiv(false);
             $table->setHeaders(['名称', '机器码', '地址', '物联卡号', '机柜 ID', '机柜类型', '状态']);
             //$table->useDiv(false);
-            $table->headersTh(true);//使用table时 头部使用<th></th>，默认使用<td></td>样式有些差别
+            //$table->headersTh(true);//使用table时 头部使用<th></th>，默认使用<td></td>样式有些差别
             //$table->getTableWidget()//extends Encore\Admin\Widgets\Table
             //->offsetSet("style", "width:1000px;");
         });
 
         $products = Product::all();
 
-        $form->hasMany('aisles', '货道列表', function (Form\NestedForm $form) use ($products) {
+        $form->hasMany('aisles', '货道列表：', function (Form\NestedForm $form) use ($products) {
             $form->number('ordinal', '货道号')->required()->rules('integer|min:1|max:54')->placeholder('货道号')->attribute(['min' => '1', 'max' => '54', 'style' => 'width: 50px']);
             $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存')->default(5)->attribute(['style' => 'width: 50px']);
             $form->number('max_stock', '最大库存')->required()->rules('integer|min:3')->placeholder('最大库存')->default(5)->attribute(['style' => 'width: 50px']);

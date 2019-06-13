@@ -210,6 +210,11 @@ class VendingMachinesController extends Controller
             $tools->disableView();
         });
 
+        $form->footer(function ($footer) {
+            // 去掉`查看`checkbox
+            $footer->disableViewCheck();
+        });
+
         return $form;
     }
 }

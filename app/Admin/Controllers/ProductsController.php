@@ -210,6 +210,11 @@ class ProductsController extends Controller
             $tools->disableView();
         });
 
+        $form->footer(function ($footer) {
+            // 去掉`查看`checkbox
+            $footer->disableViewCheck();
+        });
+
         return $form;
     }
 
@@ -218,13 +223,17 @@ class ProductsController extends Controller
     {
         // 用户输入的值通过 q 参数获取
         $search = $request->input('q');
+        $qgp = boolval($request->input('qgp', false));
         $result = Product::query()
 //            ->where('on_sale', true)
             ->where('title', 'like', '%'.$search.'%')
             ->paginate();
 
         // 把查询出来的结果重新组装成 Laravel-Admin 需要的格式
-        $result->setCollection($result->getCollection()->map(function (Product $product) {
+        $result->setCollection($result->getCollection()->map(function (Product $product) use ($qgp) {
+            if ($qgp) {
+                return ['id' => $product->id, 'text' => $product->title . '<span class="quality_guarantee_period_note">保质期：<span id="quality_guarantee_period">' . $product->quality_guarantee_period . '</span>个月</span>'];
+            }
             return ['id' => $product->id, 'text' => $product->title];
         }));
 

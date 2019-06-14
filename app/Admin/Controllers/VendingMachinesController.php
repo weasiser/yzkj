@@ -16,7 +16,7 @@ class VendingMachinesController extends Controller
 {
     use HasResourceActions;
 
-    protected $states = [
+    protected $is_opened = [
         'on'  => ['value' => 1, 'text' => '已开启', 'color' => 'success'],
         'off' => ['value' => 0, 'text' => '已关闭', 'color' => 'danger'],
     ];
@@ -100,7 +100,7 @@ class VendingMachinesController extends Controller
         $grid->iot_card_no('物联卡号')->editable();
         $grid->cabinet_id('机柜 ID')->editable();
         $grid->cabinet_type('机柜类型')->editable();
-        $grid->is_opened('状态')->switch($this->states);
+        $grid->is_opened('状态')->switch($this->is_opened);
 
         $grid->actions(function ($actions) {
             // 不在每一行后面展示查看按钮
@@ -167,10 +167,10 @@ class VendingMachinesController extends Controller
 //        $tableRow->text('iot_card_no', '物联卡号')->placeholder('物联卡号')->icon('fa-microchip');
 //        $tableRow->number('cabinet_id', '机柜 ID')->rules('required')->default(1)->placeholder('机柜 ID')->attribute(['style' => 'width: 50px']);
 //        $tableRow->number('cabinet_type', '机柜类型')->rules('required')->default(1)->placeholder('机柜类型')->attribute(['style' => 'width: 50px']);
-//        $tableRow->switch('is_opened', '状态')->states($this->states)->default(false);
+//        $tableRow->switch('is_opened', '状态')->states($this->is_opened)->default(false);
 //        $form->rowtable('售货机信息')->setHeaders($headers)->setRows([$tableRow]);
 
-        $form->rowtable('商品信息：', function ($table) {
+        $form->rowtable('售货机信息：', function ($table) {
             $table->row(function ($row) {
                 $row->text('name', '名称')->required()->placeholder('名称');
                 $row->text('code', '机器码')->required()->placeholder('机器码')->icon('fa-braille');
@@ -178,7 +178,7 @@ class VendingMachinesController extends Controller
                 $row->text('iot_card_no', '物联卡号')->placeholder('物联卡号')->icon('fa-microchip');
                 $row->number('cabinet_id', '机柜 ID')->required()->default(1)->placeholder('机柜 ID')->attribute(['style' => 'width: 50px']);
                 $row->number('cabinet_type', '机柜类型')->required()->default(1)->placeholder('机柜类型')->attribute(['style' => 'width: 50px']);
-                $row->switch('is_opened', '状态')->states($this->states)->default(false);
+                $row->switch('is_opened', '状态')->states($this->is_opened)->default(false);
             });
             //$table->useDiv(false);
             $table->setHeaders(['名称', '机器码', '地址', '物联卡号', '机柜 ID', '机柜类型', '状态']);
@@ -202,7 +202,7 @@ class VendingMachinesController extends Controller
             })->ajax('/admin/api/products');
             $form->currency('preferential_price', '优惠价')->rules('numeric')->placeholder('优惠价')->symbol('<i class="fa fa-rmb fa-fw"></i>')->default(0)->attribute(['style' => 'width: 60px']);
             $form->switch('is_lead_rail', '导轨')->states($this->lead_rail)->default(false);
-            $form->switch('is_opened', '状态')->states($this->states)->default(true);
+            $form->switch('is_opened', '状态')->states($this->is_opened)->default(true);
         })->mode('table');
 
         $form->tools(function (Form\Tools $tools) {

@@ -101,10 +101,10 @@ class AuthorizationsController extends Controller
     protected function getAliAccessToken($code)
     {
         $keyPair = AlipayKeyPair::create(
-            base_path(env('ALIPAY_APP_PRIVATE_KEY')),
-            base_path(env('ALIPAY_PUBLIC_KEY'))
+            config('services.alipay.app_private_key'),
+            config('services.alipay.public_key')
         );
-        $aop = new AopClient(env('ALIPAY_MINI_PROGRAM_APPID'), $keyPair);
+        $aop = new AopClient(config('services.alipay.mini_program_appid'), $keyPair);
         $request = AlipayRequestFactory::create('alipay.system.oauth.token', [
             'grant_type' => 'authorization_code',
             'code' => $code

@@ -44,4 +44,10 @@ return [
         ],
     ],
 
+    'alipay' => [
+        'app_private_key' => base_path(env('ALIPAY_APP_PRIVATE_KEY')),
+        'public_key' => base_path(env('ALIPAY_PUBLIC_KEY')),
+        'mini_program_appid' => env('ALIPAY_MINI_PROGRAM_APPID'),
+    ],
+
 ];

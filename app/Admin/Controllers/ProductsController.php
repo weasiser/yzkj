@@ -17,6 +17,11 @@ class ProductsController extends Controller
 {
     use HasResourceActions;
 
+    protected $on_sale = [
+        'on'  => ['value' => 1, 'text' => '已上架', 'color' => 'success'],
+        'off' => ['value' => 0, 'text' => '已下架', 'color' => 'danger'],
+    ];
+
     /**
      * Index interface.
      *
@@ -102,6 +107,7 @@ class ProductsController extends Controller
                 });
                 return new Table(['生产日期', '有效日期', '库存', '创建时间'], $pes->toArray());
             });
+        $grid->on_sale('上下架')->switch($this->on_sale);
 
         $grid->actions(function ($actions) {
             // 不在每一行后面展示查看按钮
@@ -117,6 +123,10 @@ class ProductsController extends Controller
 
         $grid->filter(function($filter){
             $filter->column(1/2, function ($filter) {
+                $filter->in('on_sale', '上下架')->checkbox([
+                    true => '上架',
+                    false => '下架',
+                ]);
             });
             $filter->column(1/2, function ($filter) {
                 $filter->like('title', '名称');
@@ -176,18 +186,17 @@ class ProductsController extends Controller
                 $row->currency('buying_price', '进货价')->required()->rules('numeric|min:0.01')->placeholder('进货价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
                 $row->currency('selling_price', '销售价')->required()->rules('numeric|min:0.01')->placeholder('销售价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
                 $row->number('quality_guarantee_period', '保质期（月）')->required()->rules('integer|min:1')->placeholder('保质期（月）')->default(0);
+                $row->switch('on_sale', '上下架')->states($this->on_sale)->default(true);
             });
             //$table->useDiv(false);
-            $table->setHeaders(['名称', '进货价', '销售价', '保质期（月）']);
+            $table->setHeaders(['名称', '进货价', '销售价', '保质期（月）', '上下架']);
             //$table->useDiv(false);
             //$table->headersTh(true);//使用table时 头部使用<th></th>，默认使用<td></td>样式有些差别
             //$table->getTableWidget()//extends Encore\Admin\Widgets\Table
             //->offsetSet("style", "width:1000px;");
         });
 
-        $form->image('image', '图片：')->rules('required|image', [
-            'required' => '请上传图片'
-        ])->removable();
+        $form->image('image', '图片：')->rules('image')->required()->removable();
 
         $form->hasMany('pes', '日期库存列表：', function (Form\NestedForm $form) {
             $form->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
@@ -227,6 +236,7 @@ class ProductsController extends Controller
         $result = Product::query()
 //            ->where('on_sale', true)
             ->where('title', 'like', '%'.$search.'%')
+            ->where('on_sale', '=', true)
             ->paginate();
 
         // 把查询出来的结果重新组装成 Laravel-Admin 需要的格式

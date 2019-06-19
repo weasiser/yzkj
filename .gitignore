@@ -12,3 +12,6 @@ yarn-error.log
 .idea
 /public/js
 /public/css
+/keys
+yzkj.conf
+yzkj.pem

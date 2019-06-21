@@ -12,8 +12,6 @@ class VendingMachinesController extends Controller
     {
         app(\Dingo\Api\Transformer\Factory::class)->disableEagerLoading();
 
-//        $vending_machine = $vending_machine->aisles;
-
         if ($request->include) {
             $vending_machine->load($request->include);
         }

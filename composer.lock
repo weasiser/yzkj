@@ -71,7 +71,7 @@
         },
         {
             "name": "dingo/api",
-            "version": "v2.2.4",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dingo/api.git",
@@ -2550,16 +2550,16 @@
         },
         {
             "name": "overtrue/wechat",
-            "version": "4.1.26",
+            "version": "4.1.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/overtrue/wechat.git",
-                "reference": "3252e933c10d74a0d42ece943f3fd8deb50f7aea"
+                "reference": "c78fbd3e6fcf65cfdb4f1131ae5667018ebb417c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/overtrue/wechat/zipball/3252e933c10d74a0d42ece943f3fd8deb50f7aea",
-                "reference": "3252e933c10d74a0d42ece943f3fd8deb50f7aea",
+                "url": "https://api.github.com/repos/overtrue/wechat/zipball/c78fbd3e6fcf65cfdb4f1131ae5667018ebb417c",
+                "reference": "c78fbd3e6fcf65cfdb4f1131ae5667018ebb417c",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2616,7 +2616,7 @@
                 "weixin",
                 "weixin-sdk"
             ],
-            "time": "2019-06-20T10:25:02+00:00"
+            "time": "2019-06-21T04:22:09+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -6079,16 +6079,16 @@
         },
         {
             "name": "filp/whoops",
-            "version": "2.3.1",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "bc0fd11bc455cc20ee4b5edabc63ebbf859324c7"
+                "reference": "1a1a1044ad00e285bd2825fac4c3a0443d90ad33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/bc0fd11bc455cc20ee4b5edabc63ebbf859324c7",
-                "reference": "bc0fd11bc455cc20ee4b5edabc63ebbf859324c7",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/1a1a1044ad00e285bd2825fac4c3a0443d90ad33",
+                "reference": "1a1a1044ad00e285bd2825fac4c3a0443d90ad33",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -6142,7 +6142,7 @@
                 "throwable",
                 "whoops"
             ],
-            "time": "2018-10-23T09:00:00+00:00"
+            "time": "2019-06-23T09:00:00+00:00"
         },
         {
             "name": "fzaninotto/faker",

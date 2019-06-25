@@ -233,7 +233,7 @@ return [
     | Set a default avatar for newly created users.
     |
     */
-    'default_avatar' => '/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg',
+    'default_avatar' => 'https://s2.ax1x.com/2019/06/26/ZZRR5n.png',
 
     /*
     |--------------------------------------------------------------------------

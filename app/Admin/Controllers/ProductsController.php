@@ -196,7 +196,7 @@ class ProductsController extends Controller
             //->offsetSet("style", "width:1000px;");
         });
 
-        $form->image('image', '图片：')->rules('image')->required()->removable();
+        $form->image('image', '图片：')->rules('image')->required();
 
         $form->hasMany('pes', '日期库存列表：', function (Form\NestedForm $form) {
             $form->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);

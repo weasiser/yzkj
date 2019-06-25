@@ -90,7 +90,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `admin_users` WRITE;
 /*!40000 ALTER TABLE `admin_users` DISABLE KEYS */;
-INSERT INTO `admin_users` VALUES (1,'admin','$2y$10$YRfD6vPUway.ZJQwnjzL/erBiNDTUr/P8./Uvbv4otq5Ws/zBqIJ2','管理员','images/role_administor.png','Il4Zq9B2kbH38jLCJd3CseJivA4CRXatICV16C5ryAsRAD39IjZY7LS06kmQ','2019-05-07 09:06:49','2019-05-20 06:21:50');
+INSERT INTO `admin_users` VALUES (1,'admin','$2y$10$YRfD6vPUway.ZJQwnjzL/erBiNDTUr/P8./Uvbv4otq5Ws/zBqIJ2','管理员','','Il4Zq9B2kbH38jLCJd3CseJivA4CRXatICV16C5ryAsRAD39IjZY7LS06kmQ','2019-05-07 09:06:49','2019-05-20 06:21:50');
 /*!40000 ALTER TABLE `admin_users` ENABLE KEYS */;
 UNLOCK TABLES;
 

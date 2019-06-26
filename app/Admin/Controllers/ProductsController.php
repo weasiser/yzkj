@@ -93,11 +93,7 @@ class ProductsController extends Controller
 
         $grid->id('ID')->sortable();
         $grid->column('title', '名称')->editable();
-        $grid->image('缩略图')->image('', 50, 50);
-//        $grid->column('image', '缩略图')->display(function ($image) {
-//            $disk = Storage::disk(config('admin.upload.disk'));
-//            return $disk->signUrl($image, 3600);
-//        })->image('', 50, 50);
+        $grid->image('缩略图')->image(config('filesystems.disks.oss.cdnDomain'), 50, 50);
         $grid->buying_price('进货价')->editable();
         $grid->selling_price('销售价')->editable();
         $grid->quality_guarantee_period('保质期（月）')->editable();

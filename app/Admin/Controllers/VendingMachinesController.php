@@ -105,6 +105,8 @@ class VendingMachinesController extends Controller
         $grid->actions(function ($actions) {
             // 不在每一行后面展示查看按钮
             $actions->disableView();
+            // 不在每一行后面展示删除按钮
+            $actions->disableDelete();
         });
 
         $grid->tools(function ($tools) {
@@ -170,40 +172,71 @@ class VendingMachinesController extends Controller
 //        $tableRow->switch('is_opened', '状态')->states($this->is_opened)->default(false);
 //        $form->rowtable('售货机信息')->setHeaders($headers)->setRows([$tableRow]);
 
-        $form->rowtable('售货机信息：', function ($table) {
-            $table->row(function ($row) {
-                $row->text('name', '名称')->required()->placeholder('名称');
-                $row->text('code', '机器码')->required()->placeholder('机器码')->icon('fa-braille');
-                $row->text('address', '地址')->placeholder('地址')->icon('fa-map-marker');
-                $row->text('iot_card_no', '物联卡号')->placeholder('物联卡号')->icon('fa-microchip');
-                $row->number('cabinet_id', '机柜 ID')->required()->default(1)->placeholder('机柜 ID')->attribute(['style' => 'width: 50px']);
-                $row->number('cabinet_type', '机柜类型')->required()->default(1)->placeholder('机柜类型')->attribute(['style' => 'width: 50px']);
-                $row->switch('is_opened', '状态')->states($this->is_opened)->default(false);
-            });
-            //$table->useDiv(false);
-            $table->setHeaders(['名称', '机器码', '地址', '物联卡号', '机柜 ID', '机柜类型', '状态']);
-            //$table->useDiv(false);
-            //$table->headersTh(true);//使用table时 头部使用<th></th>，默认使用<td></td>样式有些差别
-            //$table->getTableWidget()//extends Encore\Admin\Widgets\Table
-            //->offsetSet("style", "width:1000px;");
+        $form->tab('售货机信息', function ($form) {
+
+            $form->text('name', '名称')->required()->placeholder('名称');
+            $form->text('code', '机器码')->required()->placeholder('机器码')->icon('fa-braille');
+            $form->text('address', '地址')->placeholder('地址')->icon('fa-map-marker');
+            $form->text('iot_card_no', '物联卡号')->placeholder('物联卡号')->icon('fa-microchip');
+            $form->number('cabinet_id', '机柜 ID')->required()->default(1)->placeholder('机柜 ID');
+            $form->number('cabinet_type', '机柜类型')->required()->default(1)->placeholder('机柜类型');
+            $form->switch('is_opened', '状态')->states($this->is_opened)->default(false);
+
+        })->tab('货道信息', function ($form) {
+
+            $products = Product::all();
+
+            $form->hasMany('aisles', '货道列表：', function (Form\NestedForm $form) use ($products) {
+                $form->number('ordinal', '货道号')->required()->rules('integer|min:1|max:54')->placeholder('货道号')->attribute(['min' => '1', 'max' => '54', 'style' => 'width: 50px']);
+                $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存')->default(5)->attribute(['style' => 'width: 50px']);
+                $form->number('max_stock', '最大库存')->required()->rules('integer|min:3')->placeholder('最大库存')->default(5)->attribute(['style' => 'width: 50px']);
+                $form->select('product_id', '商品')->options(function ($id) use ($products) {
+                    $product = $products->find($id);
+                    if ($product) {
+                        return [$product->id => $product->title];
+                    }
+                })->ajax('/admin/api/products');
+                $form->currency('preferential_price', '优惠价')->rules('numeric')->placeholder('优惠价')->symbol('<i class="fa fa-rmb fa-fw"></i>')->default(0)->attribute(['style' => 'width: 60px']);
+                $form->switch('is_lead_rail', '导轨')->states($this->lead_rail)->default(false);
+                $form->switch('is_opened', '状态')->states($this->is_opened)->default(true);
+            })->mode('table');
+
         });
 
-        $products = Product::all();
-
-        $form->hasMany('aisles', '货道列表：', function (Form\NestedForm $form) use ($products) {
-            $form->number('ordinal', '货道号')->required()->rules('integer|min:1|max:54')->placeholder('货道号')->attribute(['min' => '1', 'max' => '54', 'style' => 'width: 50px']);
-            $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存')->default(5)->attribute(['style' => 'width: 50px']);
-            $form->number('max_stock', '最大库存')->required()->rules('integer|min:3')->placeholder('最大库存')->default(5)->attribute(['style' => 'width: 50px']);
-            $form->select('product_id', '商品')->options(function ($id) use ($products) {
-                $product = $products->find($id);
-                if ($product) {
-                    return [$product->id => $product->title];
-                }
-            })->ajax('/admin/api/products');
-            $form->currency('preferential_price', '优惠价')->rules('numeric')->placeholder('优惠价')->symbol('<i class="fa fa-rmb fa-fw"></i>')->default(0)->attribute(['style' => 'width: 60px']);
-            $form->switch('is_lead_rail', '导轨')->states($this->lead_rail)->default(false);
-            $form->switch('is_opened', '状态')->states($this->is_opened)->default(true);
-        })->mode('table');
+//        $form->rowtable('售货机信息：', function ($table) {
+//            $table->row(function ($row) {
+//                $row->text('name', '名称')->required()->placeholder('名称');
+//                $row->text('code', '机器码')->required()->placeholder('机器码')->icon('fa-braille');
+//                $row->text('address', '地址')->placeholder('地址')->icon('fa-map-marker');
+//                $row->text('iot_card_no', '物联卡号')->placeholder('物联卡号')->icon('fa-microchip');
+//                $row->number('cabinet_id', '机柜 ID')->required()->default(1)->placeholder('机柜 ID')->attribute(['style' => 'width: 50px']);
+//                $row->number('cabinet_type', '机柜类型')->required()->default(1)->placeholder('机柜类型')->attribute(['style' => 'width: 50px']);
+//                $row->switch('is_opened', '状态')->states($this->is_opened)->default(false);
+//            });
+//            //$table->useDiv(false);
+//            $table->setHeaders(['名称', '机器码', '地址', '物联卡号', '机柜 ID', '机柜类型', '状态']);
+//            //$table->useDiv(false);
+//            //$table->headersTh(true);//使用table时 头部使用<th></th>，默认使用<td></td>样式有些差别
+//            //$table->getTableWidget()//extends Encore\Admin\Widgets\Table
+//            //->offsetSet("style", "width:1000px;");
+//        });
+//
+//        $products = Product::all();
+//
+//        $form->hasMany('aisles', '货道列表：', function (Form\NestedForm $form) use ($products) {
+//            $form->number('ordinal', '货道号')->required()->rules('integer|min:1|max:54')->placeholder('货道号')->attribute(['min' => '1', 'max' => '54', 'style' => 'width: 50px']);
+//            $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存')->default(5)->attribute(['style' => 'width: 50px']);
+//            $form->number('max_stock', '最大库存')->required()->rules('integer|min:3')->placeholder('最大库存')->default(5)->attribute(['style' => 'width: 50px']);
+//            $form->select('product_id', '商品')->options(function ($id) use ($products) {
+//                $product = $products->find($id);
+//                if ($product) {
+//                    return [$product->id => $product->title];
+//                }
+//            })->ajax('/admin/api/products');
+//            $form->currency('preferential_price', '优惠价')->rules('numeric')->placeholder('优惠价')->symbol('<i class="fa fa-rmb fa-fw"></i>')->default(0)->attribute(['style' => 'width: 60px']);
+//            $form->switch('is_lead_rail', '导轨')->states($this->lead_rail)->default(false);
+//            $form->switch('is_opened', '状态')->states($this->is_opened)->default(true);
+//        })->mode('table');
 
         $form->tools(function (Form\Tools $tools) {
             // 去掉`查看`按钮

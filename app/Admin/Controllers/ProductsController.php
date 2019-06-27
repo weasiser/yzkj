@@ -12,7 +12,6 @@ use Encore\Admin\Show;
 use Encore\Admin\Widgets\Table;
 //use Ichynul\RowTable\TableRow;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ProductsController extends Controller
 {
@@ -93,7 +92,7 @@ class ProductsController extends Controller
 
         $grid->id('ID')->sortable();
         $grid->column('title', '名称')->editable();
-        $grid->image('缩略图')->image('', 50, 50);
+        $grid->image('缩略图')->image(config('filesystems.disks.oss.cdnDomain'), 50, 50);
         $grid->buying_price('进货价')->editable();
         $grid->selling_price('销售价')->editable();
         $grid->quality_guarantee_period('保质期（月）')->editable();
@@ -113,6 +112,8 @@ class ProductsController extends Controller
         $grid->actions(function ($actions) {
             // 不在每一行后面展示查看按钮
             $actions->disableView();
+            // 不在每一行后面展示删除按钮
+            $actions->disableDelete();
         });
 
         $grid->tools(function ($tools) {
@@ -181,32 +182,54 @@ class ProductsController extends Controller
 //        $tableRow->number('quality_guarantee_period', '保质期（月）')->required()->rules('integer|min:1')->placeholder('保质期（月）')->default(0);
 //        $form->rowtable('商品信息：')->setHeaders($headers)->setRows([$tableRow]);
 
-        $form->rowtable('商品信息：', function ($table) {
-            $table->row(function ($row) {
-                $row->text('title', '名称')->required()->placeholder('名称');
-                $row->currency('buying_price', '进货价')->required()->rules('numeric|min:0.01')->placeholder('进货价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
-                $row->currency('selling_price', '销售价')->required()->rules('numeric|min:0.01')->placeholder('销售价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
-                $row->number('quality_guarantee_period', '保质期（月）')->required()->rules('integer|min:1')->placeholder('保质期（月）')->default(0);
-                $row->switch('on_sale', '上下架')->states($this->on_sale)->default(true);
-            });
-            //$table->useDiv(false);
-            $table->setHeaders(['名称', '进货价', '销售价', '保质期（月）', '上下架']);
-            //$table->useDiv(false);
-            //$table->headersTh(true);//使用table时 头部使用<th></th>，默认使用<td></td>样式有些差别
-            //$table->getTableWidget()//extends Encore\Admin\Widgets\Table
-            //->offsetSet("style", "width:1000px;");
+        $form->tab('商品信息', function ($form) {
+
+            $form->text('title', '名称')->required()->placeholder('名称');
+            $form->currency('buying_price', '进货价')->required()->rules('numeric|min:0.01')->placeholder('进货价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
+            $form->currency('selling_price', '销售价')->required()->rules('numeric|min:0.01')->placeholder('销售价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
+            $form->number('quality_guarantee_period', '保质期（月）')->required()->rules('integer|min:1')->placeholder('保质期（月）')->default(0);
+            $form->switch('on_sale', '上下架')->states($this->on_sale)->default(true);
+            $form->image('image', '图片')->rules('image')->required();
+
+        })->tab('日期库存', function ($form) {
+
+            $form->hasMany('pes', '日期库存列表：', function (Form\NestedForm $form) {
+                $form->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
+                $form->text('expiration_date', '有效日期')->icon('fa-calendar')->required()->placeholder('有效日期')->readonly()->attribute(['type' => 'date', 'style' => 'width: 150px']);
+                $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存');
+                $form->datetime('created_at', '创建时间')->disable()->placeholder('无需输入，自动生成');
+            })->mode('table');
+
+            $form->html(view('admin.utils.product_edit'));
+
         });
 
-        $form->image('image', '图片：')->rules('image')->required();
+//        $form->rowtable('商品信息：', function ($table) {
+//            $table->row(function ($row) {
+//                $row->text('title', '名称')->required()->placeholder('名称');
+//                $row->currency('buying_price', '进货价')->required()->rules('numeric|min:0.01')->placeholder('进货价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
+//                $row->currency('selling_price', '销售价')->required()->rules('numeric|min:0.01')->placeholder('销售价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
+//                $row->number('quality_guarantee_period', '保质期（月）')->required()->rules('integer|min:1')->placeholder('保质期（月）')->default(0);
+//                $row->switch('on_sale', '上下架')->states($this->on_sale)->default(true);
+//            });
+//            //$table->useDiv(false);
+//            $table->setHeaders(['名称', '进货价', '销售价', '保质期（月）', '上下架']);
+//            //$table->useDiv(false);
+//            //$table->headersTh(true);//使用table时 头部使用<th></th>，默认使用<td></td>样式有些差别
+//            //$table->getTableWidget()//extends Encore\Admin\Widgets\Table
+//            //->offsetSet("style", "width:1000px;");
+//        });
+//
+//        $form->image('image', '图片：')->rules('image')->required()->value();
+//
+//        $form->hasMany('pes', '日期库存列表：', function (Form\NestedForm $form) {
+//            $form->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
+//            $form->text('expiration_date', '有效日期')->icon('fa-calendar')->required()->placeholder('有效日期')->readonly()->attribute(['type' => 'date', 'style' => 'width: 150px']);
+//            $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存');
+//            $form->datetime('created_at', '创建时间')->disable()->placeholder('无需输入，自动生成');
+//        })->mode('table');
 
-        $form->hasMany('pes', '日期库存列表：', function (Form\NestedForm $form) {
-            $form->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
-            $form->text('expiration_date', '有效日期')->icon('fa-calendar')->required()->placeholder('有效日期')->readonly()->attribute(['type' => 'date', 'style' => 'width: 150px']);
-            $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存');
-            $form->datetime('created_at', '创建时间')->disable()->placeholder('无需输入，自动生成');
-        })->mode('table');
-
-        $form->html(view('admin.utils.product_edit'));
+//        $form->html(view('admin.utils.product_edit'));
 
         $form->saving(function (Form $form) {
             if ($form->input('pes')) {
@@ -235,7 +258,6 @@ class ProductsController extends Controller
         $search = $request->input('q');
         $qgp = boolval($request->input('qgp', false));
         $result = Product::query()
-//            ->where('on_sale', true)
             ->where('title', 'like', '%'.$search.'%')
             ->where('on_sale', '=', true)
             ->paginate();

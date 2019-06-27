@@ -2,6 +2,9 @@
   $(function() {
     $('.has-many-pes-forms').on('change', '.pes.production_date', function () {
       let quality_guarantee_period = parseInt($('#quality_guarantee_period').val())
+      if (!quality_guarantee_period) {
+        Sweetalert2('请先填写商品保质期，才能自动生成有效日期')
+      }
       let beforeDate = $(this)
       let complete = function(n){
         return (n>9) ? n : '0' + n;

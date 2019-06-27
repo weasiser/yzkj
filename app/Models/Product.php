@@ -24,4 +24,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductPes::class)->orderBy('production_date');
     }
+
+    public function getImageAttribute($value)
+    {
+        return config('filesystems.disks.oss.cdnDomain') . '/' . $value;
+    }
 }

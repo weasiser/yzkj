@@ -27,6 +27,6 @@ class Product extends Model
 
 //    public function getImageAttribute($value)
 //    {
-//        return config('filesystems.disks.oss.cdnDomain') . '/' . $value;
+//        return $value . '?x-oss-process=style/webp';
 //    }
 }

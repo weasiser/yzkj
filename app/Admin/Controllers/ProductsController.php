@@ -10,7 +10,6 @@ use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Encore\Admin\Widgets\Table;
-//use Ichynul\RowTable\TableRow;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -189,7 +188,7 @@ class ProductsController extends Controller
             $form->currency('selling_price', '销售价')->required()->rules('numeric|min:0.01')->placeholder('销售价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
             $form->number('quality_guarantee_period', '保质期（月）')->required()->rules('integer|min:1')->placeholder('保质期（月）')->default(0);
             $form->switch('on_sale', '上下架')->states($this->on_sale)->default(true);
-            $form->image('image', '图片')->rules('image')->required();
+            $form->image('image', '图片')->required();
 
         })->tab('日期库存', function ($form) {
 

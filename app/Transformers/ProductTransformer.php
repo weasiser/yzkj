@@ -13,7 +13,7 @@ class ProductTransformer extends TransformerAbstract
         return [
             'id'                       => $product->id,
             'title'                    => $product->title,
-            'image'                    => Storage::disk(config('admin.upload.disk'))                                ->url($product->image),
+            'image'                    => config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $product->image : Storage::disk(config('admin.upload.disk'))->url($product->image),
             'buying_price'             => (float) $product->buying_price,
             'selling_price'            => (float) $product->selling_price,
             'quality_guarantee_period' => $product->quality_guarantee_period,

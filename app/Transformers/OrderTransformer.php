@@ -21,8 +21,7 @@ class OrderTransformer extends TransformerAbstract
             'amount'                   => $order->amount,
             'sold_price'               => (float) $order->sold_price,
             'total_amount'             => (float) $order->total_amount,
-            'paid_at'                  => $order->paid_at ? $order->paid_at
-                                            ->toDateTimeString() : null,
+            'paid_at'                  => $order->paid_at ? $order->paid_at->toDateTimeString() : null,
             'payment_method'           => $order->payment_method,
             'payment_no'               => $order->payment_no,
             'refund_note'              => $order->refund_note,

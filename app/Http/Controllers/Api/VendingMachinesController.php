@@ -8,14 +8,25 @@ use Illuminate\Http\Request;
 
 class VendingMachinesController extends Controller
 {
-    public function show(VendingMachine $vending_machine, Request $request, VendingMachineTransformer $vendingMachineTransformer)
+    public function show(VendingMachine $vendingMachine, Request $request, VendingMachineTransformer $vendingMachineTransformer)
     {
         app(\Dingo\Api\Transformer\Factory::class)->disableEagerLoading();
 
         if ($request->include) {
-            $vending_machine->load($request->include);
+            $vendingMachine->load($request->include);
         }
 
-        return $this->response->item($vending_machine, $vendingMachineTransformer);
+        return $this->response->item($vendingMachine, $vendingMachineTransformer);
+    }
+
+    public function index(VendingMachine $vendingMachine, Request $request, VendingMachineTransformer $vendingMachineTransformer)
+    {
+        app(\Dingo\Api\Transformer\Factory::class)->disableEagerLoading();
+
+        if ($request->include) {
+            $vendingMachine->load($request->include);
+        }
+
+        return $this->response->collection($vendingMachine, $vendingMachineTransformer);
     }
 }

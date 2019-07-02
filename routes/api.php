@@ -44,6 +44,8 @@ $api->version('v1', [
         // 删除token
 //        $api->delete('authorizations/current', 'AuthorizationsController@destroy')
 //            ->name('api.authorizations.destroy');
+        $api->get('vending_machines', 'VendingMachinesController@index')
+            ->name('api.vending_machines.index');
         $api->get('vending_machines/{vending_machine}', 'VendingMachinesController@show')
             ->name('api.vending_machines.show');
     });

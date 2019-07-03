@@ -101,10 +101,10 @@ class ProductsController extends Controller
         $grid->sold_profit('利润')->sortable();
         $grid->min_expiration_date('最小有效日期')->sortable()
             ->expand(function ($model) {
-                $pes = $model->pes()->get()->map(function ($pes) {
-                    return $pes->only(['production_date', 'expiration_date', 'stock', 'created_at']);
+                $productPes = $model->productPes()->get()->map(function ($productPes) {
+                    return $productPes->only(['production_date', 'expiration_date', 'stock', 'created_at']);
                 });
-                return new Table(['生产日期', '有效日期', '库存', '创建时间'], $pes->toArray());
+                return new Table(['生产日期', '有效日期', '库存', '创建时间'], $productPes->toArray());
             });
         $grid->on_sale('上下架')->switch($this->on_sale);
 
@@ -192,7 +192,7 @@ class ProductsController extends Controller
 
         })->tab('日期库存', function ($form) {
 
-            $form->hasMany('pes', '日期库存列表：', function (Form\NestedForm $form) {
+            $form->hasMany('productpes', '日期库存列表：', function (Form\NestedForm $form) {
                 $form->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
                 $form->text('expiration_date', '有效日期')->icon('fa-calendar')->required()->placeholder('有效日期')->readonly()->attribute(['type' => 'date', 'style' => 'width: 150px']);
                 $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存');
@@ -231,9 +231,9 @@ class ProductsController extends Controller
 //        $form->html(view('admin.utils.product_edit'));
 
         $form->saving(function (Form $form) {
-            if ($form->input('pes')) {
-                $form->model()->min_expiration_date = collect($form->input('pes'))->where(Form::REMOVE_FLAG_NAME, 0)->min('expiration_date') ?: NULL;
-                $form->model()->total_stock = collect($form->input('pes'))->where(Form::REMOVE_FLAG_NAME, 0)->sum('stock') ?: 0;
+            if ($form->input('productpes')) {
+                $form->model()->min_expiration_date = collect($form->input('productpes'))->where(Form::REMOVE_FLAG_NAME, 0)->min('expiration_date') ?: NULL;
+                $form->model()->total_stock = collect($form->input('productpes'))->where(Form::REMOVE_FLAG_NAME, 0)->sum('stock') ?: 0;
             }
         });
 

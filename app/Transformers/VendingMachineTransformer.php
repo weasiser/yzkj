@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 
 class VendingMachineTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['aisles'];
+    protected $availableIncludes = ['vendingMachineAisles'];
 
     public function transform(VendingMachine $vendingMachine)
     {
@@ -23,8 +23,8 @@ class VendingMachineTransformer extends TransformerAbstract
         ];
     }
 
-    public function includeAisles(VendingMachine $vendingMachine)
+    public function includeVendingMachineAisles(VendingMachine $vendingMachine)
     {
-        return $this->collection($vendingMachine->aisles, new VendingMachineAisleTransformer());
+        return $this->collection($vendingMachine->vendingMachineAisles, new VendingMachineAisleTransformer());
     }
 }

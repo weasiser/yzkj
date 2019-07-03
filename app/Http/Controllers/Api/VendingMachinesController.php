@@ -23,10 +23,11 @@ class VendingMachinesController extends Controller
     {
         app(\Dingo\Api\Transformer\Factory::class)->disableEagerLoading();
 
+        $vendingMachines = $vendingMachine->all();
         if ($request->include) {
-            $vendingMachine->load($request->include);
+            $vendingMachines->load($request->include);
         }
 
-        return $this->response->collection($vendingMachine, $vendingMachineTransformer);
+        return $this->response->collection($vendingMachines, $vendingMachineTransformer);
     }
 }

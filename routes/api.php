@@ -39,15 +39,15 @@ $api->version('v1', [
         $api->post('authorizations/current', 'AuthorizationsController@update')
             ->name('api.authorizations.update');
         // 更换ali_token
-        $api->post('authorizations/ali_token', 'AuthorizationsController@aliappReplaceToken')
+        $api->post('authorizations/aliToken', 'AuthorizationsController@aliappReplaceToken')
             ->name('api.authorizations.aliappReplaceToken');
         // 删除token
 //        $api->delete('authorizations/current', 'AuthorizationsController@destroy')
 //            ->name('api.authorizations.destroy');
-        $api->get('vending_machines', 'VendingMachinesController@index')
-            ->name('api.vending_machines.index');
-        $api->get('vending_machines/{vending_machine}', 'VendingMachinesController@show')
-            ->name('api.vending_machines.show');
+        $api->get('vendingMachines', 'VendingMachinesController@index')
+            ->name('api.vendingMachines.index');
+        $api->get('vendingMachines/{vendingMachine}', 'VendingMachinesController@show')
+            ->name('api.vendingMachines.show');
     });
 
     // 需要 token 验证的接口

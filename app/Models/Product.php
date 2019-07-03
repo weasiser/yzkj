@@ -20,7 +20,7 @@ class Product extends Model
         'sold_profit'
     ];
 
-    public function pes()
+    public function productPes()
     {
         return $this->hasMany(ProductPes::class)->orderBy('production_date');
     }

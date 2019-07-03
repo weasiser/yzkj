@@ -126,8 +126,17 @@ class ProductPesController extends AdminController
 
         $form->saved(function (Form $form) {
             $product = $form->model()->product;
-            $product->min_expiration_date = $product->pes->min('expiration_date');
-            $product->total_stock = $product->pes->sum('stock');
+            $product->min_expiration_date = $product->productPes->min('expiration_date');
+            $product->total_stock = $product->productPes->sum('stock');
+            $product->save();
+        });
+
+        $form->deleting(function (Form $form) {
+            $product = $form->model()->product;
+            dd($product);
+            $productPes = $product->productPes()->where('id', '<>', $form->model()->id)->get();
+            $product->min_expiration_date = $productPes->min('expiration_date');
+            $product->total_stock = $productPes->sum('stock');
             $product->save();
         });
 

@@ -14,7 +14,7 @@ class VendingMachine extends Model
         'is_opened' => 'boolean'
     ];
 
-    public function aisles()
+    public function vendingMachineAisles()
     {
         return $this->hasMany(VendingMachineAisle::class)->orderBy('ordinal');
     }

@@ -20,15 +20,14 @@ Route::group([
     $router->put('products/{id}', 'ProductsController@update');
     $router->delete('products/{id}', 'ProductsController@destroy');
     $router->get('api/products', 'ProductsController@apiIndex');
-    $router->get('api/product/{id}/pes', 'ProductsController@apiHasManyPes');
 
-    $router->get('vending_machines', 'VendingMachinesController@index');
-    $router->get('vending_machines/create', 'VendingMachinesController@create');
-    $router->post('vending_machines', 'VendingMachinesController@store');
-    $router->get('vending_machines/{id}/edit', 'VendingMachinesController@edit');
-    $router->put('vending_machines/{id}', 'VendingMachinesController@update');
-    $router->delete('vending_machines/{id}', 'VendingMachinesController@destroy');
+    $router->get('vendingMachines', 'VendingMachinesController@index');
+    $router->get('vendingMachines/create', 'VendingMachinesController@create');
+    $router->post('vendingMachines', 'VendingMachinesController@store');
+    $router->get('vendingMachines/{id}/edit', 'VendingMachinesController@edit');
+    $router->put('vendingMachines/{id}', 'VendingMachinesController@update');
+    $router->delete('vendingMachines/{id}', 'VendingMachinesController@destroy');
 
-    $router->resource('productpes', ProductPesController::class);
+    $router->resource('productPes', ProductPesController::class);
 
 });

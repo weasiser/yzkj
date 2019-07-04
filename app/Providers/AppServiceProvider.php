@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\ProductPes;
+use App\Observers\ProductPesObserver;
 use Illuminate\Support\ServiceProvider;
 use Monolog\Logger;
 use Yansongda\Pay\Pay;
@@ -53,5 +55,7 @@ class AppServiceProvider extends ServiceProvider
             $fractal->setSerializer(new \League\Fractal\Serializer\ArraySerializer);
             return new \Dingo\Api\Transformer\Adapter\Fractal($fractal);
         });
+
+        ProductPes::observe(ProductPesObserver::class);
     }
 }

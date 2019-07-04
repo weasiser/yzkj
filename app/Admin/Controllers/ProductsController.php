@@ -230,12 +230,12 @@ class ProductsController extends Controller
 
 //        $form->html(view('admin.utils.product_edit'));
 
-        $form->saving(function (Form $form) {
-            if ($form->input('productpes')) {
-                $form->model()->min_expiration_date = collect($form->input('productpes'))->where(Form::REMOVE_FLAG_NAME, 0)->min('expiration_date') ?: NULL;
-                $form->model()->total_stock = collect($form->input('productpes'))->where(Form::REMOVE_FLAG_NAME, 0)->sum('stock') ?: 0;
-            }
-        });
+//        $form->saving(function (Form $form) {
+//            if ($form->input('productpes')) {
+//                $form->model()->min_expiration_date = collect($form->input('productpes'))->where(Form::REMOVE_FLAG_NAME, 0)->min('expiration_date') ?: NULL;
+//                $form->model()->total_stock = collect($form->input('productpes'))->where(Form::REMOVE_FLAG_NAME, 0)->sum('stock') ?: 0;
+//            }
+//        });
 
         $form->tools(function (Form\Tools $tools) {
             // 去掉`查看`按钮

@@ -69,5 +69,8 @@ $api->version('v1', [
         // 删除订单
         $api->post('orders/{order}', 'OrdersController@destroy')
             ->name('api.orders.destroy');
+        // 切换货道开关
+        $api->put('vendingMachineAisles/{vendingMachineAisle}', 'VendingMachineAislesController@update')
+            ->name('api.vendingMachineAisles.update');
     });
 });

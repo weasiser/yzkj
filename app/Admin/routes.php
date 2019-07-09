@@ -30,4 +30,6 @@ Route::group([
 
     $router->resource('productPes', ProductPesController::class);
 
+    $router->resource('vendingMachineAisles', VendingMachineAislesController::class);
+
 });

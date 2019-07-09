@@ -12,13 +12,15 @@ class VendingMachineAisleTransformer extends TransformerAbstract
     public function transform(VendingMachineAisle $vendingMachineAisle)
     {
         return [
-            'id'           => $vendingMachineAisle->id,
-            'ordinal'      => $vendingMachineAisle->ordinal,
-            'stock'        => $vendingMachineAisle->stock,
-            'max_stock'    => $vendingMachineAisle->max_stock,
-            'is_lead_rail' => $vendingMachineAisle->is_lead_rail,
-            'is_opened'    => $vendingMachineAisle->is_opened,
-            'product_id'   => $vendingMachineAisle->product_id,
+            'id'                 => $vendingMachineAisle->id,
+            'ordinal'            => $vendingMachineAisle->ordinal,
+            'stock'              => $vendingMachineAisle->stock,
+            'max_stock'          => $vendingMachineAisle->max_stock,
+            'is_lead_rail'       => $vendingMachineAisle->is_lead_rail,
+            'is_opened'          => $vendingMachineAisle->is_opened,
+            'product_id'         => $vendingMachineAisle->product_id,
+            'preferential_price' => (float)$vendingMachineAisle->preferential_price,
+            'final_price'        => (float)big_number($vendingMachineAisle->product->selling_price)->subtract($vendingMachineAisle->preferential_price)->getValue(),
 //            'created_at' => (string) $vendingMachineAisle->created_at,
 //            'updated_at' => (string) $vendingMachineAisle->updated_at,
         ];

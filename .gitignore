@@ -15,3 +15,5 @@ yarn-error.log
 /keys
 yzkj.conf
 yzkj.pem
+/resources/keys/
+/resources/wxpay/

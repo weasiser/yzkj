@@ -33,10 +33,11 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton('wxpay', function () {
             $config = config('pay.wxpay');
+            $config['notify_url'] = 'http://requestbin.fullcontact.com/wm60xywm';
             if (app()->environment() !== 'production') {
                 $config['log']['level'] = Logger::DEBUG;
             } else {
-                $config['log']['level'] = Logger::WARNING;
+                $config['log']['level'] = Logger::INFO;
             }
             // 调用 Yansongda\Pay 来创建一个微信支付对象
             return Pay::wechat($config);

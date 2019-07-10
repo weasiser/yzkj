@@ -75,5 +75,8 @@ $api->version('v1', [
         // 商品列表
         $api->get('products', 'ProductsController@index')
             ->name('api.products.index');
+        // 小程序微信支付
+        $api->get('payments/{order}/miniapp/wxpay', 'PaymentsController@miniappPayByWxpay')
+            ->name('api.payments.miniappPayByWxpay');
     });
 });

@@ -18,3 +18,5 @@
 //Auth::routes(['register' => false]);
 
 Route::get('/', 'HomeController@index')->name('home');
+
+Route::post('paymentNotifications/miniapp/wxpay/notify', 'PaymentNotificationsController@miniappPayByWxpayNotify')->name('paymentNotifications.miniapp.wxpay.notify');

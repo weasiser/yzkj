@@ -15,7 +15,7 @@ class VendingMachineDeliverAndQuery
 
         $deliverProductApi = config('services.huiyijie_vending_machine.deliver_product_api');
 
-        $form_params = [
+        $params = [
             'goodslist' => [
                 [
                     'cabid' => (int)$cabid,
@@ -28,8 +28,10 @@ class VendingMachineDeliverAndQuery
         ];
 
         $response = $http->post($deliverProductApi, [
-            'headers' => ['Authorization' => $token],
-            'form_params' => $form_params
+            'headers' => [
+                'Authorization' => $token
+            ],
+            'json' => $params
         ]);
 
         $result = json_decode($response->getBody(), true);
@@ -46,7 +48,9 @@ class VendingMachineDeliverAndQuery
         $queryMachineInfoApi = config('services.huiyijie_vending_machine.query_machine_info');
 
         $response = $http->get($queryMachineInfoApi, [
-            'headers' => ['Authorization' => $token],
+            'headers' => [
+                'Authorization' => $token
+            ],
             'query' => ['machineUuid' => $machineUuid]
         ]);
 
@@ -63,12 +67,14 @@ class VendingMachineDeliverAndQuery
         $userName = config('services.huiyijie_vending_machine.user_name');
         $password = config('services.huiyijie_vending_machine.password');
 
-        $query = http_build_query([
+        $query = [
             'userName' => $userName,
             'password' => $password
-        ]);
+        ];
 
-        $response = $http->get($getAccessTokenApi . $query);
+        $response = $http->get($getAccessTokenApi, [
+            'query' => $query
+        ]);
 
         $result = json_decode($response->getBody(), true);
 

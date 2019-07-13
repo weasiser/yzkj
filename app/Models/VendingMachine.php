@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class VendingMachine extends Model
 {
     protected $fillable = [
-        'name', 'code', 'address', 'iot_card_no',
-        'is_opened'
+        'name', 'code', 'address', 'iot_card_no', 'is_opened', 'cabinet_id', 'cabinet_type'
     ];
     protected $casts = [
         'is_opened' => 'boolean'

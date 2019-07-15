@@ -18,6 +18,10 @@ class VMDeliverAndQueryController extends Controller
 
 //        return app(VendingMachineDeliverAndQuery::class)->deliverProduct($vendingMachine->code, $orderId, $ordinal, $vendingMachine->cabinet_id, $vendingMachine->cabinet_type);
         dispatch(new DeliverProduct($vendingMachine, $ordinal, $orderId))->onQueue($vendingMachine->code);
+
+        return $this->response->array([
+            'deliverProductOnQueue' => 'success'
+        ]);
     }
 
     public function queryMachineInfo(Request $request)

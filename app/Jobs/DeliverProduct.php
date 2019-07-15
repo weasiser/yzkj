@@ -14,6 +14,12 @@ class DeliverProduct implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    protected $vendingMachine;
+
+    protected $ordinal;
+
+    protected $orderId;
+
     /**
      * Create a new job instance.
      *
@@ -22,7 +28,7 @@ class DeliverProduct implements ShouldQueue
     public function __construct(VendingMachine $vendingMachine, $ordinal, $orderId)
     {
         $this->vendingMachine = $vendingMachine;
-        $this->ordianl = $ordinal;
+        $this->ordinal = $ordinal;
         $this->orderId = $orderId;
     }
 
@@ -33,6 +39,6 @@ class DeliverProduct implements ShouldQueue
      */
     public function handle()
     {
-        $result = app(VendingMachineDeliverAndQuery::class)->deliverProduct($this->vendingMachine->code, $this->orderId, $this->ordianl, $this->vendingMachine->cabinet_id, $this->vendingMachine->cabinet_type);
+        $result = app(VendingMachineDeliverAndQuery::class)->deliverProduct($this->vendingMachine->code, $this->orderId, $this->ordinal, $this->vendingMachine->cabinet_id, $this->vendingMachine->cabinet_type);
     }
 }

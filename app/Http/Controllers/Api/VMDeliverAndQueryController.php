@@ -6,6 +6,7 @@ use App\Handlers\VendingMachineDeliverAndQuery;
 use App\Jobs\DeliverProduct;
 use App\Models\VendingMachine;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class VMDeliverAndQueryController extends Controller
 {

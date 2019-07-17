@@ -17,12 +17,12 @@ class VMDeliverAndQueryController extends Controller
         $orderId = date('YmdHis') . str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         $vendingMachine = VendingMachine::find($vendingMachineId);
 
-//        return app(VendingMachineDeliverAndQuery::class)->deliverProduct($vendingMachine->code, $orderId, $ordinal, $vendingMachine->cabinet_id, $vendingMachine->cabinet_type);
-        dispatch(new DeliverProduct($vendingMachine, $ordinal, $orderId))->onQueue($vendingMachine->code);
+        return app(VendingMachineDeliverAndQuery::class)->deliverProduct($vendingMachine->code, $orderId, $ordinal, $vendingMachine->cabinet_id, $vendingMachine->cabinet_type);
+//        dispatch(new DeliverProduct($vendingMachine, $ordinal, $orderId))->onQueue($vendingMachine->code);
 
-        return $this->response->array([
-            'deliverProductOnQueue' => 'success'
-        ]);
+//        return $this->response->array([
+//            'deliverProductOnQueue' => 'success'
+//        ]);
     }
 
     public function queryMachineInfo(Request $request)

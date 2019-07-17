@@ -52,6 +52,11 @@ class OrdersController extends Controller
         return $this->response->item($order, $orderTransformer)->setStatusCode(201);
     }
 
+    public function show(Order $order, OrderTransformer $orderTransformer)
+    {
+        return $this->response->item($order, $orderTransformer);
+    }
+
     public function destroy(Order $order)
     {
         $order->vendingMachineAisle->increaseStock($order->amount);

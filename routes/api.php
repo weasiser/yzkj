@@ -88,5 +88,8 @@ $api->version('v1', [
             ->name('api.vendingMachines.index');
         $api->get('vendingMachines/{vendingMachine}', 'VendingMachinesController@show')
             ->name('api.vendingMachines.show');
+
+        $api->get('queryDeliverStatus', 'VMDeliverAndQueryController@queryDeliverStatus')
+            ->name('api.queryDeliverStatus');
     });
 });

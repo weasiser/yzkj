@@ -20,3 +20,5 @@
 Route::get('/', 'HomeController@index')->name('home');
 
 Route::post('paymentNotifications/miniapp/wxpay/notify', 'PaymentNotificationsController@miniappPayByWxpayNotify')->name('paymentNotifications.miniapp.wxpay.notify');
+
+Route::post('deliverProductNotifications/notify', 'DeliverProductNotificationsController@deliverProductNotify')->name('deliverProductNotifications.deliverProductNotify');

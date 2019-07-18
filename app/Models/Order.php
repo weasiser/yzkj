@@ -16,6 +16,7 @@ class Order extends Model
     const DELIVER_STATUS_PENDING    = 'pending';
     const DELIVER_STATUS_DELIVERING = 'delivering';
     const DELIVER_STATUS_DELIVERED  = 'delivered';
+    const DELIVER_STATUS_TIMEOUT    = 'timeout';
     const DELIVER_STATUS_FAILED     = 'failed';
 
     public static $refundStatusMap = [
@@ -31,6 +32,7 @@ class Order extends Model
         self::DELIVER_STATUS_PENDING    => '未出货',
         self::DELIVER_STATUS_DELIVERING => '正在出货',
         self::DELIVER_STATUS_DELIVERED  => '出货成功',
+        self::DELIVER_STATUS_TIMEOUT    => '出货超时',
         self::DELIVER_STATUS_FAILED     => '出货失败',
     ];
 

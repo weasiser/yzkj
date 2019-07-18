@@ -7,7 +7,7 @@ use GuzzleHttp\Client;
 
 class VendingMachineDeliverAndQuery
 {
-    public function deliverProduct($machineId, $orderid, $latticeId, $cabid = 1, $cabtype = '1')
+    public function deliverProduct($machineId, $orderNo, $latticeId, $cabid = 1, $cabtype = '1')
     {
         $http = new Client();
 
@@ -24,7 +24,7 @@ class VendingMachineDeliverAndQuery
                 ]
             ],
             'machineId' => (string)$machineId,
-            'orderid' => (string)$orderid
+            'orderid' => (string)$orderNo
         ];
 
         $response = $http->post($deliverProductApi, [

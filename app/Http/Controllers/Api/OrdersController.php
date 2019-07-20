@@ -59,8 +59,37 @@ class OrdersController extends Controller
 
     public function destroy(Order $order)
     {
+        $this->authorize('own', $order);
         $order->vendingMachineAisle->increaseStock($order->amount);
         $order->delete();
         return $this->response->noContent();
+    }
+
+    public function delivering(Order $order)
+    {
+        $this->authorize('own', $order);
+
+        // 判断订单的发货状态是否为已发货
+        if ($order->deliver_status !== Order::DELIVER_STATUS_PENDING) {
+            throw new \Exception('出货状态不正确');
+        }
+
+        // 更新发货状态为已收到
+        $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERING]);
+
+    }
+
+    public function delivered(Order $order)
+    {
+        $this->authorize('own', $order);
+
+        // 判断订单的发货状态是否为已发货
+        if ($order->deliver_status !== Order::DELIVER_STATUS_DELIVERING) {
+            throw new \Exception('出货状态不正确');
+        }
+
+        // 更新发货状态为已收到
+        $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERED]);
+
     }
 }

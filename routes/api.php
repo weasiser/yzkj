@@ -66,7 +66,7 @@ $api->version('v1', [
         $api->get('orders/{order}', 'OrdersController@show')
             ->name('api.orders.show');
         // 删除订单
-        $api->post('orders/{order}', 'OrdersController@destroy')
+        $api->post('orders/{order}/destroy', 'OrdersController@destroy')
             ->name('api.orders.destroy');
         // 更新货道
         $api->put('vendingMachineAisles/{vendingMachineAisle}', 'VendingMachineAislesController@update')
@@ -91,5 +91,12 @@ $api->version('v1', [
 
         $api->get('queryDeliverStatus', 'VMDeliverAndQueryController@queryDeliverStatus')
             ->name('api.queryDeliverStatus');
+
+        // 订单正在出货
+        $api->post('orders/{order}/delivering', 'OrdersController@delivering')
+            ->name('api.orders.delivering');
+        // 订单出货成功
+        $api->post('orders/{order}/delivered', 'OrdersController@delivered')
+            ->name('api.orders.delivered');
     });
 });

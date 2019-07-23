@@ -21,38 +21,38 @@ class VMDeliverAndQueryController extends Controller
         $orderNo = $request->input('orderNo') ?: date('YmdHis') . str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         $vendingMachine = VendingMachine::find($vendingMachineId);
 
-        $http = new Client();
-
-        $params = [
-            'goodslist' => [
-                [
-                    'cabid' => '1',
-                    'cabtype' => '1',
-                    'latticeId' => (string)$ordinal,
-                    'resultid' => '1'
-                ]
-            ],
-            'machineId' => (string)$vendingMachine->code,
-            'orderid' => (string)$orderNo
-        ];
-
-        dispatch(function () use ($http, $params) {
-            $http->post('yzkj.test/deliverProductNotifications/notify', [
-                'json' => $params
-            ]);
-        })->delay(now()->addSeconds(5));
+//        $http = new Client();
+//
+//        $params = [
+//            'goodslist' => [
+//                [
+//                    'cabid' => '1',
+//                    'cabtype' => '1',
+//                    'latticeId' => (string)$ordinal,
+//                    'resultid' => '1'
+//                ]
+//            ],
+//            'machineId' => (string)$vendingMachine->code,
+//            'orderid' => (string)$orderNo
+//        ];
+//
+//        dispatch(function () use ($http, $params) {
+//            $http->post('yzkj.test/deliverProductNotifications/notify', [
+//                'json' => $params
+//            ]);
+//        })->delay(now()->addSeconds(5));
 
 //        $http->post('yzkj.test/deliverProductNotifications/notify', [
 //            'json' => $params
 //        ]);
 
-//        return app(VendingMachineDeliverAndQuery::class)->deliverProduct($vendingMachine->code, $orderNo, $ordinal, $vendingMachine->cabinet_id, $vendingMachine->cabinet_type);
+        return app(VendingMachineDeliverAndQuery::class)->deliverProduct($vendingMachine->code, $orderNo, $ordinal, $vendingMachine->cabinet_id, $vendingMachine->cabinet_type);
 
 //        dispatch(new DeliverProduct($vendingMachine, $ordinal, $orderNo))->onQueue($vendingMachine->code);
 
-        return $this->response->array([
-            'result' => '200'
-        ]);
+//        return $this->response->array([
+//            'result' => '200'
+//        ]);
     }
 
     public function queryMachineInfo(Request $request)

@@ -18,6 +18,9 @@ class VendingMachineAislesController extends Controller
             $vendingMachineAisle->increaseStock();
         } elseif ($request->input('stock') === 'minus') {
             $vendingMachineAisle->decreaseStock();
+        } elseif ($request->input('stock') === 'full') {
+            $vendingMachineAisle->stock = $vendingMachineAisle->max_stock;
+            $vendingMachineAisle->update();
         } elseif ($product_id = $request->input('product_id')) {
             $vendingMachineAisle->product_id = $product_id;
             $vendingMachineAisle->update();

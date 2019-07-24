@@ -90,6 +90,14 @@ class OrdersController extends Controller
 
         // 更新发货状态为已收到
         $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERED]);
+    }
 
+    public function userOrders(Order $order, OrderTransformer $orderTransformer)
+    {
+        $user = $this->user();
+
+        $orders = $user->orders()->recent()->paginate(10);
+
+        return $this->response->paginator($orders, $orderTransformer);
     }
 }

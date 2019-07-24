@@ -119,4 +119,9 @@ class Order extends Model
 
         return false;
     }
+
+    public function scopeRecent($query)
+    {
+        return $query->orderBy('id', 'desc');
+    }
 }

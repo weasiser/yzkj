@@ -98,5 +98,9 @@ $api->version('v1', [
         // 订单出货成功
         $api->post('orders/{order}/delivered', 'OrdersController@delivered')
             ->name('api.orders.delivered');
+
+        // 我的订单列表
+        $api->get('userOrders', 'OrdersController@userOrders')
+            ->name('api.orders.userOrders');
     });
 });

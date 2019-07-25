@@ -18,8 +18,15 @@ class VendingMachineAislesController extends Controller
             $vendingMachineAisle->increaseStock();
         } elseif ($request->input('stock') === 'minus') {
             $vendingMachineAisle->decreaseStock();
+        } elseif ($request->input('max_stock') === 'plus') {
+            $vendingMachineAisle->increment('max_stock');
+        } elseif ($request->input('max_stock') === 'minus') {
+            $vendingMachineAisle->decrement('max_stock');
         } elseif ($request->input('stock') === 'full') {
             $vendingMachineAisle->stock = $vendingMachineAisle->max_stock;
+            $vendingMachineAisle->update();
+        } elseif ($request->input('is_lead_rail') === 'change') {
+            $vendingMachineAisle->is_lead_rail = !$vendingMachineAisle->is_lead_rail;
             $vendingMachineAisle->update();
         } elseif ($product_id = $request->input('product_id')) {
             $vendingMachineAisle->product_id = $product_id;

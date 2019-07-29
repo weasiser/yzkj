@@ -13,6 +13,7 @@ class UserTransformer extends TransformerAbstract
             'id'       => $user->id,
             'nickName' => $user->nick_name,
             'avatar'   => $user->avatar,
+            'is_mobile_admin' => $user->is_mobile_admin,
 //            'created_at' => $user->created_at->toDateTimeString(),
 //            'updated_at' => $user->updated_at->toDateTimeString(),
         ];

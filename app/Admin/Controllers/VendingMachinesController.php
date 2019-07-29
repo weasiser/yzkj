@@ -34,7 +34,7 @@ class VendingMachinesController extends Controller
     public function index(Content $content)
     {
         return $content
-            ->header('售货机')
+            ->header('售卖机')
             ->description('列表')
             ->body($this->grid());
     }
@@ -64,7 +64,7 @@ class VendingMachinesController extends Controller
     public function edit($id, Content $content)
     {
         return $content
-            ->header('售货机')
+            ->header('售卖机')
             ->description('编辑')
             ->body($this->form()->edit($id));
     }
@@ -78,7 +78,7 @@ class VendingMachinesController extends Controller
     public function create(Content $content)
     {
         return $content
-            ->header('售货机')
+            ->header('售卖机')
             ->description('创建')
             ->body($this->form());
     }
@@ -169,9 +169,9 @@ class VendingMachinesController extends Controller
 //        $tableRow->number('cabinet_id', '机柜 ID')->rules('required')->default(1)->placeholder('机柜 ID')->attribute(['style' => 'width: 50px']);
 //        $tableRow->number('cabinet_type', '机柜类型')->rules('required')->default(1)->placeholder('机柜类型')->attribute(['style' => 'width: 50px']);
 //        $tableRow->switch('is_opened', '状态')->states($this->is_opened)->default(false);
-//        $form->rowtable('售货机信息')->setHeaders($headers)->setRows([$tableRow]);
+//        $form->rowtable('售卖机信息')->setHeaders($headers)->setRows([$tableRow]);
 
-        $form->tab('售货机信息', function ($form) {
+        $form->tab('售卖机信息', function ($form) {
 
             $form->text('name', '名称')->required()->placeholder('名称');
             $form->text('code', '机器码')->required()->placeholder('机器码')->icon('fa-braille');
@@ -204,7 +204,7 @@ class VendingMachinesController extends Controller
 
         $form->setWidth(9, 1);
 
-//        $form->rowtable('售货机信息：', function ($table) {
+//        $form->rowtable('售卖机信息：', function ($table) {
 //            $table->row(function ($row) {
 //                $row->text('name', '名称')->required()->placeholder('名称');
 //                $row->text('code', '机器码')->required()->placeholder('机器码')->icon('fa-braille');

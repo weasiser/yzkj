@@ -18,7 +18,7 @@ class PaymentsController extends Controller
         return app('wxpay')->miniapp([
             'out_trade_no' => $order->no,  // 商户订单流水号，与支付宝 out_trade_no 一样
             'total_fee' => $order->total_amount * 100, // 与支付宝不同，微信支付的金额单位是分。
-            'body' => '匀贞-售货机速购', // 订单描述
+            'body' => '匀贞-售卖机速购', // 订单描述
             'openid' => $user->weapp_openid
         ]);
     }

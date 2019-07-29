@@ -17,7 +17,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'nick_name', 'avatar', 'email', 'password','weixin_session_key', 'weapp_openid', 'alipay_user_id', 'alipay_access_token'
+        'name', 'nick_name', 'avatar', 'email', 'password','weixin_session_key', 'weapp_openid', 'alipay_user_id', 'alipay_access_token', 'is_mobile_admin'
     ];
 
     /**
@@ -36,6 +36,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_mobile_admin' => 'boolean'
     ];
 
     /**

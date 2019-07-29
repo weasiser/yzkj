@@ -14,6 +14,11 @@ class UsersController extends Controller
 {
     use HasResourceActions;
 
+    protected $is_mobile_admin = [
+        'on'  => ['value' => 1, 'text' => '是', 'color' => 'success'],
+        'off' => ['value' => 0, 'text' => '否', 'color' => 'danger'],
+    ];
+
     /**
      * Index interface.
      *
@@ -99,6 +104,7 @@ class UsersController extends Controller
 //        $grid->password('Password');
 //        $grid->remember_token('Remember token');
         $grid->created_at('注册时间');
+        $grid->is_mobile_admin('移动端管理员')->switch($this->is_mobile_admin);
 //        $grid->updated_at('Updated at');
 
         // 不在页面显示 `新建` 按钮，因为我们不需要在后台新建用户
@@ -161,16 +167,12 @@ class UsersController extends Controller
      *
      * @return Form
      */
-//    protected function form()
-//    {
-//        $form = new Form(new User);
-//
-//        $form->text('name', 'Name');
-//        $form->email('email', 'Email');
-//        $form->datetime('email_verified_at', 'Email verified at')->default(date('Y-m-d H:i:s'));
-//        $form->password('password', 'Password');
-//        $form->text('remember_token', 'Remember token');
-//
-//        return $form;
-//    }
+    protected function form()
+    {
+        $form = new Form(new User);
+
+        $form->switch('is_mobile_admin', '移动端管理员')->states($this->is_mobile_admin)->default(false);
+
+        return $form;
+    }
 }

@@ -19,6 +19,9 @@ class Order extends Model
     const DELIVER_STATUS_TIMEOUT    = 'timeout';
     const DELIVER_STATUS_FAILED     = 'failed';
 
+    const PAYMENT_METHOD_ALIPAY = 'alipay';
+    const PAYMENT_METHOD_WXPAY  = 'wxpay';
+
     public static $refundStatusMap = [
         self::REFUND_STATUS_PENDING    => '未退款',
         self::REFUND_STATUS_APPLIED    => '已申请退款',
@@ -34,6 +37,11 @@ class Order extends Model
         self::DELIVER_STATUS_DELIVERED  => '出货成功',
         self::DELIVER_STATUS_TIMEOUT    => '出货超时',
         self::DELIVER_STATUS_FAILED     => '出货失败',
+    ];
+
+    public static $paymentMethodMap = [
+        self::PAYMENT_METHOD_ALIPAY => '支付宝',
+        self::PAYMENT_METHOD_WXPAY  => '微信',
     ];
 
     protected $fillable = [

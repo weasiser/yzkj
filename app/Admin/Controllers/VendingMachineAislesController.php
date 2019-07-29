@@ -57,7 +57,7 @@ class VendingMachineAislesController extends AdminController
         $grid->model()->with(['product', 'vendingMachine'])->orderBy('stock', 'asc');
 
         $grid->column('id', __('ID'))->sortable();
-        $grid->column('vendingMachine.name', __('售货机名称'));
+        $grid->column('vendingMachine.name', __('售卖机名称'));
         $grid->column('product.title', __('商品名称'));
         $grid->column('ordinal', __('货道号'));
         $grid->column('stock', __('库存'))->editable()->sortable();
@@ -87,7 +87,7 @@ class VendingMachineAislesController extends AdminController
             $filter->column(1/2, function ($filter) {
             });
             $filter->column(1/2, function ($filter) {
-                $filter->like('vendingMachine.name', '售货机名称');
+                $filter->like('vendingMachine.name', '售卖机名称');
                 $filter->like('product.title', '商品名称');
             });
 //            $filter->expand();

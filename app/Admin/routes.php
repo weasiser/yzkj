@@ -12,6 +12,7 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('admin.home');
     $router->get('users', 'UsersController@index');
+    $router->put('users/{id}', 'UsersController@update');
 
     $router->get('products', 'ProductsController@index');
     $router->get('products/create', 'ProductsController@create');
@@ -32,4 +33,7 @@ Route::group([
 
     $router->resource('vendingMachineAisles', VendingMachineAislesController::class);
 
+    $router->get('orders', 'OrdersController@index')->name('admin.orders.index');
+    $router->get('orders/{order}', 'OrdersController@show')->name('admin.orders.show');
+//    $router->resource('orders', OrdersController::class);
 });

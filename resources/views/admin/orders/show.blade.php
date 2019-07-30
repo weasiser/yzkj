@@ -8,7 +8,7 @@
     </div>
   </div>
   <div class="box-body">
-    <table class="table table-bordered">
+    <table class="table table-bordered table-hover">
       <tbody>
       <tr>
         <td>用户昵称：</td>
@@ -42,7 +42,14 @@
         <td>出货状态：</td>
         <td class="text-bold">{{ \App\Models\Order::$deliverStatusMap[$order->deliver_status] }}</td>
         <td>退款状态：</td>
-        <td class="text-bold">{{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}</td>
+        <td class="text-bold">
+          {{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}
+          <!-- 如果订单退款状态是已申请，则展示处理按钮 -->
+          @if($order->refund_status === \App\Models\Order::REFUND_STATUS_APPLIED)
+            <button class="btn btn-sm btn-success col-sm-offset-1" id="btn-refund-agree">退款</button>
+{{--            <button class="btn btn-sm btn-danger" id="btn-refund-disagree">不同意</button>--}}
+          @endif
+        </td>
       </tr>
       <tr>
         <td>单价：</td>
@@ -56,3 +63,51 @@
     </table>
   </div>
 </div>
+
+<script>
+  $(document).ready(function() {
+    // 同意 按钮的点击事件
+    $('#btn-refund-agree').click(function() {
+      Swal.fire({
+        title: '请确认是否要将款项退还给用户？',
+        type: 'warning',
+        input: 'text',
+        inputPlaceholder: '退款原因，会在下发给用户的退款消息中体现退款原因，可不填',
+        inputAttributes: {
+          autocapitalize: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        showLoaderOnConfirm: true,
+        preConfirm: function() {
+          return $.ajax({
+            url: '{{ route('admin.orders.miniappRefund', [$order->id]) }}',
+            type: 'POST',
+            data: JSON.stringify({
+              // agree: true, // 代表同意退款
+              _token: LA.token,
+            }),
+            contentType: 'application/json',
+          });
+        },
+        allowOutsideClick: false
+      }).then(function (ret) {
+        // 如果用户点击了『取消』按钮，则不做任何操作
+        if (ret.dismiss === 'cancel') {
+          // $.admin.reload()
+          return;
+        }
+        Swal.fire({
+          title: '操作成功',
+          type: 'success'
+        }).then(function() {
+          // 用户点击 swal 上的按钮时刷新页面
+          // location.reload();
+          $.admin.reload()
+        });
+      });
+    });
+
+  });
+</script>

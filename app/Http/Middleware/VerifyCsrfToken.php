@@ -20,6 +20,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'paymentNotifications/miniapp/wxpay/notify',
+        'paymentNotifications/miniapp/wxpay/refundNotify',
         'deliverProductNotifications/notify'
     ];
 }

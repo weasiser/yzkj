@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton('wxpay', function () {
             $config = config('pay.wxpay');
-            $config['notify_url'] = 'http://requestbin.fullcontact.com/wm60xywm';
+            $config['notify_url'] = route('paymentNotifications.miniapp.wxpay.notify');
             if (app()->environment() !== 'production') {
                 $config['log']['level'] = Logger::DEBUG;
             } else {

@@ -118,49 +118,49 @@ class OrdersController extends AdminController
      * @param mixed $id
      * @return Show
      */
-    protected function detail($id)
-    {
-        $show = new Show(Order::findOrFail($id));
-
-//        $content->body(Admin::show(Post::findOrFail($id)));
-
-//        $show->fields(['id', 'no']);
-        $show->field('id', __('Id'));
-        $show->field('no', __('No'));
-        $show->field('user_id', __('User id'));
-        $show->field('product_id', __('Product id'));
-        $show->field('vending_machine_id', __('Vending machine id'));
-        $show->field('vending_machine_aisle_id', __('Vending machine aisle id'));
-        $show->field('amount', __('Amount'));
-        $show->field('sold_price', __('Sold price'));
-        $show->field('total_amount', __('Total amount'));
-        $show->field('paid_at', __('Paid at'));
-        $show->field('payment_method', __('Payment method'))->badge();
-        $show->field('payment_no', __('Payment no'));
-        $show->field('refund_note', __('Refund note'));
-        $show->field('refund_picture', __('Refund picture'));
-        $show->field('refund_refuse_note', __('Refund refuse note'));
-        $show->field('refund_status', __('Refund status'));
-        $show->field('refund_no', __('Refund no'));
-        $show->field('is_closed', __('Is closed'));
-        $show->field('deliver_status', __('Deliver status'));
-        $show->field('deliver_data', __('Deliver data'));
-        $show->field('extra', __('Extra'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
-
-        $show->panel()
-//            ->style('danger')
-            ->title('订单号：'.$show->getModel()->no);
-
-        $show->panel()
-            ->tools(function ($tools) {
-                $tools->disableEdit();
-                $tools->disableDelete();
-            });;
-
-        return $show;
-    }
+//    protected function detail($id)
+//    {
+//        $show = new Show(Order::findOrFail($id));
+//
+////        $content->body(Admin::show(Post::findOrFail($id)));
+//
+////        $show->fields(['id', 'no']);
+//        $show->field('id', __('Id'));
+//        $show->field('no', __('No'));
+//        $show->field('user_id', __('User id'));
+//        $show->field('product_id', __('Product id'));
+//        $show->field('vending_machine_id', __('Vending machine id'));
+//        $show->field('vending_machine_aisle_id', __('Vending machine aisle id'));
+//        $show->field('amount', __('Amount'));
+//        $show->field('sold_price', __('Sold price'));
+//        $show->field('total_amount', __('Total amount'));
+//        $show->field('paid_at', __('Paid at'));
+//        $show->field('payment_method', __('Payment method'))->badge();
+//        $show->field('payment_no', __('Payment no'));
+//        $show->field('refund_note', __('Refund note'));
+//        $show->field('refund_picture', __('Refund picture'));
+//        $show->field('refund_refuse_note', __('Refund refuse note'));
+//        $show->field('refund_status', __('Refund status'));
+//        $show->field('refund_no', __('Refund no'));
+//        $show->field('is_closed', __('Is closed'));
+//        $show->field('deliver_status', __('Deliver status'));
+//        $show->field('deliver_data', __('Deliver data'));
+//        $show->field('extra', __('Extra'));
+//        $show->field('created_at', __('Created at'));
+//        $show->field('updated_at', __('Updated at'));
+//
+//        $show->panel()
+////            ->style('danger')
+//            ->title('订单号：'.$show->getModel()->no);
+//
+//        $show->panel()
+//            ->tools(function ($tools) {
+//                $tools->disableEdit();
+//                $tools->disableDelete();
+//            });;
+//
+//        return $show;
+//    }
 
     /**
      * Make a form builder.
@@ -194,4 +194,62 @@ class OrdersController extends AdminController
 //
 //        return $form;
 //    }
+
+    public function miniappRefund(Order $order)
+    {
+        // 判断该订单的支付方式
+        switch ($order->payment_method) {
+            case 'wxpay':
+                // 生成退款订单号
+                $refundNo = Order::getAvailableRefundNo();
+                app('wxpay')->refund([
+                    'type' => 'miniapp',
+                    'out_trade_no' => $order->no, // 之前的订单流水号
+                    'total_fee' => $order->total_amount * 100, //原订单金额，单位分
+                    'refund_fee' => $order->total_amount * 100, // 要退款的订单金额，单位分
+                    'out_refund_no' => $refundNo, // 退款订单号
+                    // 微信支付的退款结果并不是实时返回的，而是通过退款回调来通知，因此这里需要配上退款回调接口地址
+                    'notify_url' => route('paymentNotifications.miniapp.wxpay.refundNotify'), // 由于是开发环境，需要配成 requestbin 地址
+//                    'refund_desc' => '卡货'
+                ]);
+                // 将订单状态改成退款中
+                $order->update([
+                    'refund_no' => $refundNo,
+                    'refund_status' => Order::REFUND_STATUS_PROCESSING,
+                ]);
+                break;
+            case 'alipay':
+                // 用我们刚刚写的方法来生成一个退款订单号
+                $refundNo = Order::getAvailableRefundNo();
+                // 调用支付宝支付实例的 refund 方法
+                $ret = app('alipay')->refund([
+                    'out_trade_no' => $order->no, // 之前的订单流水号
+                    'refund_amount' => $order->total_amount, // 退款金额，单位元
+                    'out_request_no' => $refundNo, // 退款订单号
+                ]);
+                // 根据支付宝的文档，如果返回值里有 sub_code 字段说明退款失败
+                if ($ret->sub_code) {
+                    // 将退款失败的保存存入 extra 字段
+                    $extra = $order->extra;
+                    $extra['refund_failed_code'] = $ret->sub_code;
+                    // 将订单的退款状态标记为退款失败
+                    $order->update([
+                        'refund_no' => $refundNo,
+                        'refund_status' => Order::REFUND_STATUS_FAILED,
+                        'extra' => $extra,
+                    ]);
+                } else {
+                    // 将订单的退款状态标记为退款成功并保存退款订单号
+                    $order->update([
+                        'refund_no' => $refundNo,
+                        'refund_status' => Order::REFUND_STATUS_SUCCESS,
+                    ]);
+                }
+                break;
+            default:
+                // 原则上不可能出现，这个只是为了代码健壮性
+                throw new \Exception('未知订单支付方式：'.$order->payment_method);
+                break;
+        }
+    }
 }

@@ -35,5 +35,6 @@ Route::group([
 
     $router->get('orders', 'OrdersController@index')->name('admin.orders.index');
     $router->get('orders/{order}', 'OrdersController@show')->name('admin.orders.show');
+    $router->post('orders/{order}/miniapp/refund', 'OrdersController@miniappRefund')->name('admin.orders.miniappRefund');
 //    $router->resource('orders', OrdersController::class);
 });

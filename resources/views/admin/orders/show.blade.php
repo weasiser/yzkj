@@ -66,37 +66,51 @@
 
 <script>
   $(document).ready(function() {
+    let amountStr = '{{ $order->amount }}'
+    let amount = parseInt(amountStr)
+    let amountOptions = {}
+    for (let i = 1; i <= amount; i++) {
+      if (i === amount) {
+        amountOptions[i] = i + '（全部退款）'
+      } else {
+        amountOptions[i] = i
+      }
+    }
     // 同意 按钮的点击事件
     $('#btn-refund-agree').click(function() {
       Swal.fire({
         title: '请确认是否要将款项退还给用户？',
         type: 'warning',
-        input: 'text',
-        inputPlaceholder: '退款原因，会在下发给用户的退款消息中体现退款原因，可不填',
-        inputAttributes: {
-          autocapitalize: 'off'
-        },
+        input: 'select',
+        inputOptions: amountOptions,
+        // inputPlaceholder: '退款原因，会在下发给用户的退款消息中体现退款原因，可不填',
+        // inputValue: amountStr,
+        inputPlaceholder: '选择部分退款数量，最大即为全部退款',
         showCancelButton: true,
         confirmButtonText: "确认",
         cancelButtonText: "取消",
         showLoaderOnConfirm: true,
+        inputValidator: (value) => {
+          if (!value) {
+            return '请选择部分退款数量'
+          }
+        },
         preConfirm: function() {
           return $.ajax({
             url: '{{ route('admin.orders.miniappRefund', [$order->id]) }}',
             type: 'POST',
             data: JSON.stringify({
-              // agree: true, // 代表同意退款
+              refundAmount: parseInt($('.swal2-select').val()),
               _token: LA.token,
             }),
             contentType: 'application/json',
-          });
+          })
         },
         allowOutsideClick: false
       }).then(function (ret) {
         // 如果用户点击了『取消』按钮，则不做任何操作
         if (ret.dismiss === 'cancel') {
-          // $.admin.reload()
-          return;
+          return
         }
         Swal.fire({
           title: '操作成功',
@@ -105,9 +119,9 @@
           // 用户点击 swal 上的按钮时刷新页面
           // location.reload();
           $.admin.reload()
-        });
-      });
-    });
+        })
+      })
+    })
 
-  });
+  })
 </script>

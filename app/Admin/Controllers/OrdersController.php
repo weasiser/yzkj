@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Http\Requests\Admin\RefundRequest;
 use App\Models\Order;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -195,8 +196,16 @@ class OrdersController extends AdminController
 //        return $form;
 //    }
 
-    public function miniappRefund(Order $order)
+    public function miniappRefund(Order $order, RefundRequest $request)
     {
+        $refundAmount = $request->input('refundAmount');
+        if ($refundAmount > $order->amount) {
+            throw new \Exception('部分退款数量超过最大值');
+        } elseif ($refundAmount < $order->amount) {
+            $refund_amount = big_number($order->sold_price)->multiply($refundAmount);
+        } else {
+            $refund_amount = $order->total_amount;
+        }
         // 判断该订单的支付方式
         switch ($order->payment_method) {
             case 'wxpay':
@@ -206,7 +215,7 @@ class OrdersController extends AdminController
                     'type' => 'miniapp',
                     'out_trade_no' => $order->no, // 之前的订单流水号
                     'total_fee' => $order->total_amount * 100, //原订单金额，单位分
-                    'refund_fee' => $order->total_amount * 100, // 要退款的订单金额，单位分
+                    'refund_fee' => $refund_amount * 100, // 要退款的订单金额，单位分
                     'out_refund_no' => $refundNo, // 退款订单号
                     // 微信支付的退款结果并不是实时返回的，而是通过退款回调来通知，因此这里需要配上退款回调接口地址
                     'notify_url' => route('paymentNotifications.miniapp.wxpay.refundNotify'), // 由于是开发环境，需要配成 requestbin 地址
@@ -224,7 +233,7 @@ class OrdersController extends AdminController
                 // 调用支付宝支付实例的 refund 方法
                 $ret = app('alipay')->refund([
                     'out_trade_no' => $order->no, // 之前的订单流水号
-                    'refund_amount' => $order->total_amount, // 退款金额，单位元
+                    'refund_amount' => $refund_amount, // 退款金额，单位元
                     'out_request_no' => $refundNo, // 退款订单号
                 ]);
                 // 根据支付宝的文档，如果返回值里有 sub_code 字段说明退款失败

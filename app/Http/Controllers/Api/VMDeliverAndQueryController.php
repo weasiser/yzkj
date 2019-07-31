@@ -22,7 +22,7 @@ class VMDeliverAndQueryController extends Controller
         $vendingMachine = VendingMachine::find($vendingMachineId);
 
 //        $http = new Client();
-//
+
 //        $params = [
 //            'goodslist' => [
 //                [

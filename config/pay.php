@@ -32,8 +32,8 @@ return [
         'cert_client' => resource_path('wxpay/apiclient_cert.pem'),//'./cert/apiclient_cert.pem', // optional，退款等情况时用到
         'cert_key' => resource_path('wxpay/apiclient_key.pem'),//'./cert/apiclient_key.pem',// optional，退款等情况时用到
         'log' => [ // optional
-            'file' => storage_path('logs/wechat_pay.log'),
-//            'level' => 'debug', // 建议生产环境等级调整为 info，开发环境为 debug
+            'file' => storage_path('logs/wxpay.log'),
+            'level' => 'info', // 建议生产环境等级调整为 info，开发环境为 debug
 //            'type' => 'single', // optional, 可选 daily.
 //            'max_file' => 30, // optional, 当 type 为 daily 时有效，默认 30 天
         ],

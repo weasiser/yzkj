@@ -94,7 +94,7 @@ class ProductsController extends Controller
         $grid->image('缩略图')->image(config('filesystems.disks.oss.cdnDomain'), 50, 50);
         $grid->buying_price('进货价')->editable();
         $grid->selling_price('销售价')->editable();
-        $grid->quality_guarantee_period('保质期（月）')->editable();
+        $grid->quality_guarantee_period('保质期（月）')->editable()->sortable();
         $grid->total_stock('总库存')->sortable();
         $grid->sold_count('销量（件）')->sortable();
         $grid->sold_value('销售额')->sortable();
@@ -259,7 +259,7 @@ class ProductsController extends Controller
         $result = Product::query()
             ->where('title', 'like', '%'.$search.'%')
             ->where('on_sale', '=', true)
-            ->paginate();
+            ->paginate(10);
 
         // 把查询出来的结果重新组装成 Laravel-Admin 需要的格式
         $result->setCollection($result->getCollection()->map(function (Product $product) use ($qgp) {
@@ -268,6 +268,27 @@ class ProductsController extends Controller
             }
             return ['id' => $product->id, 'text' => $product->title];
         }));
+
+        return $result;
+    }
+
+    public function apiAll(Request $request)
+    {
+        $qgp = boolval($request->input('qgp', false));
+        $result = Product::where('on_sale', '=', true)->get()->map(function (Product $product) use ($qgp) {
+            if ($qgp) {
+                return ['id' => $product->id, 'text' => $product->title . '<span class="quality_guarantee_period_note">保质期：<span id="quality_guarantee_period">' . $product->quality_guarantee_period . '</span>个月</span>'];
+            }
+            return ['id' => $product->id, 'text' => $product->title];
+        });
+
+        // 把查询出来的结果重新组装成 Laravel-Admin 需要的格式
+//        $result->setCollection($result->getCollection()->map(function (Product $product) use ($qgp) {
+//            if ($qgp) {
+//                return ['id' => $product->id, 'text' => $product->title . '<span class="quality_guarantee_period_note">保质期：<span id="quality_guarantee_period">' . $product->quality_guarantee_period . '</span>个月</span>'];
+//            }
+//            return ['id' => $product->id, 'text' => $product->title];
+//        }));
 
         return $result;
     }

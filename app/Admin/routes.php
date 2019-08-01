@@ -21,6 +21,7 @@ Route::group([
     $router->put('products/{id}', 'ProductsController@update');
     $router->delete('products/{id}', 'ProductsController@destroy');
     $router->get('api/products', 'ProductsController@apiIndex');
+    $router->get('api/products/all', 'ProductsController@apiAll');
 
     $router->get('vendingMachines', 'VendingMachinesController@index');
     $router->get('vendingMachines/create', 'VendingMachinesController@create');

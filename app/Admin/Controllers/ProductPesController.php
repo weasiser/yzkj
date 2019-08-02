@@ -110,7 +110,7 @@ EOT;
 
         Admin::script($script);
 
-        Admin::style('.quality_guarantee_period_note {margin-left: 10px;}');
+        Admin::style('.quality_guarantee_period_note {margin-left: 10px;} span.select2-selection.select2-selection--single {width: 500px !important;}');
 
         return $grid;
     }

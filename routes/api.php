@@ -71,6 +71,9 @@ $api->version('v1', [
         // 更新货道
         $api->put('vendingMachineAisles/{vendingMachineAisle}', 'VendingMachineAislesController@update')
             ->name('api.vendingMachineAisles.update');
+        // 更新售卖机
+        $api->put('vendingMachines/{vendingMachine}', 'VendingMachinesController@update')
+            ->name('api.vendingMachines.update');
         // 商品列表
         $api->get('products', 'ProductsController@index')
             ->name('api.products.index');

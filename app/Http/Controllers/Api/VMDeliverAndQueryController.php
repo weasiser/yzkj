@@ -57,7 +57,7 @@ class VMDeliverAndQueryController extends Controller
 
     public function queryMachineInfo(Request $request)
     {
-        return app(VendingMachineDeliverAndQuery::class)->queryMachineInfo($request->input('machineUuid'));
+        return app(VendingMachineDeliverAndQuery::class)->queryMachineInfo($request->input('code'));
     }
 
     public function queryDeliverStatus(Request $request, VendingMachineAisle $vendingMachineAisle, Product $product)

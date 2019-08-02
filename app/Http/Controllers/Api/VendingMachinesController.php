@@ -30,4 +30,15 @@ class VendingMachinesController extends Controller
 
         return $this->response->collection($vendingMachines, $vendingMachineTransformer);
     }
+
+    public function update(VendingMachine $vendingMachine, Request $request)
+    {
+        if ($request->input('is_opened') === 'change') {
+            $vendingMachine->is_opened = !$vendingMachine->is_opened;
+            $vendingMachine->update();
+        }
+        return $this->response->array([
+            'updateResult' => 'success'
+        ]);
+    }
 }

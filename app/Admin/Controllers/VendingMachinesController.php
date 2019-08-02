@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Handlers\VendingMachineDeliverAndQuery;
 use App\Models\Product;
 use App\Models\VendingMachine;
 use App\Http\Controllers\Controller;
@@ -90,6 +91,13 @@ class VendingMachinesController extends Controller
      */
     protected function grid()
     {
+        $vmInfo = app(VendingMachineDeliverAndQuery::class)->queryMachineInfo();
+//        dd($vmInfo);
+        $vmNetStat = [];
+        foreach ($vmInfo['data'] as $value) {
+            $vmNetStat[$value['machineUuid']] = $value['netStat'];
+        }
+
         $grid = new Grid(new VendingMachine);
 
         $grid->id('ID')->sortable();
@@ -99,7 +107,10 @@ class VendingMachinesController extends Controller
         $grid->iot_card_no('物联卡号')->editable();
         $grid->cabinet_id('机柜 ID')->editable();
         $grid->cabinet_type('机柜类型')->editable();
-        $grid->is_opened('状态')->switch($this->is_opened);
+        $grid->is_opened('使用状态')->switch($this->is_opened);
+        $grid->column('在离线')->display(function () use ($vmNetStat) {
+            return $vmNetStat[$this->code] === 1 ? '<span class="label label-success">在线</span>' : '<span class="label label-danger">离线</span>';
+        });
 
         $grid->actions(function ($actions) {
             // 不在每一行后面展示查看按钮

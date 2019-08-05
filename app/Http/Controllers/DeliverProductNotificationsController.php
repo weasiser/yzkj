@@ -26,6 +26,12 @@ class DeliverProductNotificationsController extends Controller
 
             $notification->save();
 
+            $http = new Client();
+
+            $http->post('https://yzkj01.com/notice/deliverResult', [
+                'json' => $result
+            ]);
+
             if (strlen($result['orderid']) === 22) {
                 $orderNo = substr($result['orderid'], 0, 20);
                 $order = Order::where('no', $orderNo)->first();

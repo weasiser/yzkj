@@ -26,6 +26,11 @@ class VendingMachinesController extends Controller
         'off' => ['value' => 0, 'text' => '无', 'color' => 'danger'],
     ];
 
+    protected $is_delivering = [
+        'on'  => ['value' => 1, 'text' => '是', 'color' => 'success'],
+        'off' => ['value' => 0, 'text' => '否', 'color' => 'danger'],
+    ];
+
     /**
      * Index interface.
      *
@@ -107,6 +112,7 @@ class VendingMachinesController extends Controller
         $grid->iot_card_no('物联卡号')->editable();
         $grid->cabinet_id('机柜 ID')->editable();
         $grid->cabinet_type('机柜类型')->editable();
+        $grid->is_delivering('正在出货')->switch($this->is_delivering);
         $grid->is_opened('使用状态')->switch($this->is_opened);
         $grid->column('在离线')->display(function () use ($vmNetStat) {
             return $vmNetStat[$this->code] === 1 ? '<span class="label label-success">在线</span>' : '<span class="label label-danger">离线</span>';
@@ -190,7 +196,8 @@ class VendingMachinesController extends Controller
             $form->text('iot_card_no', '物联卡号')->placeholder('物联卡号')->icon('fa-microchip');
             $form->number('cabinet_id', '机柜 ID')->required()->default(1)->placeholder('机柜 ID');
             $form->number('cabinet_type', '机柜类型')->required()->default(1)->placeholder('机柜类型');
-            $form->switch('is_opened', '状态')->states($this->is_opened)->default(false);
+            $form->switch('is_delivering', '正在出货')->states($this->is_delivering)->default(false);
+            $form->switch('is_opened', '使用状态')->states($this->is_opened)->default(false);
 
         })->tab('货道信息', function ($form) {
 

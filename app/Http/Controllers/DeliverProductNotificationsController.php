@@ -26,17 +26,17 @@ class DeliverProductNotificationsController extends Controller
 
             $notification->save();
 
-            $http = new Client();
-
-            $http->post('https://yzkj01.com/notice/deliverResult', [
-                'json' => $result
-            ]);
+//            $http = new Client();
+//
+//            $http->post('https://yzkj01.com/notice/deliverResult', [
+//                'json' => $result
+//            ]);
 
             if (strlen($result['orderid']) === 22) {
                 $orderNo = substr($result['orderid'], 0, 20);
-                $order = Order::where('no', $orderNo)->first();
                 $num = (int)ltrim(substr($result['orderid'], -2, 2), '0');
-                if ($num < $order->amount) {
+                $order = Order::where('no', $orderNo)->first();
+                if ($order && $num < $order->amount) {
                     $num += 1;
                     if ($num < 10) {
                         $num = '0' . $num;

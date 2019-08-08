@@ -41,4 +41,26 @@ class VendingMachinesController extends Controller
             'updateResult' => 'success'
         ]);
     }
+
+    public function isDelivering(VendingMachine $vendingMachine)
+    {
+        return $this->response->array([
+            'isDelivering' => $vendingMachine->is_delivering
+        ]);
+    }
+
+    public function isDeliveringChange(VendingMachine $vendingMachine)
+    {
+        $vendingMachine->is_delivering = true;
+        $vendingMachine->update();
+        dispatch(function () use ($vendingMachine) {
+            if ($vendingMachine->is_delivering) {
+                $vendingMachine->is_delivering = false;
+                $vendingMachine->update();
+            }
+        })->delay(now()->addSeconds(60));
+        return $this->response->array([
+            'isDelivering' => $vendingMachine->is_delivering
+        ]);
+    }
 }

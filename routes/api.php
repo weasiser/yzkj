@@ -105,5 +105,13 @@ $api->version('v1', [
         // 我的订单列表
         $api->get('userOrders', 'OrdersController@userOrders')
             ->name('api.orders.userOrders');
+
+        // 是否正在出货
+        $api->get('vendingMachines/{vendingMachine}/isDelivering', 'VendingMachinesController@isDelivering')
+            ->name('api.vendingMachines.isDelivering');
+
+        // 改变是否正在出货
+        $api->get('vendingMachines/{vendingMachine}/isDeliveringChange', 'VendingMachinesController@isDeliveringChange')
+            ->name('api.vendingMachines.isDeliveringChange');
     });
 });

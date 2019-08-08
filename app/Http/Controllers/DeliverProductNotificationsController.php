@@ -36,12 +36,13 @@ class DeliverProductNotificationsController extends Controller
                 $orderNo = substr($result['orderid'], 0, 20);
                 $num = (int)ltrim(substr($result['orderid'], -2, 2), '0');
                 $order = Order::where('no', $orderNo)->first();
-                if ($order && $num < $order->amount) {
-                    $num += 1;
-                    if ($num < 10) {
-                        $num = '0' . $num;
-                    }
-                    $orderNo .= $num;
+                if ($order) {
+                    if ($num < $order->amount) {
+                        $num += 1;
+                        if ($num < 10) {
+                            $num = '0' . $num;
+                        }
+                        $orderNo .= $num;
 
 //                    $http = new Client();
 //
@@ -68,9 +69,17 @@ class DeliverProductNotificationsController extends Controller
 //                        ]);
 //                    })->delay(now()->addSeconds(5));
 
-                    return app(VendingMachineDeliverAndQuery::class)->deliverProduct($result['machineId'], $orderNo, $result['goodslist'][0]['latticeId'], $result['goodslist'][0]['cabid'], $result['goodslist'][0]['cabtype']);
+                        return app(VendingMachineDeliverAndQuery::class)->deliverProduct($result['machineId'], $orderNo, $result['goodslist'][0]['latticeId'], $result['goodslist'][0]['cabid'], $result['goodslist'][0]['cabtype']);
+                    } else {
+                        $vendingMachine = $order->vendingMachine;
+                        if ($vendingMachine->is_delivering) {
+                            $vendingMachine->is_delivering = false;
+                            $vendingMachine->update();
+                        }
+                        return json_encode(array('result'=>'200', 'resultDesc'=>'Success'));
+                    }
                 } else {
-                    return json_encode(array('result'=>'200', 'resultDesc'=>'Success'));
+                    return json_encode(array('result'=>'404', 'resultDesc'=>'Not Found'));
                 }
             }
 

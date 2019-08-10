@@ -68,6 +68,9 @@ $api->version('v1', [
         // 删除订单
         $api->post('orders/{order}/destroy', 'OrdersController@destroy')
             ->name('api.orders.destroy');
+        // 订单申请退款
+        $api->post('orders/{order}/applyRefund', 'OrdersController@applyRefund')
+            ->name('api.orders.applyRefund');
         // 更新货道
         $api->put('vendingMachineAisles/{vendingMachineAisle}', 'VendingMachineAislesController@update')
             ->name('api.vendingMachineAisles.update');

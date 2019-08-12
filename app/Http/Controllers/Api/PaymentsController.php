@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Admin\RefundRequest;
 use App\Models\Order;
+use App\Services\RefundService;
 use Illuminate\Http\Request;
 
 class PaymentsController extends Controller
@@ -20,6 +22,21 @@ class PaymentsController extends Controller
             'total_fee' => $order->total_amount * 100, // 与支付宝不同，微信支付的金额单位是分。
             'body' => '匀贞-售卖机速购', // 订单描述
             'openid' => $user->weapp_openid
+        ]);
+    }
+
+    public function miniappRefund(Order $order, RefundService $refundService, RefundRequest $request)
+    {
+        $user = $this->user();
+
+        $refundAmount = $request->input('refundAmount');
+
+        if ($user->is_mobile_admin) {
+            $refundService->miniappRefund($order, $refundAmount);
+        }
+
+        return $this->response->array([
+            'refund_status' => $order->refund_status
         ]);
     }
 }

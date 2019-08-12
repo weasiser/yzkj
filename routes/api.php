@@ -83,6 +83,9 @@ $api->version('v1', [
         // 小程序微信支付
         $api->get('payments/{order}/miniapp/wxpay', 'PaymentsController@miniappPayByWxpay')
             ->name('api.payments.miniappPayByWxpay');
+        // 小程序退款
+        $api->post('payments/{order}/miniapp/refund', 'PaymentsController@miniappRefund')
+            ->name('api.payments.refund.miniappRefund');
         // 出货
         $api->post('vendingMachine/deliver', 'VMDeliverAndQueryController@deliverProduct')
             ->name('api.VMDeliverAndQuery.deliverProduct');

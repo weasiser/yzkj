@@ -22,7 +22,7 @@ class RefundService
             case 'wxpay':
                 // 生成退款订单号
                 $refundNo = Order::getAvailableRefundNo();
-                app('wxpay')->refund([
+                $result = app('wxpay')->refund([
                     'type' => 'miniapp',
                     'out_trade_no' => $order->no, // 之前的订单流水号
                     'total_fee' => $order->total_amount * 100, //原订单金额，单位分
@@ -32,11 +32,24 @@ class RefundService
                     'notify_url' => route('paymentNotifications.miniapp.wxpay.refundNotify'), // 由于是开发环境，需要配成 requestbin 地址
 //                    'refund_desc' => '卡货'
                 ]);
-                // 将订单状态改成退款中
-                $order->update([
-                    'refund_no' => $refundNo,
-                    'refund_status' => Order::REFUND_STATUS_PROCESSING,
-                ]);
+                if ($result->return_code === 'SUCCESS' && $result->result_code === 'SUCCESS') {
+                    // 将订单状态改成退款中
+                    $order->update([
+                        'refund_no' => $refundNo,
+                        'refund_status' => Order::REFUND_STATUS_PROCESSING,
+                        'refund_amount' => $refund_amount,
+                    ]);
+                } else {
+                    $order->update([
+                        'refund_no' => $refundNo,
+                        'refund_status' => Order::REFUND_STATUS_FAILED,
+                        'extra' => [
+                            'return_msg' => $result->return_msg,
+                            'err_code' => $result->err_code,
+                            'err_code_des' => $result->err_code_des,
+                        ],
+                    ]);
+                }
                 break;
             case 'alipay':
                 // 用我们刚刚写的方法来生成一个退款订单号
@@ -63,6 +76,7 @@ class RefundService
                     $order->update([
                         'refund_no' => $refundNo,
                         'refund_status' => Order::REFUND_STATUS_SUCCESS,
+                        'refund_amount' => $refund_amount,
                     ]);
                 }
                 break;

@@ -29,14 +29,16 @@ class PaymentsController extends Controller
     {
         $user = $this->user();
 
-        $refundAmount = $request->input('refundAmount');
-
         if ($user->is_mobile_admin) {
+            $refundAmount = $request->input('refundAmount');
             $refundService->miniappRefund($order, $refundAmount);
+            return $this->response->array([
+                'refund_status' => $order->refund_status
+            ]);
+        } else {
+            return $this->response->array([
+                'refund_status' => 'Unauthorized'
+            ]);
         }
-
-        return $this->response->array([
-            'refund_status' => $order->refund_status
-        ]);
     }
 }

@@ -50,6 +50,12 @@
 {{--            <button class="btn btn-sm btn-danger" id="btn-refund-disagree">不同意</button>--}}
           @endif
         </td>
+        @if($order->refund_status === \App\Models\Order::REFUND_STATUS_SUCCESS)
+          <td>退款数量：</td>
+          <td class="text-bold">{{ $order->refund_number }}</td>
+          <td>退款金额：</td>
+          <td class="text-bold">￥ {{ $order->refund_amount }}</td>
+        @endif
       </tr>
       <tr>
         <td>单价：</td>

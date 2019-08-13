@@ -17,7 +17,6 @@ class RefundService
         } else {
             $refund_amount = $order->total_amount;
         }
-        dd($refund_amount);
         // 判断该订单的支付方式
         switch ($order->payment_method) {
             case 'wxpay':

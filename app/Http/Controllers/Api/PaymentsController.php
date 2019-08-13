@@ -25,7 +25,7 @@ class PaymentsController extends Controller
         ]);
     }
 
-    public function miniappRefund(Order $order, RefundService $refundService, RefundRequest $request)
+    public function miniappRefund(Order $order, RefundRequest $request, RefundService $refundService)
     {
         $user = $this->user();
 

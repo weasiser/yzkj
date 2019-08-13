@@ -13,10 +13,11 @@ class RefundService
         if ($refundAmount > $order->amount) {
             throw new \Exception('部分退款数量超过最大值');
         } elseif ($refundAmount < $order->amount) {
-            $refund_amount = big_number($order->sold_price)->multiply($refundAmount);
+            $refund_amount = big_number($order->sold_price)->multiply($refundAmount)->getValue();
         } else {
             $refund_amount = $order->total_amount;
         }
+        dd($refund_amount);
         // 判断该订单的支付方式
         switch ($order->payment_method) {
             case 'wxpay':
@@ -38,6 +39,7 @@ class RefundService
                         'refund_no' => $refundNo,
                         'refund_status' => Order::REFUND_STATUS_PROCESSING,
                         'refund_amount' => $refund_amount,
+                        'refund_number' => $refundAmount,
                     ]);
                 } else {
                     $order->update([
@@ -77,6 +79,7 @@ class RefundService
                         'refund_no' => $refundNo,
                         'refund_status' => Order::REFUND_STATUS_SUCCESS,
                         'refund_amount' => $refund_amount,
+                        'refund_number' => $refundAmount,
                     ]);
                 }
                 break;

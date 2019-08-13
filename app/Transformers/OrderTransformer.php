@@ -29,6 +29,8 @@ class OrderTransformer extends TransformerAbstract
             'refund_refuse_note'       => $order->refund_refuse_note,
             'refund_status'            => $order->refund_status,
             'refund_no'                => $order->refund_no,
+            'refund_amount'            => $order->refund_amount ? (float) $order->refund_amount : null,
+            'refund_number'            => $order->refund_number ? $order->refund_amount : null,
             'is_closed'                => $order->is_closed,
             'deliver_status'           => $order->deliver_status,
             'deliver_data'             => $order->deliver_data,

@@ -59,6 +59,8 @@ class Order extends Model
         'refund_refuse_note',
         'refund_status',
         'refund_no',
+        'refund_amount',
+        'refund_number',
         'is_closed',
         'deliver_status',
         'deliver_data',

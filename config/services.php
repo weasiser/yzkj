@@ -45,8 +45,8 @@ return [
     ],
 
     'alipay' => [
-        'app_private_key' => resource_path('keys/app_private_key.pem'),
-        'public_key' => resource_path('keys/alipay_public_key.pem'),
+        'app_private_key' => resource_path('alipay/app_private_key.pem'),//resource_path('keys/app_private_key.pem'),
+        'public_key' => resource_path('alipay/alipay_public_key.pem'),//resource_path('keys/alipay_public_key.pem'),
         'mini_program_appid' => env('ALIPAY_MINI_PROGRAM_APPID'),
     ],
 

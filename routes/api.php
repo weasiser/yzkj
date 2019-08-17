@@ -44,6 +44,11 @@ $api->version('v1', [
         // 删除token
 //        $api->delete('authorizations/current', 'AuthorizationsController@destroy')
 //            ->name('api.authorizations.destroy');
+        $api->get('vendingMachines/{vendingMachine}', 'VendingMachinesController@show')
+            ->name('api.vendingMachines.show');
+        // 查询是否在线
+        $api->get('vendingMachine/query', 'VMDeliverAndQueryController@queryMachineInfo')
+            ->name('api.VMDeliverAndQuery.queryMachineInfo');
     });
 
     // 需要 token 验证的接口
@@ -89,14 +94,9 @@ $api->version('v1', [
         // 出货
         $api->post('vendingMachine/deliver', 'VMDeliverAndQueryController@deliverProduct')
             ->name('api.VMDeliverAndQuery.deliverProduct');
-        // 查询是否在线
-        $api->get('vendingMachine/query', 'VMDeliverAndQueryController@queryMachineInfo')
-            ->name('api.VMDeliverAndQuery.queryMachineInfo');
 
         $api->get('vendingMachines', 'VendingMachinesController@index')
             ->name('api.vendingMachines.index');
-        $api->get('vendingMachines/{vendingMachine}', 'VendingMachinesController@show')
-            ->name('api.vendingMachines.show');
 
         $api->get('queryDeliverStatus', 'VMDeliverAndQueryController@queryDeliverStatus')
             ->name('api.queryDeliverStatus');

@@ -7,6 +7,7 @@ use Alipay\AopClient;
 use Alipay\Key\AlipayKeyPair;
 use App\Http\Requests\Api\AuthorizationRequest;
 use App\Models\User;
+use App\Transformers\UserTransformer;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -48,16 +49,20 @@ class AuthorizationsController extends Controller
         return $this->userStore($user, $attributes);
     }
 
-    public function aliappReplaceToken(AuthorizationRequest $request)
+    public function aliappReplaceToken(AuthorizationRequest $request, UserTransformer $userTransformer)
     {
         $code = $request->code;
+        $userInfo = $request->userInfo;
         $data = $this->getAliAccessToken($code);
         $user = User::where('alipay_user_id', $data['user_id'])->first();
         $attributes['alipay_access_token'] = $data['access_token'];
+        $attributes['nick_name'] = isset($userInfo['nick_name']) ? $userInfo['nick_name'] : '未设置';
+        $attributes['avatar'] = isset($userInfo['avatar']) ? $userInfo['avatar'] : 'https://s2.ax1x.com/2019/05/29/Vnuqk4.png';
         $user->update($attributes);
-        return $this->response->array([
-            'replace_access_token' => 'success'
-        ]);
+//        return $this->response->array([
+//            'replace_access_token' => 'success'
+//        ]);
+        return $this->response->item($user, $userTransformer);
     }
 
     public function update()
@@ -98,7 +103,7 @@ class AuthorizationsController extends Controller
         return $this->respondWithToken($token);
     }
 
-    protected function getAliAccessToken($code)
+    protected function getAliAccessToken($code/*, $getUserInfo = false*/)
     {
         $keyPair = AlipayKeyPair::create(
             config('services.alipay.app_private_key'),
@@ -116,13 +121,17 @@ class AuthorizationsController extends Controller
         if (isset($data['code'])) {
             return $this->response->errorUnauthorized($data['sub_msg']);
         }
-//        $request = AlipayRequestFactory::create('alipay.user.info.share', [
-//            'auth_token' => $data['access_token']
-//        ]);
-//        $userInfo = $aop->execute($request)->getData();
-//        if (isset($userInfo['code'])) {
-//            return $this->response->errorUnauthorized($userInfo['sub_msg']);
+//        if ($getUserInfo) {
+//            $request = AlipayRequestFactory::create('alipay.user.info.share', [
+//                'auth_token' => $data['access_token']
+//            ]);
+//            $data['user_info'] = $aop->execute($request)->getData();
+//            dd($data);
+//            if ($data['user_info']['code'] !== '10000') {
+//                return $this->response->errorUnauthorized($data['user_info']['msg']);
+//            }
 //        }
+
         return $data;
     }
 }

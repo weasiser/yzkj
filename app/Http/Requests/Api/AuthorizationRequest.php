@@ -13,6 +13,7 @@ class AuthorizationRequest extends FormRequest
     {
         return [
             'code' => 'required|string',
+            'userInfo' => 'array'
         ];
     }
 }

@@ -56,7 +56,7 @@ class AuthorizationsController extends Controller
         $data = $this->getAliAccessToken($code);
         $user = User::where('alipay_user_id', $data['user_id'])->first();
         $attributes['alipay_access_token'] = $data['access_token'];
-        $attributes['nick_name'] = isset($userInfo['nick_name']) ? $userInfo['nick_name'] : '未设置';
+        $attributes['nick_name'] = isset($userInfo['nickName']) ? $userInfo['nickName'] : '未设置';
         $attributes['avatar'] = isset($userInfo['avatar']) ? $userInfo['avatar'] : 'https://s2.ax1x.com/2019/05/29/Vnuqk4.png';
         $user->update($attributes);
 //        return $this->response->array([

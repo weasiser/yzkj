@@ -38,9 +38,6 @@ $api->version('v1', [
             ->name('api.authorizations.update');
         $api->post('authorizations/current', 'AuthorizationsController@update')
             ->name('api.authorizations.update');
-        // 更换ali_token
-        $api->post('authorizations/aliToken', 'AuthorizationsController@aliappReplaceToken')
-            ->name('api.authorizations.aliappReplaceToken');
         // 删除token
 //        $api->delete('authorizations/current', 'AuthorizationsController@destroy')
 //            ->name('api.authorizations.destroy');
@@ -61,6 +58,9 @@ $api->version('v1', [
 
         // 需要 token 验证的接口
         $api->group(['middleware' => 'api.auth'], function($api) {
+            // 更换ali_token
+            $api->post('authorizations/aliToken', 'AuthorizationsController@aliappReplaceToken')
+                ->name('api.authorizations.aliappReplaceToken');
             // 当前登录用户信息
             $api->patch('user', 'UsersController@me')
                 ->name('api.user.patch');

@@ -51,13 +51,20 @@ class AuthorizationsController extends Controller
 
     public function aliappReplaceToken(AuthorizationRequest $request, UserTransformer $userTransformer)
     {
-        $code = $request->code;
-        $userInfo = $request->userInfo;
-        $data = $this->getAliAccessToken($code);
-        $user = User::where('alipay_user_id', $data['user_id'])->first();
-        $attributes['alipay_access_token'] = $data['access_token'];
-        $attributes['nick_name'] = isset($userInfo['nickName']) ? $userInfo['nickName'] : '未设置';
-        $attributes['avatar'] = isset($userInfo['avatar']) ? $userInfo['avatar'] : 'https://s2.ax1x.com/2019/05/29/Vnuqk4.png';
+        $user = $this->user();
+        if ($code = $request->code) {
+            $data = $this->getAliAccessToken($code);
+            $attributes['alipay_access_token'] = $data['access_token'];
+        }
+        if ($userInfo = $request->userInfo) {
+            $attributes['nick_name'] = isset($userInfo['nickName']) ? $userInfo['nickName'] : '未设置';
+            $attributes['avatar'] = isset($userInfo['avatar']) ? $userInfo['avatar'] : 'https://s2.ax1x.com/2019/05/29/Vnuqk4.png';
+        }
+//        $data = $this->getAliAccessToken($code);
+//        $user = User::where('alipay_user_id', $data['user_id'])->first();
+//        $attributes['alipay_access_token'] = $data['access_token'];
+//        $attributes['nick_name'] = isset($userInfo['nickName']) ? $userInfo['nickName'] : '未设置';
+//        $attributes['avatar'] = isset($userInfo['avatar']) ? $userInfo['avatar'] : 'https://s2.ax1x.com/2019/05/29/Vnuqk4.png';
         $user->update($attributes);
 //        return $this->response->array([
 //            'replace_access_token' => 'success'

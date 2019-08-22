@@ -65,10 +65,10 @@ class VMDeliverAndQueryController extends Controller
         $orderNo = $request->input('orderNo');
         $deliverProductNotification = DeliverProductNotification::where('no', $orderNo)->first();
         if ($deliverProductNotification) {
-            if ($request->input('realDeal') === 'yes' && $deliverProductNotification->result === '1') {
-                $vendingMachineAisle->find($request->input('vendingMachineAisleId'))->decreaseStock();
-                $product->find($request->input('productId'))->productPes->where('stock', '>=', 1)->first()->decrement('stock', 1);
-            }
+//            if ($request->input('realDeal') === 'yes' && $deliverProductNotification->result === '1') {
+//                $vendingMachineAisle->find($request->input('vendingMachineAisleId'))->decreaseStock();
+//                $product->find($request->input('productId'))->productPes->where('stock', '>=', 1)->first()->decrement('stock', 1);
+//            }
             return $this->response->array([
                 'result' => $deliverProductNotification->result
             ]);

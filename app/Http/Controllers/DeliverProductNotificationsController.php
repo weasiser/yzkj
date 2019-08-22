@@ -32,11 +32,13 @@ class DeliverProductNotificationsController extends Controller
 //                'json' => $result
 //            ]);
 
-            if (strlen($result['orderid']) === 22) {
+            if (strlen($result['orderid']) === 22 && $result['goodslist'][0]['resultid'] === '1') {
                 $orderNo = substr($result['orderid'], 0, 20);
                 $num = (int)ltrim(substr($result['orderid'], -2, 2), '0');
                 $order = Order::where('no', $orderNo)->first();
                 if ($order) {
+                    $order->vendingMachineAisle->decreaseStock();
+                    $order->product->productPes->where('stock', '>=', 1)->first()->decrement('stock', 1);
                     if ($num < $order->amount) {
                         $num += 1;
                         if ($num < 10) {

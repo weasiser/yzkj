@@ -92,6 +92,9 @@ $api->version('v1', [
             // 小程序微信支付
             $api->get('payments/{order}/miniapp/wxpay', 'PaymentsController@miniappPayByWxpay')
                 ->name('api.payments.miniappPayByWxpay');
+            // 小程序支付宝支付
+            $api->get('payments/{order}/miniapp/alipay', 'PaymentsController@miniappPayByAlipay')
+                ->name('api.payments.miniappPayByAlipay');
             // 小程序退款
             $api->post('payments/{order}/miniapp/refund', 'PaymentsController@miniappRefund')
                 ->name('api.payments.refund.miniappRefund');

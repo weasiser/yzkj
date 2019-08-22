@@ -21,6 +21,8 @@ Route::get('/', 'HomeController@index')->name('home');
 
 Route::post('paymentNotifications/miniapp/wxpay/notify', 'PaymentNotificationsController@miniappPayByWxpayNotify')->name('paymentNotifications.miniapp.wxpay.notify');
 
+Route::post('paymentNotifications/miniapp/alipay/notify', 'PaymentNotificationsController@miniappPayByAlipayNotify')->name('paymentNotifications.miniapp.alipay.notify');
+
 Route::post('deliverProductNotifications/notify', 'DeliverProductNotificationsController@deliverProductNotify')->name('deliverProductNotifications.deliverProductNotify');
 
 Route::post('paymentNotifications/miniapp/wxpay/refundNotify', 'PaymentNotificationsController@miniappWxpayRefundNotify')->name('paymentNotifications.miniapp.wxpay.refundNotify');

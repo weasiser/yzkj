@@ -64,13 +64,17 @@ class RefundService
                 // 根据支付宝的文档，如果返回值里有 sub_code 字段说明退款失败
                 if ($ret->sub_code) {
                     // 将退款失败的保存存入 extra 字段
-                    $extra = $order->extra;
-                    $extra['refund_failed_code'] = $ret->sub_code;
+//                    $extra = $order->extra;
+//                    $extra['refund_failed_code'] = $ret->sub_code;
+//                    $extra['refund_failed_msg'] = $ret->sub_msg;
                     // 将订单的退款状态标记为退款失败
                     $order->update([
                         'refund_no' => $refundNo,
                         'refund_status' => Order::REFUND_STATUS_FAILED,
-                        'extra' => $extra,
+                        'extra' => [
+                            'err_code' => $ret->sub_code,
+                            'err_code_des' => $ret->sub_msg,
+                        ],
                     ]);
                 } else {
                     // 将订单的退款状态标记为退款成功并保存退款订单号

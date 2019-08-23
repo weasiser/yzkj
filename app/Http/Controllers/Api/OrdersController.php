@@ -120,5 +120,9 @@ class OrdersController extends Controller
         $order->update([
             'refund_status' => Order::REFUND_STATUS_APPLIED,
         ]);
+
+        return $this->response->array([
+            'applyRefundResult' => 'success',
+        ]);
     }
 }

@@ -37,7 +37,7 @@ class DeliverProductNotificationsController extends Controller
                 $num = (int)ltrim(substr($result['orderid'], -2, 2), '0');
                 $order = Order::where('no', $orderNo)->first();
                 if ($order) {
-                    $order->vendingMachineAisle->decreaseStock();
+//                    $order->vendingMachineAisle->decreaseStock();
                     $order->product->productPes->where('stock', '>=', 1)->first()->decrement('stock', 1);
                     if ($num < $order->amount) {
                         $num += 1;

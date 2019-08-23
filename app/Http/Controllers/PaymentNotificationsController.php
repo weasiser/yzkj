@@ -98,11 +98,11 @@ class PaymentNotificationsController extends Controller
         return app('wxpay')->success();
     }
 
-    protected function deliverProduct($order)
+    protected function deliverProduct(Order $order)
     {
         $vendingMachine = $order->vendingMachine;
         $ordinal = $order->vendingMachineAisle->ordinal;
         $orderNo = $order->no . '01';
-        return app(VendingMachineDeliverAndQuery::class)->deliverProduct($vendingMachine->code, $orderNo, $ordinal, $vendingMachine->cabinet_id, $vendingMachine->cabinet_type);
+        app(VendingMachineDeliverAndQuery::class)->deliverProduct($vendingMachine->code, $orderNo, $ordinal, $vendingMachine->cabinet_id, $vendingMachine->cabinet_type);
     }
 }

@@ -5,9 +5,9 @@ return [
         'app_id' => env('ALIPAY_MINI_PROGRAM_APPID'),
 //        'notify_url' => 'http://yansongda.cn/notify.php',
 //        'return_url' => 'http://yansongda.cn/return.php',
-        'ali_public_key' => resource_path('keys/alipay_public_key.pem'),
+        'ali_public_key' => env('ALIPAY_PUBLIC_KEY'),//resource_path('keys/alipay_public_key.pem'),
         // 加密方式： **RSA2**
-        'private_key' => resource_path('keys/app_private_key.pem'),
+        'private_key' => env('ALIPAY_APP_PRIVATE_KEY'),//resource_path('keys/app_private_key.pem'),
         'log' => [ // optional
             'file' => storage_path('logs/alipay.log'),
             'level' => 'info', // 建议生产环境等级调整为 info，开发环境为 debug

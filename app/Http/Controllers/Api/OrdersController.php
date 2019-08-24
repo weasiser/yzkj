@@ -96,7 +96,7 @@ class OrdersController extends Controller
     {
         $user = $this->user();
 
-        $orders = $user->orders()->recent()->paginate(3);
+        $orders = $user->orders()->recent()->paginate(5);
 
         return $this->response->paginator($orders, $orderTransformer);
     }

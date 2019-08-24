@@ -11,6 +11,11 @@ class ProductPesObserver
         $this->updateTotalStockAndMinExpirationDate($productPes);
     }
 
+    public function updated(ProductPes $productPes)
+    {
+        $this->updateTotalStockAndMinExpirationDate($productPes);
+    }
+
     public function deleted(ProductPes $productPes)
     {
         $this->updateTotalStockAndMinExpirationDate($productPes);

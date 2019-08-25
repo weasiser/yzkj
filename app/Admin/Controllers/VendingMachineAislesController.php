@@ -92,6 +92,8 @@ class VendingMachineAislesController extends AdminController
             });
 //            $filter->expand();
         });
+        
+        $grid->paginate(10);
 
         return $grid;
     }

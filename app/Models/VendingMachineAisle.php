@@ -26,11 +26,23 @@ class VendingMachineAisle extends Model
 
     public function decreaseStock($amount = 1)
     {
-        return $this->where('id', $this->id)->where('stock', '>=', $amount)->decrement('stock', $amount);
+        $vendingMachineAisle = $this->where('id', $this->id)->where('stock', '>=', $amount)->first();
+        if ($vendingMachineAisle) {
+            $vendingMachineAisle->update(['stock' => $vendingMachineAisle->stock - $amount]);
+        } else {
+            throw new \Exception('该货道的商品库存不足');
+        }
+//        return $this->where('id', $this->id)->where('stock', '>=', $amount)->decrement('stock', $amount);
     }
 
     public function increaseStock($amount = 1)
     {
-        return $this->where('id', $this->id)->whereColumn('stock', '<', 'max_stock')->increment('stock', $amount);
+        $vendingMachineAisle = $this->where('id', $this->id)->whereColumn('stock', '<', 'max_stock')->first();
+        if ($vendingMachineAisle && ($vendingMachineAisle->stock + $amount <= $vendingMachineAisle->max_stock)) {
+            $vendingMachineAisle->update(['stock' => $vendingMachineAisle->stock + $amount]);
+        } else {
+            throw new \Exception('该货道增加库存时超过最大库存');
+        }
+//        return $this->where('id', $this->id)->whereColumn('stock', '<', 'max_stock')->increment('stock', $amount);
     }
 }

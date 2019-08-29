@@ -43,7 +43,9 @@ class VendingMachineAisleObserver
     {
         $product = $vendingMachineAisle->product;
         $vendingMachineAisles = $product->vendingMachineAisles;
-        $product->vending_machine_stock = $vendingMachineAisles->sum('stock');
+        $vendingMachineStock = $vendingMachineAisles->sum('stock');
+        $product->vending_machine_stock = $vendingMachineStock;
+        $product->warehouse_stock = $product->total_stock - $vendingMachineStock;
         $product->save();
     }
 }

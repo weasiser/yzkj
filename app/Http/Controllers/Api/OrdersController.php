@@ -41,9 +41,11 @@ class OrdersController extends Controller
             // 写入数据库
             $order->save();
 
-            if ($aisle->decreaseStock($amount) <= 0) {
-                throw new \Exception('该货道的商品库存不足');
-            }
+            $aisle->decreaseStock($amount);
+
+//            if ($aisle->decreaseStock($amount) <= 0) {
+//                throw new \Exception('该货道的商品库存不足');
+//            }
             $this->dispatch(new CloseOrder($order, config('app.order_ttl')));
 
             return $order;

@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\ProductPes;
+use App\Models\VendingMachineAisle;
 use App\Observers\ProductPesObserver;
+use App\Observers\VendingMachineAisleObserver;
 use Illuminate\Support\ServiceProvider;
 use Monolog\Logger;
 use Yansongda\Pay\Pay;
@@ -59,5 +61,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         ProductPes::observe(ProductPesObserver::class);
+        VendingMachineAisle::observe(VendingMachineAisleObserver::class);
     }
 }

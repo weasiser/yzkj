@@ -95,6 +95,8 @@ class ProductsController extends Controller
         $grid->buying_price('进货价')->editable();
         $grid->selling_price('销售价')->editable();
         $grid->quality_guarantee_period('保质期（月）')->editable()->sortable();
+        $grid->column('warehouse_stock', '公司库存')->sortable();
+        $grid->column('vending_machine_stock', '售卖机库存')->sortable();
         $grid->total_stock('总库存')->sortable();
         $grid->sold_count('销量（件）')->sortable();
         $grid->sold_value('销售额')->sortable();

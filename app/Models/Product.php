@@ -13,6 +13,8 @@ class Product extends Model
         'selling_price',
         'quality_guarantee_period',
         'on_sale',
+        'warehouse_stock',
+        'vending_machine_stock',
         'total_stock',
         'min_expiration_date',
         'sold_count',

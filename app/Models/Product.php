@@ -29,4 +29,9 @@ class Product extends Model
 //    {
 //        return $value . '?x-oss-process=style/webp';
 //    }
+
+    public function vendingMachineAisles()
+    {
+        return $this->hasMany(VendingMachineAisle::class);
+    }
 }

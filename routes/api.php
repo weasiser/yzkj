@@ -122,6 +122,9 @@ $api->version('v1', [
             // 改变是否正在出货
             $api->get('vendingMachines/{vendingMachine}/isDeliveringChange', 'VendingMachinesController@isDeliveringChange')
                 ->name('api.vendingMachines.isDeliveringChange');
+            // 账单列表
+            $api->get('orders', 'OrdersController@index')
+                ->name('api.orders.index');
         });
     });
 });

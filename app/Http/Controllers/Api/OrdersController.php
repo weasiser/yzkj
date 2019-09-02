@@ -54,6 +54,12 @@ class OrdersController extends Controller
         return $this->response->item($order, $orderTransformer)->setStatusCode(201);
     }
 
+    public function index(Order $order, OrderTransformer $orderTransformer)
+    {
+        $orders = $order->paginate(5);
+        return $this->response->collection($orders, $orderTransformer);
+    }
+
     public function show(Order $order, OrderTransformer $orderTransformer)
     {
         return $this->response->item($order, $orderTransformer);

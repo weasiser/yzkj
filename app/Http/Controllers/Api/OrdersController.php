@@ -56,8 +56,8 @@ class OrdersController extends Controller
 
     public function index(Order $order, OrderTransformer $orderTransformer)
     {
-        $orders = $order->paginate(5);
-        return $this->response->collection($orders, $orderTransformer);
+        $orders = $order->recent()->paginate(5);
+        return $this->response->paginator($orders, $orderTransformer);
     }
 
     public function show(Order $order, OrderTransformer $orderTransformer)

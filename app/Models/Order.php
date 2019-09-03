@@ -49,6 +49,7 @@ class Order extends Model
         'no',
         'ordinal',
         'amount',
+        'purchase_price',
         'sold_price',
         'total_amount',
         'paid_at',

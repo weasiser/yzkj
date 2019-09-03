@@ -19,6 +19,7 @@ class OrderTransformer extends TransformerAbstract
             'vending_machine_id'       => $order->vending_machine_id,
             'vending_machine_aisle_id' => $order->vending_machine_aisle_id,
             'amount'                   => $order->amount,
+            'purchase_price'           => (float) $order->purchase_price,
             'sold_price'               => (float) $order->sold_price,
             'total_amount'             => (float) $order->total_amount,
             'paid_at'                  => $order->paid_at ? $order->paid_at->toDateTimeString() : null,

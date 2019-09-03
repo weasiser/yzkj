@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\OrderPaidOrRefunded;
 use App\Handlers\VendingMachineDeliverAndQuery;
 use App\Models\Order;
+use App\Models\VendingMachine;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -31,6 +33,10 @@ class PaymentNotificationsController extends Controller
             'payment_method' => 'wxpay',
             'payment_no'     => $data->transaction_id,
         ]);
+
+        $this->afterPaidOrRefunded($order);
+
+        $this->isDeliveringChange($order->vendingMachine);
 
         $this->deliverProduct($order);
 
@@ -64,6 +70,10 @@ class PaymentNotificationsController extends Controller
             'payment_no'     => $data->trade_no, // 支付宝订单号
         ]);
 
+        $this->afterPaidOrRefunded($order);
+
+        $this->isDeliveringChange($order->vendingMachine);
+
         $this->deliverProduct($order);
 
         return app('alipay')->success();
@@ -95,14 +105,34 @@ class PaymentNotificationsController extends Controller
             ]);
         }
 
+        $this->afterPaidOrRefunded($order);
+
         return app('wxpay')->success();
     }
 
     protected function deliverProduct(Order $order)
     {
+        $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERING]);
         $vendingMachine = $order->vendingMachine;
         $ordinal = $order->vendingMachineAisle->ordinal;
         $orderNo = $order->no . '01';
         app(VendingMachineDeliverAndQuery::class)->deliverProduct($vendingMachine->code, $orderNo, $ordinal, $vendingMachine->cabinet_id, $vendingMachine->cabinet_type);
+    }
+
+    protected function isDeliveringChange(VendingMachine $vendingMachine)
+    {
+        $vendingMachine->is_delivering = true;
+        $vendingMachine->update();
+        dispatch(function () use ($vendingMachine) {
+            if ($vendingMachine->is_delivering) {
+                $vendingMachine->is_delivering = false;
+                $vendingMachine->update();
+            }
+        })->delay(now()->addSeconds(60));
+    }
+
+    protected function afterPaidOrRefunded(Order $order)
+    {
+        event(new OrderPaidOrRefunded($order));
     }
 }

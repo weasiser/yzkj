@@ -56,6 +56,7 @@ class OrdersController extends AdminController
         $grid->column('vendingMachine.name', __('售卖机名称'));
         $grid->column('vendingMachineAisle.ordinal', __('货道号'));
         $grid->column('amount', __('数量'));
+        $grid->column('purchase_price', __('进货价'));
         $grid->column('sold_price', __('单价'));
         $grid->column('total_amount', __('总价'));
         $grid->column('paid_at', __('支付时间'));

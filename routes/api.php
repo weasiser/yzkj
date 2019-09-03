@@ -108,11 +108,11 @@ $api->version('v1', [
             $api->get('queryDeliverStatus', 'VMDeliverAndQueryController@queryDeliverStatus')
                 ->name('api.queryDeliverStatus');
             // 订单正在出货
-            $api->post('orders/{order}/delivering', 'OrdersController@delivering')
-                ->name('api.orders.delivering');
+//            $api->post('orders/{order}/delivering', 'OrdersController@delivering')
+//                ->name('api.orders.delivering');
             // 订单出货成功
-            $api->post('orders/{order}/delivered', 'OrdersController@delivered')
-                ->name('api.orders.delivered');
+//            $api->post('orders/{order}/delivered', 'OrdersController@delivered')
+//                ->name('api.orders.delivered');
             // 我的订单列表
             $api->get('userOrders', 'OrdersController@userOrders')
                 ->name('api.orders.userOrders');
@@ -120,8 +120,8 @@ $api->version('v1', [
             $api->get('vendingMachines/{vendingMachine}/isDelivering', 'VendingMachinesController@isDelivering')
                 ->name('api.vendingMachines.isDelivering');
             // 改变是否正在出货
-            $api->get('vendingMachines/{vendingMachine}/isDeliveringChange', 'VendingMachinesController@isDeliveringChange')
-                ->name('api.vendingMachines.isDeliveringChange');
+//            $api->get('vendingMachines/{vendingMachine}/isDeliveringChange', 'VendingMachinesController@isDeliveringChange')
+//                ->name('api.vendingMachines.isDeliveringChange');
             // 账单列表
             $api->get('orders', 'OrdersController@index')
                 ->name('api.orders.index');

@@ -75,6 +75,7 @@ class DeliverProductNotificationsController extends Controller
 
                         return app(VendingMachineDeliverAndQuery::class)->deliverProduct($result['machineId'], $orderNo, $result['goodslist'][0]['latticeId'], $result['goodslist'][0]['cabid'], $result['goodslist'][0]['cabtype']);
                     } else {
+                        $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERED]);
                         $vendingMachine = $order->vendingMachine;
                         if ($vendingMachine->is_delivering) {
                             $vendingMachine->is_delivering = false;

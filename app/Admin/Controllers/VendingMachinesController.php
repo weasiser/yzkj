@@ -112,6 +112,9 @@ class VendingMachinesController extends Controller
         $grid->iot_card_no('物联卡号')->editable();
         $grid->cabinet_id('机柜 ID')->editable();
         $grid->cabinet_type('机柜类型')->editable();
+        $grid->sold_count('销量（件）')->sortable();
+        $grid->sold_value('销售额')->sortable();
+        $grid->sold_profit('利润')->sortable();
         $grid->is_delivering('正在出货')->switch($this->is_delivering);
         $grid->is_opened('使用状态')->switch($this->is_opened);
         $grid->column('在离线')->display(function () use ($vmNetStat) {

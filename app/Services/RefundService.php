@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\OrderPaidOrRefunded;
 use App\Http\Requests\Admin\RefundRequest;
 use App\Models\Order;
 
@@ -84,6 +85,8 @@ class RefundService
                         'refund_amount' => $refund_amount,
                         'refund_number' => $refundAmount,
                     ]);
+
+                    $this->afterRefunded($order);
                 }
                 break;
             default:
@@ -91,5 +94,10 @@ class RefundService
                 throw new \Exception('未知订单支付方式：'.$order->payment_method);
                 break;
         }
+    }
+
+    protected function afterRefunded(Order $order)
+    {
+        event(new OrderPaidOrRefunded($order));
     }
 }

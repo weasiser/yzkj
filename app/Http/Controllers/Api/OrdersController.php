@@ -29,6 +29,7 @@ class OrdersController extends Controller
             // 创建一个订单
             $order = new Order([
                 'amount'       => $amount,
+                'purchase_price' => $product->buying_price,
                 'sold_price'   => $sold_price,
                 'total_amount' => $totalAmount,
             ]);
@@ -54,9 +55,9 @@ class OrdersController extends Controller
         return $this->response->item($order, $orderTransformer)->setStatusCode(201);
     }
 
-    public function index(Order $order, OrderTransformer $orderTransformer)
+    public function index(Request $request, Order $order, OrderTransformer $orderTransformer)
     {
-        $orders = $order->recent()->paginate(5);
+        $orders = $order->whereDate('paid_at', $request->date)->recent()->paginate(5);
         return $this->response->paginator($orders, $orderTransformer);
     }
 
@@ -73,32 +74,32 @@ class OrdersController extends Controller
         return $this->response->noContent();
     }
 
-    public function delivering(Order $order)
-    {
-        $this->authorize('own', $order);
-
-        // 判断订单的发货状态是否为已发货
-        if ($order->deliver_status !== Order::DELIVER_STATUS_PENDING) {
-            throw new \Exception('出货状态不正确');
-        }
-
-        // 更新发货状态为已收到
-        $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERING]);
-
-    }
-
-    public function delivered(Order $order)
-    {
-        $this->authorize('own', $order);
-
-        // 判断订单的发货状态是否为已发货
-        if ($order->deliver_status !== Order::DELIVER_STATUS_DELIVERING) {
-            throw new \Exception('出货状态不正确');
-        }
-
-        // 更新发货状态为已收到
-        $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERED]);
-    }
+//    public function delivering(Order $order)
+//    {
+//        $this->authorize('own', $order);
+//
+//        // 判断订单的发货状态是否为已发货
+//        if ($order->deliver_status !== Order::DELIVER_STATUS_PENDING) {
+//            throw new \Exception('出货状态不正确');
+//        }
+//
+//        // 更新发货状态为已收到
+//        $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERING]);
+//
+//    }
+//
+//    public function delivered(Order $order)
+//    {
+//        $this->authorize('own', $order);
+//
+//        // 判断订单的发货状态是否为已发货
+//        if ($order->deliver_status !== Order::DELIVER_STATUS_DELIVERING) {
+//            throw new \Exception('出货状态不正确');
+//        }
+//
+//        // 更新发货状态为已收到
+//        $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERED]);
+//    }
 
     public function userOrders(Order $order, OrderTransformer $orderTransformer)
     {

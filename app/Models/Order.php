@@ -54,23 +54,16 @@ class Order extends Model
         'paid_at',
         'payment_method',
         'payment_no',
-        'refund_note',
-        'refund_picture',
-        'refund_refuse_note',
         'refund_status',
         'refund_no',
         'refund_amount',
         'refund_number',
-        'is_closed',
         'deliver_status',
-        'deliver_data',
         'extra',
     ];
 
     protected $casts = [
-        'is_closed' => 'boolean',
-        'ship_data' => 'array',
-        'extra'     => 'array',
+        'extra' => 'array',
     ];
 
     protected $dates = [

@@ -14,7 +14,7 @@ class AddRefundNumberToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->tinyInteger('refund_number')->after('refund_amount')->nullable();
+            $table->unsignedTinyInteger('refund_number')->after('refund_amount')->nullable();
         });
     }
 

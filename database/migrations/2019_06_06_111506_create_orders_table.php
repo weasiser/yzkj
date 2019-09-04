@@ -25,8 +25,8 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('vending_machine_aisle_id')->nullable();
             $table->foreign('vending_machine_aisle_id')->references('id')->on('vending_machine_aisles')->onDelete('set null');
             $table->unsignedTinyInteger('amount');
-            $table->decimal('sold_price', 8, 2);
-            $table->decimal('total_amount', 8, 2);
+            $table->unsignedDecimal('sold_price', 8, 2);
+            $table->unsignedDecimal('total_amount', 8, 2);
             $table->dateTime('paid_at')->nullable();
             $table->string('payment_method')->nullable();
             $table->string('payment_no')->nullable();

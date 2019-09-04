@@ -14,7 +14,7 @@ class AddRefundAmountToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->decimal('refund_amount', 8, 2)->after('refund_no')->nullable();
+            $table->unsignedDecimal('refund_amount', 8, 2)->after('refund_no')->nullable();
         });
     }
 

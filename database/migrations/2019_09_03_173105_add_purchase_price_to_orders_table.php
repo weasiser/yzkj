@@ -14,7 +14,7 @@ class AddPurchasePriceToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->decimal('purchase_price', 8, 2)->after('amount');
+            $table->unsignedDecimal('purchase_price', 8, 2)->after('amount');
         });
     }
 

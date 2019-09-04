@@ -57,8 +57,13 @@ class OrdersController extends Controller
 
     public function index(Request $request, Order $order, OrderTransformer $orderTransformer)
     {
-        $orders = $order->whereDate('paid_at', $request->date)->recent()->paginate(5);
-        return $this->response->paginator($orders, $orderTransformer);
+        if ($request->date) {
+            $orders = $order->whereDate('paid_at', $request->date)->recent()->paginate(5);
+            return $this->response->paginator($orders, $orderTransformer);
+        } elseif ($request->orderNo) {
+            $searchOrder = $order->where('no', $request->orderNo)->first();
+            return $this->response->item($searchOrder, $orderTransformer);
+        }
     }
 
     public function show(Order $order, OrderTransformer $orderTransformer)

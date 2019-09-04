@@ -62,7 +62,11 @@ class OrdersController extends Controller
             return $this->response->paginator($orders, $orderTransformer);
         } elseif ($request->orderNo) {
             $searchOrder = $order->where('no', $request->orderNo)->first();
-            return $this->response->item($searchOrder, $orderTransformer);
+            if ($searchOrder) {
+                return $this->response->item($searchOrder, $orderTransformer);
+            } else {
+                return $this->response->noContent();
+            }
         }
     }
 

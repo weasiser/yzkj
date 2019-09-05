@@ -83,6 +83,12 @@ class OrdersController extends Controller
         return $this->response->noContent();
     }
 
+    public function getDailyStatistics(Request $request, Order $order)
+    {
+        return $order->whereYear('orders.paid_at', $request->year)->whereMonth('orders.paid_at', $request->month)->leftJoin('products', 'orders.product_id', '=', 'products.id')->selectRaw('products.id, products.title, products.image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->groupBy('orders.product_id')->get();
+        return $order->whereYear('paid_at', $request->year)->whereMonth('paid_at', $request->month)->selectRaw('date(paid_at) as date, sum(amount - refund_number) as sold_count, sum(total_amount - refund_amount) as sold_value, sum((sold_price - purchase_price) * (amount - refund_number)) as sold_profit')->groupBy('date')->get();
+    }
+
 //    public function delivering(Order $order)
 //    {
 //        $this->authorize('own', $order);

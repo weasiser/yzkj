@@ -125,9 +125,9 @@ $api->version('v1', [
             // 账单列表
             $api->get('orders', 'OrdersController@index')
                 ->name('api.orders.index');
-            // 月内每天统计
-            $api->get('getStatistics', 'OrdersController@getStatistics')
-                ->name('api.orders.getStatistics');
+            // 商品销量统计
+            $api->get('getProductSaleStatistics', 'OrdersController@getProductSaleStatistics')
+                ->name('api.orders.getProductSaleStatistics');
             // 月内每天统计
             $api->get('getDailyStatistics', 'OrdersController@getDailyStatistics')
                 ->name('api.orders.getDailyStatistics');

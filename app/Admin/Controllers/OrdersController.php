@@ -55,10 +55,16 @@ class OrdersController extends AdminController
 //        $grid->column('product.image', __('商品图片'))->image(config('filesystems.disks.oss.cdnDomain'), 40, 40);
         $grid->column('vendingMachine.name', __('售卖机名称'));
         $grid->column('vendingMachineAisle.ordinal', __('货道号'));
-        $grid->column('amount', __('数量'));
+        $grid->column('amount', __('数量'))->totalRow();
         $grid->column('purchase_price', __('进货价'));
         $grid->column('sold_price', __('单价'));
-        $grid->column('total_amount', __('总价'));
+        $grid->column('total_amount', __('总金额'))->totalRow();
+        $grid->column('refund_number', __('退款数量'))->display(function($value) {
+            return $value ?: '';
+        })->totalRow();
+        $grid->column('refund_amount', __('退款金额'))->display(function($value) {
+            return $value == 0 ? '' : $value;
+        })->totalRow();
         $grid->column('paid_at', __('支付时间'));
 //        $grid->column('payment_method', __('支付方式'));
         $grid->column('payment_method', __('支付方式'))->using([
@@ -111,6 +117,8 @@ class OrdersController extends AdminController
             });
 //            $filter->expand();
         });
+
+        $grid->paginate(5);
 
         return $grid;
     }

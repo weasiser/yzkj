@@ -128,6 +128,9 @@ $api->version('v1', [
             // 月内每天统计
             $api->get('getStatistics', 'OrdersController@getStatistics')
                 ->name('api.orders.getStatistics');
+            // 月内每天统计
+            $api->get('getDailyStatistics', 'OrdersController@getDailyStatistics')
+                ->name('api.orders.getDailyStatistics');
         });
     });
 });

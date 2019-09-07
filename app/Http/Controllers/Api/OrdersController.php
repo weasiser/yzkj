@@ -10,6 +10,7 @@ use App\Models\VendingMachine;
 use App\Models\VendingMachineAisle;
 use App\Transformers\OrderTransformer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class OrdersController extends Controller
 {
@@ -83,22 +84,9 @@ class OrdersController extends Controller
         return $this->response->noContent();
     }
 
-    public function getStatistics(Request $request, Order $order, Product $product, VendingMachine $vendingMachine)
+    public function getDailyStatistics(Order $order)
     {
-        if ($request->vendingMachineId) {
-            $productSaleStatistics = $vendingMachine->find($request->vendingMachineId)->vendingMachineAisles->leftJoin('orders', 'vending_machine_aisles.id', '=', 'orders.vending_machine_aisle_id')->leftJoin('products', 'orders.product_id', '=', 'products.id')->whereYear('orders.paid_at', $request->year)->whereMonth('orders.paid_at', $request->month)->selectRaw('products.id, products.title, products.image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->groupBy('products.id')->get();
-
-            $dailySaleStatistics = $order->where('vending_machine_id', $request->vendingMachineId)->whereYear('paid_at', $request->year)->whereMonth('paid_at', $request->month)->selectRaw('date(paid_at) as date, sum(amount - refund_number) as sold_count, sum(total_amount - refund_amount) as sold_value, sum((sold_price - purchase_price) * (amount - refund_number)) as sold_profit')->groupBy('date')->get();
-
-            $totalStatistics = $order->where('vending_machine_id', $request->vendingMachineId)->whereYear('paid_at', $request->year)->whereMonth('paid_at', $request->month)->selectRaw('sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->get();
-        } else {
-            $productSaleStatistics = $product->leftJoin('orders', 'products.id', '=', 'orders.product_id')->where('products.on_sale', true)->whereYear('orders.paid_at', $request->year)->whereMonth('orders.paid_at', $request->month)->selectRaw('products.id, products.title, products.image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->groupBy('products.id')->orderBy('sold_count', 'asc')->get();
-
-            $dailySaleStatistics = $order->whereYear('paid_at', $request->year)->whereMonth('paid_at', $request->month)->selectRaw('date(paid_at) as date, sum(total_amount - refund_amount) as info, sum(amount - refund_number) as sold_count, sum(total_amount - refund_amount) as sold_value, sum((sold_price - purchase_price) * (amount - refund_number)) as sold_profit')->groupBy('date')->get();
-
-            $totalStatistics = $order->whereYear('paid_at', $request->year)->whereMonth('paid_at', $request->month)->selectRaw('sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->get();
-        }
-
+        $dailySaleStatistics = $order->selectRaw('date(paid_at) as date, sum(total_amount - refund_amount) as info, sum(amount - refund_number) as sold_count, sum(total_amount - refund_amount) as sold_value, sum((sold_price - purchase_price) * (amount - refund_number)) as sold_profit')->groupBy('date')->get();
         foreach ($dailySaleStatistics as $key => $value) {
             $value['info'] = '￥' . $value['info'];
             $value['data'] = [
@@ -108,12 +96,28 @@ class OrdersController extends Controller
             ];
             unset($value['sold_count'], $value['sold_value'], $value['sold_profit']);
         }
-//        return $order->whereYear('orders.paid_at', $request->year)->whereMonth('orders.paid_at', $request->month)->leftJoin('products', 'orders.product_id', '=', 'products.id')->selectRaw('products.id, products.title, products.image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->groupBy('orders.product_id')->get();
-//        return $order->whereYear('paid_at', $request->year)->whereMonth('paid_at', $request->month)->selectRaw('date(paid_at) as date, sum(amount - refund_number) as sold_count, sum(total_amount - refund_amount) as sold_value, sum((sold_price - purchase_price) * (amount - refund_number)) as sold_profit')->groupBy('date')->get();
+        return $dailySaleStatistics;
+    }
+
+    public function getStatistics(Request $request, Product $product, VendingMachine $vendingMachine)
+    {
+        if ($request->vendingMachineId) {
+            $productSaleStatistics = $vendingMachine->find($request->vendingMachineId)->vendingMachineAisles->leftJoin('orders', 'vending_machine_aisles.id', '=', 'orders.vending_machine_aisle_id')->leftJoin('products', 'orders.product_id', '=', 'products.id')->whereYear('orders.paid_at', $request->year)->whereMonth('orders.paid_at', $request->month)->selectRaw('products.id, products.title, products.image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->groupBy('products.id')->get();
+
+//            $totalStatistics = $order->where('vending_machine_id', $request->vendingMachineId)->whereYear('paid_at', $request->year)->whereMonth('paid_at', $request->month)->selectRaw('sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->get();
+        } else {
+            $productSaleStatistics = $product->leftJoin('orders', 'products.id', '=', 'orders.product_id')->where('products.on_sale', true)->whereYear('orders.paid_at', $request->year)->whereMonth('orders.paid_at', $request->month)->selectRaw('products.id, products.title, products.image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->groupBy('products.id')->orderBy('sold_count', 'asc')->get();
+
+//            $totalStatistics = $order->whereYear('paid_at', $request->year)->whereMonth('paid_at', $request->month)->selectRaw('sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->get();
+        }
+
+        foreach ($productSaleStatistics as $value) {
+            $value['image'] = config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $value['image'] : Storage::disk(config('admin.upload.disk'))->url($value['image']);
+        }
+
         return $this->response->array([
             'productSaleStatistics' => $productSaleStatistics,
-            'dailySaleStatistics' => $dailySaleStatistics,
-            'totalStatistics' => $totalStatistics,
+//            'totalStatistics' => $totalStatistics,
         ]);
     }
 

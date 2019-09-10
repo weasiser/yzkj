@@ -21,6 +21,7 @@ class VendingMachineAisleTransformer extends TransformerAbstract
             'product_id'         => $vendingMachineAisle->product_id,
             'preferential_price' => (float)$vendingMachineAisle->preferential_price,
             'final_price'        => (float)big_number($vendingMachineAisle->product->selling_price)->subtract($vendingMachineAisle->preferential_price)->getValue(),
+            'is_sold_out_checked' => $vendingMachineAisle->is_sold_out_checked,
 //            'created_at' => (string) $vendingMachineAisle->created_at,
 //            'updated_at' => (string) $vendingMachineAisle->updated_at,
         ];

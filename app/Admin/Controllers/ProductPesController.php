@@ -13,6 +13,11 @@ use Encore\Admin\Show;
 
 class ProductPesController extends AdminController
 {
+    protected $is_sold_out_checked = [
+        'on'  => ['value' => 1, 'text' => '已检查', 'color' => 'success'],
+        'off' => ['value' => 0, 'text' => '未检查', 'color' => 'danger'],
+    ];
+
     /**
      * Title for current resource.
      *
@@ -60,6 +65,8 @@ class ProductPesController extends AdminController
         $grid->column('production_date', __('生产日期'))->sortable();
         $grid->column('expiration_date', __('有效日期'))->sortable();
         $grid->column('stock', __('库存'))->editable()->sortable();
+        $grid->column('registered_stock', __('登记库存'))->editable()->sortable();
+        $grid->column('is_sold_out_checked', __('售完过期检查'))->switch($this->is_sold_out_checked);
         $grid->column('created_at', __('创建时间'));
         $grid->column('updated_at', __('更新时间'));
 
@@ -73,6 +80,10 @@ class ProductPesController extends AdminController
             });
             $filter->column(1/2, function ($filter) {
                 $filter->like('product.title', '商品名称');
+                $filter->in('is_sold_out_checked', '售完过期检查')->checkbox([
+                    false => '未检查',
+                    true => '已检查',
+                ]);
             });
 //            $filter->expand();
         });
@@ -87,6 +98,7 @@ class ProductPesController extends AdminController
             $create->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
             $create->text('expiration_date', '有效日期')->icon('fa-calendar')->required()->readonly()->placeholder('有效日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
             $create->integer('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存')->attribute(['style' => 'width: 50px']);
+            $create->integer('registered_stock', '登记库存')->readonly()->required()->rules('integer|min:1')->placeholder('登记库存')->attribute(['style' => 'width: 70px']);
         });
 
         $script = <<<EOT
@@ -105,12 +117,17 @@ class ProductPesController extends AdminController
       let this_expiration_date = (this_year+'-'+this_month+'-'+this_day)
       beforeDate.parents('.create-form').find('#expiration_date').val(this_expiration_date)
     })
+    $('.create-form').on('input', '#stock', function () {
+      $('#registered_stock').val($('#stock').val())
+    })
   })
 EOT;
 
         Admin::script($script);
 
         Admin::style('.quality_guarantee_period_note {margin-left: 10px;} span.select2-selection.select2-selection--single {width: 500px !important;}');
+
+        $grid->paginate(10);
 
         return $grid;
     }
@@ -154,6 +171,8 @@ EOT;
         $form->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
         $form->text('expiration_date', '有效日期')->icon('fa-calendar')->required()->placeholder('有效日期')->readonly()->attribute(['type' => 'date', 'style' => 'width: 150px']);
         $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存');
+        $form->number('registered_stock', '登记库存')->required()->rules('integer|min:1')->placeholder('登记库存');
+        $form->switch('is_sold_out_checked', '售完过期检查')->states($this->is_sold_out_checked)->default(false);
 
         $form->tools(function (Form\Tools $tools) {
             // 去掉`查看`按钮

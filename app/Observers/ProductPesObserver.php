@@ -27,7 +27,9 @@ class ProductPesObserver
         $productPes = $product->productPes;
         $product->min_expiration_date = $productPes->min('expiration_date');
         $total_stock = $productPes->sum('stock');
+        $total_registered_stock = $productPes->sum('registered_stock');
         $product->total_stock = $total_stock;
+        $product->total_registered_stock = $total_registered_stock;
         $product->warehouse_stock = $total_stock - $product->vending_machine_stock;
         $product->save();
     }

@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class VendingMachineAisle extends Model
 {
     protected $fillable = [
-        'ordinal', 'stock', 'max_stock', 'preferential_price', 'product_id', 'is_lead_rail', 'is_opened'
+        'ordinal', 'stock', 'max_stock', 'preferential_price', 'product_id', 'is_lead_rail', 'is_opened', 'is_sold_out_checked'
     ];
     protected $casts = [
         'is_lead_rail' => 'boolean',
-        'is_opened' => 'boolean'
+        'is_opened' => 'boolean',
+        'is_sold_out_checked' => 'boolean'
     ];
 
     public function vendingMachine()

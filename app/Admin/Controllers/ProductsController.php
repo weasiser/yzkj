@@ -98,6 +98,7 @@ class ProductsController extends Controller
         $grid->column('warehouse_stock', '公司库存')->sortable();
         $grid->column('vending_machine_stock', '售卖机库存')->sortable();
         $grid->total_stock('总库存')->sortable();
+        $grid->column('total_registered_stock', '登记库存')->sortable();
         $grid->sold_count('销量（件）')->sortable();
         $grid->sold_value('销售额')->sortable();
         $grid->sold_profit('利润')->sortable();
@@ -175,6 +176,8 @@ class ProductsController extends Controller
     {
         $form = new Form(new Product);
 
+        $form->model()->where('is_sold_out_checked', false);
+
 //        $headers = ['名称', '进货价', '销售价', '保质期（月）'];
 //        $tableRow = new TableRow();
 //        $tableRow->text('title', '名称')->required()->placeholder('名称');
@@ -194,10 +197,11 @@ class ProductsController extends Controller
 
         })->tab('日期库存', function ($form) {
 
-            $form->hasMany('productpes', '日期库存列表：', function (Form\NestedForm $form) {
+            $form->hasMany('productpeswithoutsoldoutchecked', '日期库存列表：', function (Form\NestedForm $form) {
                 $form->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
                 $form->text('expiration_date', '有效日期')->icon('fa-calendar')->required()->placeholder('有效日期')->readonly()->attribute(['type' => 'date', 'style' => 'width: 150px']);
                 $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存');
+                $form->number('registered_stock', '登记库存')->required()->rules('integer|min:1')->placeholder('登记库存');
                 $form->datetime('created_at', '创建时间')->disable()->placeholder('无需输入，自动生成');
             })->mode('table');
 

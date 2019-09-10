@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Product;
 use App\Models\VendingMachineAisle;
 use App\Transformers\ProductTransformer;
 use App\Transformers\VendingMachineAisleTransformer;
@@ -9,7 +10,7 @@ use Illuminate\Http\Request;
 
 class VendingMachineAislesController extends Controller
 {
-    public function update(VendingMachineAisle $vendingMachineAisle, Request $request, VendingMachineAisleTransformer $vendingMachineAisleTransformer, ProductTransformer $productTransformer)
+    public function update(VendingMachineAisle $vendingMachineAisle, Request $request, ProductTransformer $productTransformer)
     {
         if ($request->input('is_opened') === 'change') {
             $vendingMachineAisle->is_opened = !$vendingMachineAisle->is_opened;
@@ -33,6 +34,16 @@ class VendingMachineAislesController extends Controller
             $vendingMachineAisle->update();
             $product = $vendingMachineAisle->product;
             return $this->response->item($product, $productTransformer);
+        } elseif ($request->input('is_sold_out_checked') === 'change') {
+            $vendingMachineAisle->is_sold_out_checked = true;
+            $vendingMachineAisle->update();
+            $product = $vendingMachineAisle->product;
+            $vendingMachineAisles = $product->vendingMachineAisles;
+            $vendingMachineAislesChecked = $vendingMachineAisles->where('is_sold_out_checked', true);
+            if ($vendingMachineAisles->count() === $vendingMachineAislesChecked->count()) {
+                $product->productPesWithoutSoldOutChecked->first()->update(['is_sold_out_checked', true]);
+                $vendingMachineAislesChecked->update(['is_sold_out_checked', false]);
+            }
         }
 //        return $this->response->item($vendingMachineAisle, $vendingMachineAisleTransformer);
 //        return $this->response->array([

@@ -16,6 +16,7 @@ class Product extends Model
         'warehouse_stock',
         'vending_machine_stock',
         'total_stock',
+        'total_registered_stock',
         'min_expiration_date',
         'sold_count',
         'sold_value',
@@ -25,6 +26,11 @@ class Product extends Model
     public function productPes()
     {
         return $this->hasMany(ProductPes::class)->orderBy('production_date');
+    }
+
+    public function productPesWithoutSoldOutChecked()
+    {
+        return $this->hasMany(ProductPes::class)->orderBy('production_date')->where('is_sold_out_checked', false);
     }
 
 //    public function getImageAttribute($value)

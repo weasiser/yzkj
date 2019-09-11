@@ -15,7 +15,7 @@
       let this_month = complete(this_production_date.getMonth() + 1)
       let this_day = complete(this_production_date.getDate())
       let this_expiration_date = (this_year+'-'+this_month+'-'+this_day)
-      beforeDate.parents('.has-many-productpeswithoutsoldoutchecked-forms').find('.productpeswithoutsoldoutchecked.expiration_date').val(this_expiration_date)
+      beforeDate.parents('.has-many-productpeswithoutsoldoutchecked-form').find('.productpeswithoutsoldoutchecked.expiration_date').val(this_expiration_date)
     })
   })
 </script>

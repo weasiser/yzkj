@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Product;
 use App\Models\VendingMachineAisle;
 use App\Transformers\ProductTransformer;
-use App\Transformers\VendingMachineAisleTransformer;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class VendingMachineAislesController extends Controller
 {
@@ -41,8 +41,11 @@ class VendingMachineAislesController extends Controller
             $vendingMachineAisles = $product->vendingMachineAisles;
             $vendingMachineAislesChecked = $vendingMachineAisles->where('is_sold_out_checked', true);
             if ($vendingMachineAisles->count() === $vendingMachineAislesChecked->count()) {
-                $product->productPesWithoutSoldOutChecked->first()->update(['is_sold_out_checked', true]);
-                $vendingMachineAislesChecked->update(['is_sold_out_checked', false]);
+                $product->productPesWithoutSoldOutChecked->first()->update(['is_sold_out_checked' => true]);
+//                $vendingMachineAislesChecked->each->update(['is_sold_out_checked' => false]);
+                DB::table('vending_machine_aisles')->where('product_id', $product->id)->where('is_sold_out_checked', true)->update(['is_sold_out_checked' => false, 'updated_at' => Carbon::now()]);
+                $product->min_expiration_date = $product->productPesWithoutSoldOutChecked->min('expiration_date');
+                $product->update();
             }
         }
 //        return $this->response->item($vendingMachineAisle, $vendingMachineAisleTransformer);

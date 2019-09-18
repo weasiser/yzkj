@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Product;
 use App\Models\VendingMachineAisle;
 use App\Transformers\ProductTransformer;
 use Carbon\Carbon;
@@ -30,9 +31,13 @@ class VendingMachineAislesController extends Controller
             $vendingMachineAisle->is_lead_rail = !$vendingMachineAisle->is_lead_rail;
             $vendingMachineAisle->update();
         } elseif ($product_id = $request->input('product_id')) {
-            $vendingMachineAisle->product_id = $product_id;
-            $vendingMachineAisle->update();
-            $product = $vendingMachineAisle->product;
+            $productBefore = $vendingMachineAisle->product;
+            $product = Product::find($product_id);
+            $vendingMachineAisle->product()->associate($product);
+//            $vendingMachineAisle->product_id = $product_id;
+            $vendingMachineAisle->save();
+            $this->updateTotalVendingMachineStock($productBefore);
+            $this->updateTotalVendingMachineStock($product);
             return $this->response->item($product, $productTransformer);
         } elseif ($request->input('is_sold_out_checked') === 'change') {
             $vendingMachineAisle->is_sold_out_checked = true;
@@ -55,5 +60,14 @@ class VendingMachineAislesController extends Controller
         return $this->response->array([
             'updateResult' => 'success'
         ]);
+    }
+
+    protected function updateTotalVendingMachineStock($product)
+    {
+        $vendingMachineAisles = $product->vendingMachineAisles;
+        $vendingMachineStock = $vendingMachineAisles->sum('stock');
+        $product->vending_machine_stock = $vendingMachineStock;
+        $product->warehouse_stock = $product->total_stock - $vendingMachineStock;
+        $product->save();
     }
 }

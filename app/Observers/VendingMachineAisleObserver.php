@@ -25,7 +25,7 @@ class VendingMachineAisleObserver
      */
 //    public function updated(VendingMachineAisle $vendingMachineAisle)
 //    {
-//        //
+//        $this->updateTotalVendingMachineStock($vendingMachineAisle);
 //    }
 
     /**

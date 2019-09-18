@@ -10,6 +10,6 @@ class ProductsController extends Controller
 {
     public function index(Product $product, ProductTransformer $productTransformer)
     {
-        return $this->response->collection($product::all()->where('on_sale', '=', true), $productTransformer);
+        return $this->response->collection($product::where('on_sale', '=', true)->get(), $productTransformer);
     }
 }

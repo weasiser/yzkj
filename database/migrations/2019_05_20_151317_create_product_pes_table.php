@@ -17,7 +17,7 @@ class CreateProductPesTable extends Migration
             $table->bigIncrements('id');
             $table->date('production_date');
             $table->date('expiration_date');
-            $table->unsignedTinyInteger('stock');
+            $table->tinyInteger('stock');
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->timestamps();

@@ -45,7 +45,7 @@
         <td class="text-bold">
           {{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}
           <!-- 如果订单退款状态是已申请，则展示处理按钮 -->
-          @if($order->refund_status === \App\Models\Order::REFUND_STATUS_APPLIED)
+          @if($order->refund_status === \App\Models\Order::REFUND_STATUS_APPLIED || $order->refund_status === \App\Models\Order::REFUND_STATUS_PENDING)
             <button class="btn btn-sm btn-success col-sm-offset-1" id="btn-refund-agree">退款</button>
 {{--            <button class="btn btn-sm btn-danger" id="btn-refund-disagree">不同意</button>--}}
           @endif

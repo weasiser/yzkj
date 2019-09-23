@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Handlers\VendingMachineDeliverAndQuery;
 use App\Models\DeliverProductNotification;
 use App\Models\Order;
+use App\Services\RefundService;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class DeliverProductNotificationsController extends Controller
 {
-    public function deliverProductNotify(Request $request)
+    public function deliverProductNotify(Request $request, DeliverProductNotification $deliverProductNotification, RefundService $refundService)
     {
         $result = $request->input();
 
@@ -32,21 +33,22 @@ class DeliverProductNotificationsController extends Controller
 //                'json' => $result
 //            ]);
 
-            if (strlen($result['orderid']) === 22 && $result['goodslist'][0]['resultid'] === '1') {
+            if (strlen($result['orderid']) === 22) {
                 $orderNo = substr($result['orderid'], 0, 20);
                 $num = (int)ltrim(substr($result['orderid'], -2, 2), '0');
                 $order = Order::where('no', $orderNo)->first();
                 if ($order) {
+                    if ($result['goodslist'][0]['resultid'] === '1') {
 //                    $order->vendingMachineAisle->decreaseStock();
 //                    $order->product->productPes->where('stock', '>=', 1)->first()->decrement('stock', 1);
-                    $productPes = $order->product->productPes->where('stock', '>=', 1)->first();
-                    $productPes->update(['stock' => $productPes->stock - 1]);
-                    if ($num < $order->amount) {
-                        $num += 1;
-                        if ($num < 10) {
-                            $num = '0' . $num;
-                        }
-                        $orderNo .= $num;
+                        $productPes = $order->product->productPes->where('stock', '>=', 1)->first();
+                        $productPes->update(['stock' => $productPes->stock - 1]);
+                        if ($num < $order->amount) {
+                            $num += 1;
+                            if ($num < 10) {
+                                $num = '0' . $num;
+                            }
+                            $orderNo .= $num;
 
 //                    $http = new Client();
 //
@@ -73,16 +75,23 @@ class DeliverProductNotificationsController extends Controller
 //                        ]);
 //                    })->delay(now()->addSeconds(5));
 
-                        return app(VendingMachineDeliverAndQuery::class)->deliverProduct($result['machineId'], $orderNo, $result['goodslist'][0]['latticeId'], $result['goodslist'][0]['cabid'], $result['goodslist'][0]['cabtype']);
-                    } else {
-                        $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERED]);
-                        $vendingMachine = $order->vendingMachine;
-                        if ($vendingMachine->is_delivering) {
-                            $vendingMachine->is_delivering = false;
-                            $vendingMachine->update();
+                            return app(VendingMachineDeliverAndQuery::class)->deliverProduct($result['machineId'], $orderNo, $result['goodslist'][0]['latticeId'], $result['goodslist'][0]['cabid'], $result['goodslist'][0]['cabtype']);
+                        } else {
+                            $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERED]);
                         }
-                        return json_encode(array('result'=>'200', 'resultDesc'=>'Success'));
+                    } elseif ($result['goodslist'][0]['resultid'] === '2') {
+                        $order->update(['deliver_status' => Order::DELIVER_STATUS_TIMEOUT]);
+                        $this->refund($order, $deliverProductNotification, $refundService);
+                    } elseif ($result['goodslist'][0]['resultid'] === '3') {
+                        $order->update(['deliver_status' => Order::DELIVER_STATUS_FAILED]);
+                        $this->refund($order, $deliverProductNotification, $refundService);
                     }
+                    $vendingMachine = $order->vendingMachine;
+                    if ($vendingMachine->is_delivering) {
+                        $vendingMachine->is_delivering = false;
+                        $vendingMachine->update();
+                    }
+                    return json_encode(array('result'=>'200', 'resultDesc'=>'Success'));
                 } else {
                     return json_encode(array('result'=>'404', 'resultDesc'=>'Not Found'));
                 }
@@ -92,5 +101,11 @@ class DeliverProductNotificationsController extends Controller
         } else {
             return json_encode(array('result'=>'404', 'resultDesc'=>'Not Found'));
         }
+    }
+
+    protected function refund(Order $order, DeliverProductNotification $deliverProductNotification, RefundService $refundService)
+    {
+        $refundAmount = $order->amount - $deliverProductNotification->where('no', $order->no)->where('result', '1')->count();
+        $refundService->miniappRefund($order, $refundAmount);
     }
 }

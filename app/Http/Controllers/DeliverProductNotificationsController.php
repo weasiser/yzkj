@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class DeliverProductNotificationsController extends Controller
 {
-    public function deliverProductNotify(Request $request, DeliverProductNotification $deliverProductNotification, RefundService $refundService)
+    public function deliverProductNotify(Request $request, RefundService $refundService)
     {
         $result = $request->input();
 
@@ -81,10 +81,10 @@ class DeliverProductNotificationsController extends Controller
                         }
                     } elseif ($result['goodslist'][0]['resultid'] === '2') {
                         $order->update(['deliver_status' => Order::DELIVER_STATUS_TIMEOUT]);
-                        $this->refund($order, $deliverProductNotification, $refundService);
+                        $this->refund($num, $order, $refundService);
                     } elseif ($result['goodslist'][0]['resultid'] === '3') {
                         $order->update(['deliver_status' => Order::DELIVER_STATUS_FAILED]);
-                        $this->refund($order, $deliverProductNotification, $refundService);
+                        $this->refund($num, $order, $refundService);
                     }
                     $vendingMachine = $order->vendingMachine;
                     if ($vendingMachine->is_delivering) {
@@ -103,9 +103,9 @@ class DeliverProductNotificationsController extends Controller
         }
     }
 
-    protected function refund(Order $order, DeliverProductNotification $deliverProductNotification, RefundService $refundService)
+    protected function refund($num, Order $order, RefundService $refundService)
     {
-        $refundAmount = $order->amount - $deliverProductNotification->where('no', $order->no)->where('result', '1')->count();
+        $refundAmount = $order->amount - $num + 1;
         $refundService->miniappRefund($order, $refundAmount);
     }
 }

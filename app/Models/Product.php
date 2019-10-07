@@ -11,6 +11,8 @@ class Product extends Model
         'image',
         'buying_price',
         'selling_price',
+        'market_price',
+        'promotion_price',
         'quality_guarantee_period',
         'on_sale',
         'warehouse_stock',

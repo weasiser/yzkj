@@ -24,7 +24,7 @@ class OrdersController extends Controller
             $vendingMachine = VendingMachine::find($aisle->vending_machine_id);
             $product = Product::find($aisle->product_id);
 
-            $sold_price = big_number($product->selling_price)->subtract($aisle->preferential_price)->getValue();
+            $sold_price = big_number($product->selling_price)->subtract($aisle->preferential_price)->subtract($product->promotion_price)->getValue();
             $totalAmount = big_number($sold_price)->multiply($amount)->getValue();
 
             // 创建一个订单

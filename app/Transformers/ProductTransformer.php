@@ -17,6 +17,8 @@ class ProductTransformer extends TransformerAbstract
             'image'                    => config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $product->image : Storage::disk(config('admin.upload.disk'))->url($product->image),
             'buying_price'             => (float)$product->buying_price,
             'selling_price'            => (float)$product->selling_price,
+            'market_price'             => (float)$product->market_price,
+            'promotion_price'          => (float)$product->promotion_price,
             'quality_guarantee_period' => $product->quality_guarantee_period,
             'total_stock'              => $product->total_stock,
             'min_expiration_date'      => $product->min_expiration_date,

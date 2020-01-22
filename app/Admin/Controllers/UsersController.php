@@ -189,7 +189,7 @@ class UsersController extends Controller
 
         // 把查询出来的结果重新组装成 Laravel-Admin 需要的格式
         $result->setCollection($result->getCollection()->map(function (User $user) {
-            return ['id' => $user->id, 'text' => $user->nick_name];
+            return ['id' => $user->id, 'text' => $user->id . '    ' . $user->nick_name];
         }));
 
         return $result;

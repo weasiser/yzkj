@@ -10,6 +10,7 @@ class VendingMachine extends Model
         'name',
         'code',
         'address',
+        'warehouse_id',
         'iot_card_no',
         'is_opened',
         'cabinet_id',
@@ -27,5 +28,10 @@ class VendingMachine extends Model
     public function vendingMachineAisles()
     {
         return $this->hasMany(VendingMachineAisle::class)->orderBy('ordinal');
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
     }
 }

@@ -6,6 +6,7 @@ use App\Handlers\VendingMachineDeliverAndQuery;
 use App\Models\Product;
 use App\Models\VendingMachine;
 use App\Http\Controllers\Controller;
+use App\Models\Warehouse;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -105,10 +106,13 @@ class VendingMachinesController extends Controller
 
         $grid = new Grid(new VendingMachine);
 
+        $grid->model()->with(['warehouse']);
+
         $grid->id('ID')->sortable();
         $grid->name('名称')->editable();
         $grid->code('机器码')->editable();
         $grid->address('地址')->editable();
+        $grid->column('warehouse.name', '仓库')->label('primary');
         $grid->iot_card_no('物联卡号')->editable();
         $grid->cabinet_id('机柜 ID')->editable();
         $grid->cabinet_type('机柜类型')->editable();
@@ -140,6 +144,7 @@ class VendingMachinesController extends Controller
             });
             $filter->column(1/2, function ($filter) {
                 $filter->like('name', '名称');
+                $filter->in('warehouse_id', '仓库')->multipleSelect(Warehouse::all()->pluck('name', 'id'));
             });
 //            $filter->expand();
         });
@@ -194,6 +199,7 @@ class VendingMachinesController extends Controller
         $form->tab('售卖机信息', function ($form) {
 
             $form->text('name', '名称')->required()->placeholder('名称');
+            $form->select('warehouse_id', '仓库')->options(Warehouse::all()->pluck('name', 'id'))->required();
             $form->text('code', '机器码')->required()->placeholder('机器码')->icon('fa-braille');
             $form->text('address', '地址')->placeholder('地址')->icon('fa-map-marker');
             $form->text('iot_card_no', '物联卡号')->placeholder('物联卡号')->icon('fa-microchip');

@@ -68,6 +68,8 @@ $api->version('v1', [
                 ->name('api.user.put');
             $api->post('user', 'UsersController@me')
                 ->name('api.user.post');
+            $api->get('myWarehouses', 'UsersController@myWarehouses')
+                ->name('api.user.myWarehouses');
             // 创建订单
             $api->post('orders', 'OrdersController@store')
                 ->name('api.orders.store');
@@ -101,6 +103,9 @@ $api->version('v1', [
             // 出货
             $api->post('vendingMachine/deliver', 'VMDeliverAndQueryController@deliverProduct')
                 ->name('api.VMDeliverAndQuery.deliverProduct');
+            // 仓库列表
+            $api->get('warehouses', 'WarehousesController@index')
+                ->name('api.warehouses.index');
             // 售卖机列表
             $api->get('vendingMachines', 'VendingMachinesController@index')
                 ->name('api.vendingMachines.index');
@@ -131,8 +136,17 @@ $api->version('v1', [
             // 月内每天统计
             $api->get('getDailyStatistics', 'OrdersController@getDailyStatistics')
                 ->name('api.orders.getDailyStatistics');
+            // 信息
             $api->post('information', 'InformationController@store')
                 ->name('api.information.store');
+            $api->get('information/{information}', 'InformationController@show')
+                ->name('api.information.show');
+            $api->get('information', 'InformationController@index')
+                ->name('api.information.index');
+            $api->put('information/{information}', 'InformationController@update')
+                ->name('api.information.update');
+            $api->delete('information/{information}', 'InformationController@destroy')
+                ->name('api.information.destroy');
         });
     });
 });

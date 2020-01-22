@@ -18,4 +18,29 @@ class InformationController extends Controller
 
         return $this->response->item($information, $informationTransformer)->setStatusCode(201);
     }
+
+    public function show(Information $information, InformationTransformer $informationTransformer)
+    {
+        return $this->response->item($information, $informationTransformer);
+    }
+
+    public function index(Information $information, InformationTransformer $informationTransformer)
+    {
+        $informationList = $information->recent()->paginate(5);
+        return $this->response->paginator($informationList, $informationTransformer);
+    }
+
+    public function update(Information $information, InformationRequest $request, InformationTransformer $informationTransformer)
+    {
+        $this->authorize('own', $information);
+        $information->update($request->all());
+        return $this->response->item($information, $informationTransformer);
+    }
+
+    public function destroy(Information $information)
+    {
+        $this->authorize('own', $information);
+        $information->delete();
+        return $this->response->noContent();
+    }
 }

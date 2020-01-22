@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\Product;
 use App\Models\ProductPes;
+use App\Models\Warehouse;
 use Encore\Admin\Admin;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -58,10 +59,11 @@ class ProductPesController extends AdminController
     {
         $grid = new Grid(new ProductPes);
 
-        $grid->model()->with('product');
+        $grid->model()->with(['product', 'warehouse']);
 
         $grid->column('id', __('ID'))->sortable();
         $grid->column('product.title', __('商品名称'));
+        $grid->column('warehouse.name', '仓库')->label('primary');
         $grid->column('production_date', __('生产日期'))->sortable();
         $grid->column('expiration_date', __('有效日期'))->sortable();
         $grid->column('stock', __('库存'))->editable()->sortable();
@@ -77,6 +79,7 @@ class ProductPesController extends AdminController
 
         $grid->filter(function($filter){
             $filter->column(1/2, function ($filter) {
+                $filter->in('warehouse_id', '仓库')->multipleSelect(Warehouse::all()->pluck('name', 'id'));
             });
             $filter->column(1/2, function ($filter) {
                 $filter->like('product.title', '商品名称');
@@ -94,7 +97,8 @@ class ProductPesController extends AdminController
                 if ($product) {
                     return [$product->id => $product->title . '<span class="quality_guarantee_period_note">保质期：<span id="quality_guarantee_period">' . $product->quality_guarantee_period . '</span>个月</span>'];
                 }
-            })->ajax('/admin/api/products?qgp=1')->required()->attribute(['style' => 'width: 500px !important']);
+            })->ajax('/admin/api/products?qgp=1')->required();
+            $create->select('warehouse_id', '仓库')->options(Warehouse::all()->pluck('name', 'id'))->required();
             $create->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
             $create->text('expiration_date', '有效日期')->icon('fa-calendar')->required()->readonly()->placeholder('有效日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
             $create->integer('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存')->attribute(['style' => 'width: 50px']);
@@ -120,12 +124,13 @@ class ProductPesController extends AdminController
     $('.create-form').on('input', '#stock', function () {
       $('#registered_stock').val($('#stock').val())
     })
+    $('span.select2-selection.select2-selection--single').first().css('cssText','width: 400px !important')
   })
 EOT;
 
         Admin::script($script);
 
-        Admin::style('.quality_guarantee_period_note {margin-left: 10px;} span.select2-selection.select2-selection--single {width: 500px !important;}');
+        Admin::style('.quality_guarantee_period_note {margin-left: 10px;}');
 
         $grid->paginate(10);
 
@@ -168,6 +173,7 @@ EOT;
                 return [$product->id => $product->title . '<span class="quality_guarantee_period_note">保质期：<span id="quality_guarantee_period">' . $product->quality_guarantee_period . '</span>个月</span>'];
             }
         })->ajax('/admin/api/products?qgp=1')->required();
+        $form->select('warehouse_id', '仓库')->options(Warehouse::all()->pluck('name', 'id'))->required();
         $form->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
         $form->text('expiration_date', '有效日期')->icon('fa-calendar')->required()->placeholder('有效日期')->readonly()->attribute(['type' => 'date', 'style' => 'width: 150px']);
         $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存');
@@ -203,5 +209,12 @@ EOT;
         });
 
         return $form;
+    }
+
+    public function apiStock(Warehouse $warehouse)
+    {
+        $result = $warehouse->productPes;
+
+        return $result;
     }
 }

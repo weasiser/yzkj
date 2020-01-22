@@ -25,4 +25,18 @@ class UsersController extends Controller
         $user->update($attributes);
         return $this->response->item($user, $userTransformer);
     }
+
+    public function myWarehouses()
+    {
+        $user = $this->user();
+        $warehouses = $user->warehouses;
+        $myWarehouses = [];
+        foreach ($warehouses as $warehouse) {
+            $myWarehouses[] = $warehouse->id;
+        }
+        return $this->response->array([
+            'is_mobile_admin' => $user->is_mobile_admin,
+            'myWarehouses' => $myWarehouses,
+        ]);
+    }
 }

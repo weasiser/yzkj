@@ -31,24 +31,39 @@ class UpdateSoldCountValueProfit
         $order = $event->getOrder();
         $product = $order->product;
         $vendingMachine = $order->vendingMachine;
+        $warehouse = $vendingMachine->warehouse;
         if ($order->refund_status === Order::REFUND_STATUS_SUCCESS) {
-            $product->sold_count -= $order->refund_number;
-            $product->sold_value -= $order->refund_amount;
-            $product->sold_profit -= big_number($order->sold_price)->subtract($order->purchase_price)->multiply($order->refund_number)->getValue();
-            $vendingMachine->sold_count -= $order->refund_number;
-            $vendingMachine->sold_value -= $order->refund_amount;
-            $vendingMachine->sold_profit -= big_number($order->sold_price)->subtract($order->purchase_price)->multiply($order->refund_number)->getValue();
+            $sold_count = $order->refund_number;
+            $sold_value = $order->refund_amount;
+            $sold_profit = big_number($order->sold_price)->subtract($order->purchase_price)->multiply($order->refund_number)->getValue();
+            $product->sold_count -= $sold_count;
+            $product->sold_value -= $sold_value;
+            $product->sold_profit -= $sold_profit;
+            $vendingMachine->sold_count -= $sold_count;
+            $vendingMachine->sold_value -= $sold_value;
+            $vendingMachine->sold_profit -= $sold_profit;
+            $warehouse->sold_count -= $sold_count;
+            $warehouse->sold_value -= $sold_value;
+            $warehouse->sold_profit -= $sold_profit;
             $product->update();
             $vendingMachine->update();
+            $warehouse->update();
         } else {
-            $product->sold_count += $order->amount;
-            $product->sold_value += $order->total_amount;
-            $product->sold_profit += big_number($order->sold_price)->subtract($order->purchase_price)->multiply($order->amount)->getValue();
-            $vendingMachine->sold_count += $order->amount;
-            $vendingMachine->sold_value += $order->total_amount;
-            $vendingMachine->sold_profit += big_number($order->sold_price)->subtract($order->purchase_price)->multiply($order->amount)->getValue();
+            $sold_count = $order->amount;
+            $sold_value = $order->total_amount;
+            $sold_profit = big_number($order->sold_price)->subtract($order->purchase_price)->multiply($order->amount)->getValue();
+            $product->sold_count += $sold_count;
+            $product->sold_value += $sold_value;
+            $product->sold_profit += $sold_profit;
+            $vendingMachine->sold_count += $sold_count;
+            $vendingMachine->sold_value += $sold_value;
+            $vendingMachine->sold_profit += $sold_profit;
+            $warehouse->sold_count += $sold_count;
+            $warehouse->sold_value += $sold_value;
+            $warehouse->sold_profit += $sold_profit;
             $product->update();
             $vendingMachine->update();
+            $warehouse->update();
         }
     }
 }

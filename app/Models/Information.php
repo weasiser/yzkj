@@ -17,4 +17,9 @@ class Information extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function scopeRecent($query)
+    {
+        return $query->orderBy('id', 'desc');
+    }
 }

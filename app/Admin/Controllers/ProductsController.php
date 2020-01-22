@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\Product;
 use App\Http\Controllers\Controller;
+use App\Models\Warehouse;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -87,7 +88,7 @@ class ProductsController extends Controller
     protected function grid()
     {
         $grid = new Grid(new Product);
-//        $grid->model()->with('pes');
+        $grid->model();
 
         $grid->id('ID')->sortable();
         $grid->column('title', '名称')->editable();
@@ -97,20 +98,20 @@ class ProductsController extends Controller
         $grid->column('market_price', '市场价')->editable();
         $grid->column('promotion_price', '促销优惠')->editable()->sortable();
         $grid->quality_guarantee_period('保质期（月）')->editable()->sortable();
-        $grid->column('warehouse_stock', '公司库存')->sortable();
+        $grid->column('warehouse_stock', '仓库库存')->sortable();
         $grid->column('vending_machine_stock', '售卖机库存')->sortable();
         $grid->total_stock('总库存')->sortable();
         $grid->column('total_registered_stock', '登记库存')->sortable();
         $grid->sold_count('销量（件）')->sortable();
         $grid->sold_value('销售额')->sortable();
         $grid->sold_profit('利润')->sortable();
-        $grid->min_expiration_date('最小有效日期')->sortable()
-            ->expand(function ($model) {
-                $productPes = $model->productPes()->get()->map(function ($productPes) {
-                    return $productPes->only(['production_date', 'expiration_date', 'stock', 'created_at']);
-                });
-                return new Table(['生产日期', '有效日期', '库存', '创建时间'], $productPes->toArray());
-            });
+        $grid->min_expiration_date('最小有效日期')->sortable();
+//            ->expand(function ($model) {
+//                $productPes = $model->productPes()->get()->map(function ($productPes) {
+//                    return $productPes->only(['production_date', 'expiration_date', 'stock', 'created_at']);
+//                });
+//                return new Table(['生产日期', '有效日期', '库存', '创建时间'], $productPes->toArray());
+//            });
         $grid->on_sale('上下架')->switch($this->on_sale);
 
         $grid->actions(function ($actions) {
@@ -136,6 +137,7 @@ class ProductsController extends Controller
             });
             $filter->column(1/2, function ($filter) {
                 $filter->like('title', '名称');
+//                $filter->equal('productPes.warehouse_id', '仓库')->select(Warehouse::all()->pluck('name', 'id'));
             });
 //            $filter->expand();
         });
@@ -202,16 +204,19 @@ class ProductsController extends Controller
         })->tab('日期库存', function ($form) {
 
             $form->hasMany('productpeswithoutsoldoutchecked', '日期库存列表：', function (Form\NestedForm $form) {
+                $form->select('warehouse_id', '仓库')->options(Warehouse::all()->pluck('name', 'id'))->required();
                 $form->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
                 $form->text('expiration_date', '有效日期')->icon('fa-calendar')->required()->placeholder('有效日期')->readonly()->attribute(['type' => 'date', 'style' => 'width: 150px']);
-                $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存');
-                $form->number('registered_stock', '登记库存')->required()->rules('integer|min:1')->placeholder('登记库存');
+                $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存')->attribute(['style' => 'width: 50px']);
+                $form->number('registered_stock', '登记库存')->required()->rules('integer|min:1')->placeholder('登记库存')->attribute(['style' => 'width: 50px']);
                 $form->datetime('created_at', '创建时间')->disable()->placeholder('无需输入，自动生成');
             })->mode('table');
 
             $form->html(view('admin.utils.product_edit'));
 
         });
+
+//        $form->setWidth(8, 2);
 
 //        $form->rowtable('商品信息：', function ($table) {
 //            $table->row(function ($row) {

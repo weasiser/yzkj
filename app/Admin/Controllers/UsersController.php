@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Product;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\HasResourceActions;
@@ -9,6 +10,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
@@ -174,5 +176,22 @@ class UsersController extends Controller
         $form->switch('is_mobile_admin', '移动端管理员')->states($this->is_mobile_admin)->default(false);
 
         return $form;
+    }
+
+    public function apiIndex(Request $request)
+    {
+        // 用户输入的值通过 q 参数获取
+        $search = $request->input('q');
+        $result = User::query()
+            ->where('nick_name', 'like', '%'.$search.'%')
+            ->orWhere('id', $search)
+            ->paginate(10);
+
+        // 把查询出来的结果重新组装成 Laravel-Admin 需要的格式
+        $result->setCollection($result->getCollection()->map(function (User $user) {
+            return ['id' => $user->id, 'text' => $user->nick_name];
+        }));
+
+        return $result;
     }
 }

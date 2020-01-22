@@ -14,6 +14,7 @@ class UserTransformer extends TransformerAbstract
             'nickName' => $user->nick_name,
             'avatar'   => $user->avatar,
             'is_mobile_admin' => $user->is_mobile_admin,
+            'is_warehouse_manager' => $user->warehouses->count() ? true : false,
 //            'created_at' => $user->created_at->toDateTimeString(),
 //            'updated_at' => $user->updated_at->toDateTimeString(),
         ];

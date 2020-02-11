@@ -32,6 +32,10 @@ Route::group([
     $router->delete('vendingMachines/{id}', 'VendingMachinesController@destroy');
 
     $router->resource('productPes', ProductPesController::class);
+    $router->resource('articleCategories', ArticleCategoriesController::class);
+    $router->resource('articles', ArticlesController::class);
+    $router->post('articles/images/upload', 'ArticlesController@imageUpload')->name('articles.images.upload');
+
     $router->get('api/{id}/stock', 'ProductPesController@apiStock');
 
     $router->resource('vendingMachineAisles', VendingMachineAislesController::class);

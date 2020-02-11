@@ -26,3 +26,4 @@ Encore\Admin\Form::forget(['map', 'editor']);
 //Admin::js('https://lib.baomitu.com/font-awesome/5.8.2/js/v4-shims.min.js');
 
 Admin::script('$("ul.nav.navbar-nav:first").css("display", "none")');
+\Encore\Admin\Form::extend('ckeditor', \ghost\CKEditor\Editor::class);

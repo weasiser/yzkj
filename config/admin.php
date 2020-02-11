@@ -114,7 +114,7 @@ return [
 
         'guards' => [
             'admin' => [
-                'driver'   => 'session',
+                'driver' => 'session',
                 'provider' => 'admin',
             ],
         ],
@@ -122,7 +122,7 @@ return [
         'providers' => [
             'admin' => [
                 'driver' => 'eloquent',
-                'model'  => Encore\Admin\Auth\Database\Administrator::class,
+                'model' => Encore\Admin\Auth\Database\Administrator::class,
             ],
         ],
 
@@ -156,7 +156,7 @@ return [
         // Image and file upload path under the disk above.
         'directory' => [
             'image' => 'images',
-            'file'  => 'files',
+            'file' => 'files',
         ],
     ],
 
@@ -190,11 +190,11 @@ return [
         'menu_model' => Encore\Admin\Auth\Database\Menu::class,
 
         // Pivot table for table above.
-        'operation_log_table'    => 'admin_operation_log',
+        'operation_log_table' => 'admin_operation_log',
         'user_permissions_table' => 'admin_user_permissions',
-        'role_users_table'       => 'admin_role_users',
+        'role_users_table' => 'admin_role_users',
         'role_permissions_table' => 'admin_role_permissions',
-        'role_menu_table'        => 'admin_role_menu',
+        'role_menu_table' => 'admin_role_menu',
     ],
 
     /*
@@ -351,6 +351,84 @@ return [
     |
     */
     'extensions' => [
+        'ckeditor' => [
 
+            //Set to false if you want to disable this extension
+            'enable' => true,
+
+            // Editor configuration
+            'config' => [
+                "simpleUpload" => [
+                    "uploadUrl" => '/admin/articles/images/upload'
+                ],
+//                "fontSize" => [
+//                    "options" =>[
+//                        9,
+//                        11,
+//                        13,
+//                        'default',
+//                        17,
+//                        19,
+//                        21
+//                    ]
+//                ],
+                "toolbar" => [
+                    "items" => [
+                        'heading',
+                        '|',
+                        'undo',
+                        'redo',
+                        '|',
+                        'bold',
+                        'italic',
+                        'link',
+                        'bulletedList',
+                        'numberedList',
+                        '|',
+                        'indent',
+                        'outdent',
+                        '|',
+                        'imageUpload',
+                        'blockQuote',
+                        'insertTable',
+                        'mediaEmbed',
+                        '|',
+                        'fontBackgroundColor',
+                        'fontColor',
+                        'fontSize',
+                        'fontFamily',
+                    ]
+                ],
+                'image' => [
+                    'toolbar' => [
+                        'imageTextAlternative',
+                        'imageStyle:full',
+                        'imageStyle:side'
+                    ],
+//                    'resizeUnit'=>'px',
+                    'styles' => [
+                        // This option is equal to a situation where no style is applied.
+                        'full',
+
+                        'side',
+                        // This represents an image aligned to the left.
+                        'alignLeft',
+                        'alignCenter',
+                        // This represents an image aligned to the right.
+                        'alignRight'
+                    ]
+                ],
+
+                "table" => [
+                    'contentToolbar' => [
+                        'tableColumn',
+                        'tableRow',
+                        'mergeTableCells'
+                    ]
+                ],
+                'language' => 'zh-cn',
+
+            ]
+        ]
     ],
 ];

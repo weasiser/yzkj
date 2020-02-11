@@ -88,7 +88,6 @@ class ProductsController extends Controller
     protected function grid()
     {
         $grid = new Grid(new Product);
-        $grid->model();
 
         $grid->id('ID')->sortable();
         $grid->column('title', '名称')->editable();
@@ -204,7 +203,7 @@ class ProductsController extends Controller
         })->tab('日期库存', function ($form) {
 
             $form->hasMany('productpeswithoutsoldoutchecked', '日期库存列表：', function (Form\NestedForm $form) {
-                $form->select('warehouse_id', '仓库')->options(Warehouse::all()->pluck('name', 'id'))->required();
+                $form->select('warehouse_id', '仓库')->options(Warehouse::all()->pluck('name', 'id'));
                 $form->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
                 $form->text('expiration_date', '有效日期')->icon('fa-calendar')->required()->placeholder('有效日期')->readonly()->attribute(['type' => 'date', 'style' => 'width: 150px']);
                 $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存')->attribute(['style' => 'width: 50px']);

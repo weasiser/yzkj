@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fadef8d4802bdb83f36bc7a2e232ae15",
+    "content-hash": "4a507338b57ab2adb37b4f3e29a59999",
     "packages": [
         {
             "name": "aliyuncs/oss-sdk-php",
@@ -116,12 +116,12 @@
             "version": "v0.11.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/barryvdh/laravel-cors.git",
+                "url": "https://github.com/fruitcake/laravel-cors.git",
                 "reference": "03492f1a3bc74a05de23f93b94ac7cc5c173eec9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-cors/zipball/03492f1a3bc74a05de23f93b94ac7cc5c173eec9",
+                "url": "https://api.github.com/repos/fruitcake/laravel-cors/zipball/03492f1a3bc74a05de23f93b94ac7cc5c173eec9",
                 "reference": "03492f1a3bc74a05de23f93b94ac7cc5c173eec9",
                 "shasum": "",
                 "mirrors": [
@@ -1259,6 +1259,67 @@
             "time": "2019-09-03T16:45:42+00:00"
         },
         {
+            "name": "ghost/ckeditor",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Ghost-die/ckeditor.git",
+                "reference": "7df095aa4ff2f931e1dac3d36b1b4362289dd538"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Ghost-die/ckeditor/zipball/7df095aa4ff2f931e1dac3d36b1b4362289dd538",
+                "reference": "7df095aa4ff2f931e1dac3d36b1b4362289dd538",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "encore/laravel-admin": "~1.6",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "ghost\\CKEditor\\CKEditorServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ghost\\CKEditor\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "ghost",
+                    "email": "ghost@ghost-ai.com"
+                }
+            ],
+            "description": "CKEditor 5 集成laravel-admin",
+            "homepage": "https://github.com/Ghost-die/ckeditor.git",
+            "keywords": [
+                "CKEditor",
+                "ckeditor5",
+                "editor",
+                "extension",
+                "laravel-admin"
+            ],
+            "time": "2020-01-06T12:18:43+00:00"
+        },
+        {
             "name": "guzzlehttp/guzzle",
             "version": "6.3.3",
             "source": {
@@ -1630,16 +1691,16 @@
         },
         {
             "name": "intervention/image",
-            "version": "2.5.0",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "39eaef720d082ecc54c64bf54541c55f10db546d"
+                "reference": "abbf18d5ab8367f96b3205ca3c89fb2fa598c69e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/39eaef720d082ecc54c64bf54541c55f10db546d",
-                "reference": "39eaef720d082ecc54c64bf54541c55f10db546d",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/abbf18d5ab8367f96b3205ca3c89fb2fa598c69e",
+                "reference": "abbf18d5ab8367f96b3205ca3c89fb2fa598c69e",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1702,7 +1763,7 @@
                 "thumbnail",
                 "watermark"
             ],
-            "time": "2019-06-24T14:06:31+00:00"
+            "time": "2019-11-02T09:15:47+00:00"
         },
         {
             "name": "jakub-onderka/php-console-color",
@@ -2460,6 +2521,7 @@
                 "bcmath",
                 "math"
             ],
+            "abandoned": "brick/math",
             "time": "2017-02-16T16:54:46+00:00"
         },
         {
@@ -2845,16 +2907,16 @@
         },
         {
             "name": "overtrue/wechat",
-            "version": "4.2.4",
+            "version": "4.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/overtrue/wechat.git",
-                "reference": "556d27748a5aed94148f5a5e7aff1946134b3b59"
+                "reference": "511f0fe01100b7ddb09302d2a86baa69ded1913e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/overtrue/wechat/zipball/556d27748a5aed94148f5a5e7aff1946134b3b59",
-                "reference": "556d27748a5aed94148f5a5e7aff1946134b3b59",
+                "url": "https://api.github.com/repos/overtrue/wechat/zipball/511f0fe01100b7ddb09302d2a86baa69ded1913e",
+                "reference": "511f0fe01100b7ddb09302d2a86baa69ded1913e",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2913,7 +2975,7 @@
                 "weixin",
                 "weixin-sdk"
             ],
-            "time": "2019-09-25T04:04:16+00:00"
+            "time": "2019-09-25T07:05:54+00:00"
         },
         {
             "name": "paragonie/random_compat",

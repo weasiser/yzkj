@@ -4,7 +4,7 @@
 namespace App\Handlers;
 
 use Illuminate\Support\Facades\Storage;
-use Image;
+use Intervention\Image\Facades\Image;
 use Str;
 
 class ImageUploadHandler
@@ -16,12 +16,17 @@ class ImageUploadHandler
     {
         // 构建存储的文件夹规则，值如：uploads/images/avatars/2017/09/21
         // 文件夹切割能让查找效率更高。
+        $tmp_folder = "uploads/admin/images";
         $oss_folder = "images/$folder/" . date("Y/m/d", time());
-        $folder_name = "uploads/" . $oss_folder;
+        $folder_name = "uploads/admin/" . $oss_folder;
 
         // 文件具体存储的物理路径，`public_path()` 获取的是 `public` 文件夹的物理路径。
         // 值如：/home/vagrant/Code/larabbs/public/uploads/images/avatars/201709/21/
-        $upload_path = public_path() . '/' . $folder_name;
+        if (config('filesystems.default') === 'oss') {
+            $upload_path = public_path() . '/' . $tmp_folder;
+        } else {
+            $upload_path = public_path() . '/' . $folder_name;
+        }
 
         // 获取文件的后缀名，因图片从剪贴板里黏贴时后缀名为空，所以此处确保后缀一直存在
         $extension = strtolower($file->getClientOriginalExtension()) ?: 'png';
@@ -66,10 +71,10 @@ class ImageUploadHandler
         $image = Image::make($file_path);
 
         // 进行大小调整的操作
-        $image->resize($max_width, null, function ($constraint) {
+        $image->widen($max_width, function ($constraint) {
 
             // 设定宽度是 $max_width，高度等比例缩放
-            $constraint->aspectRatio();
+//            $constraint->aspectRatio();
 
             // 防止裁图时图片尺寸变大
             $constraint->upsize();
@@ -82,6 +87,6 @@ class ImageUploadHandler
     protected function uploadToOss($path, $file)
     {
         $disk = Storage::disk('oss');
-        $disk->put($path, $file);
+        $disk->put($path, file_get_contents($file));
     }
 }

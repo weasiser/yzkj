@@ -53,10 +53,10 @@ class ImageUploadHandler
         if (config('filesystems.default') === 'oss') {
             $path = $oss_folder . '/' . $filename;
             $localFilePathName = $upload_path . '/' . $filename;
-            $this->uploadToOss($path, $localFilePathName);
+            $oss_path = $this->uploadToOss($path, $localFilePathName);
             unlink($localFilePathName);
             return [
-                'path' => config('filesystems.disks.oss.cdnDomain') . '/' . $path
+                'path' => config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $path : $oss_path
             ];
         }
 
@@ -88,5 +88,6 @@ class ImageUploadHandler
     {
         $disk = Storage::disk('oss');
         $disk->put($path, file_get_contents($file));
+        return $disk->getUrl($path);
     }
 }

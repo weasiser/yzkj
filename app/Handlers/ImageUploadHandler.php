@@ -5,6 +5,7 @@ namespace App\Handlers;
 
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use msonowal\LaravelTinify\Services\TinifyService;
 use Str;
 
 class ImageUploadHandler
@@ -43,11 +44,16 @@ class ImageUploadHandler
         // 将图片移动到我们的目标存储路径中
         $file->move($upload_path, $filename);
 
-        // 如果限制了图片宽度，就进行裁剪
-        if ($max_width && $extension != 'gif') {
+        $width = getimagesize($upload_path . '/' . $filename)[0];
 
-            // 此类中封装的函数，用于裁剪图片
-            $this->reduceSize($upload_path . '/' . $filename, $max_width);
+        // 如果限制了图片宽度，就进行裁剪
+        if ($max_width && $width > $max_width && $extension !== 'gif') {
+            if ($extension === 'png') {
+                $this->tinifyApi($upload_path . '/' . $filename, $max_width);
+            } else {
+                // 此类中封装的函数，用于裁剪图片
+                $this->reduceSize($upload_path . '/' . $filename, $max_width);
+            }
         }
 
         if (config('filesystems.default') === 'oss') {
@@ -89,5 +95,14 @@ class ImageUploadHandler
         $disk = Storage::disk('oss');
         $disk->put($path, file_get_contents($file));
         return $disk->getUrl($path);
+    }
+
+    protected function tinifyApi($file_path_name, $max_width)
+    {
+        $tinify = new TinifyService();
+        $tinify->fromFile($file_path_name)->resize(array(
+            "method" => "scale",
+            "width" => $max_width
+        ))->toFile($file_path_name);
     }
 }

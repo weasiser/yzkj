@@ -30,7 +30,7 @@ class ImageUploadHandler
         }
 
         // 获取文件的后缀名，因图片从剪贴板里黏贴时后缀名为空，所以此处确保后缀一直存在
-        $extension = strtolower($file->getClientOriginalExtension()) ?: 'png';
+        $extension = strtolower($file->getClientOriginalExtension()) ?: 'jpg';
 
         // 拼接文件名，加前缀是为了增加辨析度，前缀可以是相关数据模型的 ID
         // 值如：1_1493521050_7BVc9v9ujP.png
@@ -48,12 +48,12 @@ class ImageUploadHandler
 
         // 如果限制了图片宽度，就进行裁剪
         if ($max_width && $width > $max_width && $extension !== 'gif') {
-            if ($extension === 'png') {
-                $this->tinifyApi($upload_path . '/' . $filename, $max_width);
-            } else {
+//            if ($extension === 'png') {
+//                $this->tinifyApi($upload_path . '/' . $filename, $max_width);
+//            } else {
                 // 此类中封装的函数，用于裁剪图片
-                $this->reduceSize($upload_path . '/' . $filename, $max_width);
-            }
+                $this->reduceSize($upload_path . '/' . $filename, $max_width, $extension);
+//            }
         }
 
         if (config('filesystems.default') === 'oss') {
@@ -71,10 +71,14 @@ class ImageUploadHandler
         ];
     }
 
-    public function reduceSize($file_path, $max_width)
+    public function reduceSize($file_path, $max_width, $extension)
     {
         // 先实例化，传参是文件的磁盘物理路径
         $image = Image::make($file_path);
+
+        if ($extension === 'png') {
+            $image = $image->encode('jpg', 100);
+        }
 
         // 进行大小调整的操作
         $image->resize($max_width, null, function ($constraint) {

@@ -162,7 +162,7 @@ class ArticlesController extends AdminController
         // 判断是否有上传文件，并赋值给 $file
         if ($file = $request->upload) {
             // 保存图片到本地
-            $result = $imageUploadHandler->save($file, 'articles', 'admin', 480);
+            $result = $imageUploadHandler->save($file, 'articles', 'admin', 416);
             // 图片保存成功的话
             if ($result) {
                 $data = [

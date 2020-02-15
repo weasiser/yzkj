@@ -71,10 +71,10 @@ class ImageUploadHandler
         $image = Image::make($file_path);
 
         // 进行大小调整的操作
-        $image->widen($max_width, function ($constraint) {
+        $image->resize($max_width, null, function ($constraint) {
 
             // 设定宽度是 $max_width，高度等比例缩放
-//            $constraint->aspectRatio();
+            $constraint->aspectRatio();
 
             // 防止裁图时图片尺寸变大
             $constraint->upsize();

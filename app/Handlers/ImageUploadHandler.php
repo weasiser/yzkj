@@ -5,7 +5,7 @@ namespace App\Handlers;
 
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
-use msonowal\LaravelTinify\Services\TinifyService;
+//use msonowal\LaravelTinify\Services\TinifyService;
 use Str;
 
 class ImageUploadHandler

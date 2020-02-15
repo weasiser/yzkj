@@ -34,36 +34,44 @@ class ImageUploadHandler
 
         // 拼接文件名，加前缀是为了增加辨析度，前缀可以是相关数据模型的 ID
         // 值如：1_1493521050_7BVc9v9ujP.png
-        $filename = $file_prefix . '_' . time() . '_' . Str::random(10) . '.' . $extension;
+        $file_name_without_extension = $file_prefix . '_' . time() . '_' . Str::random(10);
+        $filename = $file_name_without_extension . '.' . $extension;
 
         // 如果上传的不是图片将终止操作
         if (!in_array($extension, $this->allowed_ext)) {
             return false;
         }
 
+        $file_path_name = $upload_path . '/' . $filename;
+
         // 将图片移动到我们的目标存储路径中
         $file->move($upload_path, $filename);
 
-        $width = getimagesize($upload_path . '/' . $filename)[0];
+        if (config('filesystems.default') === 'oss') {
+            $path = $oss_folder . '/' . $filename;
+            $localFilePathName = $file_path_name;
+            $oss_path = $this->uploadToOss($path, $localFilePathName);
+            unlink($localFilePathName);
+            return [
+                'path' => config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $path : $oss_path
+            ];
+        }
+
+//        if ($extension === 'png') {
+//            $this->transform_image($file_path_name, 'jpeg', $upload_path . '/' . $file_name_without_extension . '.jpeg');
+//            $file_path_name = $upload_path . '/' . $file_name_without_extension . '.jpeg';
+//        }
+
+        $width = getimagesize($file_path_name)[0];
 
         // 如果限制了图片宽度，就进行裁剪
         if ($max_width && $width > $max_width && $extension !== 'gif') {
 //            if ($extension === 'png') {
 //                $this->tinifyApi($upload_path . '/' . $filename, $max_width);
 //            } else {
-                // 此类中封装的函数，用于裁剪图片
-                $this->reduceSize($upload_path . '/' . $filename, $max_width, $extension);
+                //此类中封装的函数，用于裁剪图片
+                $this->reduceSize($file_path_name, $max_width, $extension);
 //            }
-        }
-
-        if (config('filesystems.default') === 'oss') {
-            $path = $oss_folder . '/' . $filename;
-            $localFilePathName = $upload_path . '/' . $filename;
-            $oss_path = $this->uploadToOss($path, $localFilePathName);
-            unlink($localFilePathName);
-            return [
-                'path' => config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $path : $oss_path
-            ];
         }
 
         return [
@@ -76,9 +84,9 @@ class ImageUploadHandler
         // 先实例化，传参是文件的磁盘物理路径
         $image = Image::make($file_path);
 
-        if ($extension === 'png') {
-            $image->encode('jpg', 100);
-        }
+//        if ($extension === 'png') {
+//            $image->encode('jpg', 100);
+//        }
 
         // 进行大小调整的操作
         $image->resize($max_width, null, function ($constraint) {
@@ -101,12 +109,66 @@ class ImageUploadHandler
         return $disk->getUrl($path);
     }
 
-    protected function tinifyApi($file_path_name, $max_width)
-    {
-        $tinify = new TinifyService();
-        $tinify->fromFile($file_path_name)->resize(array(
-            "method" => "scale",
-            "width" => $max_width
-        ))->toFile($file_path_name);
-    }
+//    protected function tinifyApi($file_path_name, $max_width)
+//    {
+//        $tinify = new TinifyService();
+//        $tinify->fromFile($file_path_name)->resize(array(
+//            "method" => "scale",
+//            "width" => $max_width
+//        ))->toFile($file_path_name);
+//    }
+
+    /**
+     * 图片格式转换
+     * @param string $image_path 文件路径或url
+     * @param string $to_ext 待转格式，支持png,gif,jpeg,wbmp,webp,xbm
+     * @param null|string $save_path 存储路径，null则返回二进制内容，string则返回true|false
+     * @return boolean|string $save_path是null则返回二进制内容，是string则返回true|false
+     * @throws Exception
+     * @author klinson <klinson@163.com>
+     */
+//    protected function transform_image($image_path, $to_ext = 'jpeg', $save_path = null)
+//    {
+//        if (!in_array($to_ext, ['png', 'gif', 'jpeg', 'wbmp', 'webp', 'xbm'])) {
+//            throw new \Exception('unsupport transform image to ' . $to_ext);
+//        }
+//        switch (exif_imagetype($image_path)) {
+//            case IMAGETYPE_GIF :
+//                $img = imagecreatefromgif($image_path);
+//                break;
+//            case IMAGETYPE_JPEG :
+//            case IMAGETYPE_JPEG2000:
+//                $img = imagecreatefromjpeg($image_path);
+//                break;
+//            case IMAGETYPE_PNG:
+//                $img = imagecreatefrompng($image_path);
+//                break;
+//            case IMAGETYPE_BMP:
+//            case IMAGETYPE_WBMP:
+//                $img = imagecreatefromwbmp($image_path);
+//                break;
+//            case IMAGETYPE_XBM:
+//                $img = imagecreatefromxbm($image_path);
+//                break;
+//            case IMAGETYPE_WEBP: //(从 PHP 7.1.0 开始支持)
+//                $img = imagecreatefromwebp($image_path);
+//                break;
+//            default :
+//                throw new \Exception('Invalid image type');
+//        }
+//        $function = 'image' . $to_ext;
+//        if ($save_path) {
+//            return $function($img, $save_path, 100);
+//        } else {
+//            $tmp = __DIR__ . '/' . uniqid() . '.' . $to_ext;
+//            if ($function($img, $tmp)) {
+//                $content = file_get_contents($tmp);
+//                unlink($tmp);
+//                return $content;
+//            } else {
+//                unlink($tmp);
+//                throw new \Exception('the file ' . $tmp . ' can not write');
+//            }
+//        }
+//    }
 }

@@ -77,7 +77,7 @@ class ImageUploadHandler
         $image = Image::make($file_path);
 
         if ($extension === 'png') {
-            $image = $image->encode('jpg', 100);
+            $image->encode('jpg', 100);
         }
 
         // 进行大小调整的操作

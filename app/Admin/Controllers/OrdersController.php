@@ -52,7 +52,9 @@ class OrdersController extends AdminController
         $grid->column('no', __('订单号'));
         $grid->column('user.nick_name', __('用户昵称'));
         $grid->column('product.title', __('商品名称'));
-        $grid->column('product.image', __('缩略图'))->image(config('filesystems.disks.oss.cdnDomain'), 50, 50);
+        $grid->column('product.image', __('缩略图'))->display(function ($image) {
+            return config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $image . '-adminProductList' : '/' . $image;
+        })->image('', 50, 50);
 //        $grid->column('product.image', __('商品图片'))->image(config('filesystems.disks.oss.cdnDomain'), 40, 40);
         $grid->column('vendingMachine.name', __('售卖机名称'));
         $grid->column('vendingMachineAisle.ordinal', __('货道号'));

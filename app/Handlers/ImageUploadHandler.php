@@ -53,7 +53,7 @@ class ImageUploadHandler
             $oss_path = $this->uploadToOss($path, $localFilePathName);
             unlink($localFilePathName);
             return [
-                'path' => config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $path : $oss_path
+                'path' => config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $path . '-article' : $oss_path . '-article'
             ];
         }
 

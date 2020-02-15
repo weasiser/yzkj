@@ -90,7 +90,9 @@ class ProductsController extends Controller
 
         $grid->id('ID')->sortable();
         $grid->column('title', '名称')->editable();
-        $grid->image('缩略图')->image(config('filesystems.disks.oss.cdnDomain'), 50, 50);
+        $grid->column('image', '缩略图')->display(function ($image) {
+            return config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $image . '-adminProductList' : '/' . $image;
+        })->image('', 50, 50);
         $grid->buying_price('进货价')->editable();
         $grid->selling_price('销售价')->editable();
         $grid->column('market_price', '市场价')->editable();

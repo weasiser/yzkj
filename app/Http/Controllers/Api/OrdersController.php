@@ -172,7 +172,7 @@ class OrdersController extends Controller
 //        }
 
         foreach ($productSaleStatistics as $value) {
-            $value['image'] = config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $value['image'] : Storage::disk(config('admin.upload.disk'))->url($value['image']);
+            $value['image'] = config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $value['image'] . '-product' : Storage::disk(config('admin.upload.disk'))->url($value['image']) . '-product';
             if ($value['sold_count'] === null) {
                 $value['sold_count'] = '0';
                 $value['sold_value'] = '0.00';

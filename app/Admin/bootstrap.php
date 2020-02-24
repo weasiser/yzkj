@@ -27,3 +27,5 @@ Encore\Admin\Form::forget(['map', 'editor']);
 
 Admin::script('$("ul.nav.navbar-nav:first").css("display", "none")');
 \Encore\Admin\Form::extend('ckeditor', \ghost\CKEditor\Editor::class);
+
+//Encore\Admin\Form::extend('image', \App\Admin\Extensions\Form\CdnImage::class); // 重新注册新的 Image 组件

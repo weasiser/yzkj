@@ -9,11 +9,17 @@ class Article extends Model
     protected $fillable = [
         'title',
         'author',
+        'banner',
         'body',
     ];
 
     public function articleCategory()
     {
         return $this->belongsTo(ArticleCategory::class);
+    }
+
+    public function scopeRecent($query)
+    {
+        return $query->orderBy('id', 'desc');
     }
 }

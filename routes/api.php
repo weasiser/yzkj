@@ -55,6 +55,10 @@ $api->version('v1', [
         // 查询是否在线
         $api->get('vendingMachine/query', 'VMDeliverAndQueryController@queryMachineInfo')
             ->name('api.VMDeliverAndQuery.queryMachineInfo');
+        $api->get('articleCategories', 'ArticleCategoriesController@index')
+            ->name('api.articleCategories.index');
+        $api->get('articles', 'ArticlesController@index')
+            ->name('api.articles.index');
 
         // 需要 token 验证的接口
         $api->group(['middleware' => 'api.auth'], function($api) {
@@ -147,6 +151,9 @@ $api->version('v1', [
                 ->name('api.information.update');
             $api->delete('information/{information}', 'InformationController@destroy')
                 ->name('api.information.destroy');
+
+            $api->get('articles/{article}', 'ArticlesController@show')
+                ->name('api.articles.show');
         });
     });
 });

@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 
 class VendingMachineTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['vendingMachineAisles'];
+    protected $availableIncludes = ['vendingMachineAisles', 'warehouse'];
 
     public function transform(VendingMachine $vendingMachine)
     {

@@ -10,6 +10,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use Ichynul\RowTable\TableRow;
 use Illuminate\Http\Request;
 
 class ArticlesController extends AdminController
@@ -130,8 +131,16 @@ class ArticlesController extends AdminController
         $form = new Form(new Article);
 
         $form->text('title', __('标题'))->required();
-        $form->text('author', __('作者'));
-        $form->select('article_category_id', '分类')->options(ArticleCategory::all()->pluck('name', 'id'))->required();
+        $form->rowtable('', function ($table) {
+            $table->row(function (TableRow $row) {
+                $row->text('author', '作者');
+                $row->select('article_category_id', '分类')->options(ArticleCategory::all()->pluck('name', 'id'))->required();
+            });
+            $table->useDiv(true);
+        });
+        $form->image('banner', '横幅图片')->required()->move('images/articles/banners/' . date("Y/m/d", time()));
+//        $form->text('author', __('作者'));
+//        $form->select('article_category_id', '分类')->options(ArticleCategory::all()->pluck('name', 'id'))->required();
 //        $form->number('article_category_id', __('Article category id'));
 //        $form->textarea('body', __('Body'));
         $form->ckeditor('body', '正文');

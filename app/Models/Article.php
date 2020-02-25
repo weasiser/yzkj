@@ -18,6 +18,11 @@ class Article extends Model
         return $this->belongsTo(ArticleCategory::class);
     }
 
+    public function articleComments()
+    {
+        return $this->hasMany(ArticleComment::class);
+    }
+
     public function scopeRecent($query)
     {
         return $query->orderBy('id', 'desc');

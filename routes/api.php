@@ -59,6 +59,10 @@ $api->version('v1', [
             ->name('api.articleCategories.index');
         $api->get('articles', 'ArticlesController@index')
             ->name('api.articles.index');
+        $api->get('articles/{article}', 'ArticlesController@show')
+            ->name('api.articles.show');
+        $api->get('articles/{article}/articleComments', 'ArticlesController@articleCommentsIndex')
+            ->name('api.articles.commnets.index');
 
         // 需要 token 验证的接口
         $api->group(['middleware' => 'api.auth'], function($api) {
@@ -152,8 +156,12 @@ $api->version('v1', [
             $api->delete('information/{information}', 'InformationController@destroy')
                 ->name('api.information.destroy');
 
-            $api->get('articles/{article}', 'ArticlesController@show')
-                ->name('api.articles.show');
+            // 发布评论
+            $api->post('articles/{article}/articleComments', 'ArticleCommentsController@store')
+                ->name('api.articles.comments.store');
+            // 删除评论
+            $api->delete('articles/{article}/articleComments/{articleComment}', 'ArticleCommentsController@destroy')
+                ->name('api.articles.comments.destroy');
         });
     });
 });

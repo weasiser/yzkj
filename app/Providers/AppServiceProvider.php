@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Article;
+use App\Models\ArticleComment;
 use App\Models\ProductPes;
 use App\Models\VendingMachineAisle;
+use App\Observers\ArticleCommentObserver;
+use App\Observers\ArticleObserver;
 use App\Observers\ProductPesObserver;
 use App\Observers\VendingMachineAisleObserver;
 use Illuminate\Support\ServiceProvider;
@@ -62,5 +66,7 @@ class AppServiceProvider extends ServiceProvider
 
         ProductPes::observe(ProductPesObserver::class);
         VendingMachineAisle::observe(VendingMachineAisleObserver::class);
+        Article::observe(ArticleObserver::class);
+        ArticleComment::observe(ArticleCommentObserver::class);
     }
 }

@@ -11,6 +11,10 @@ class ArticleCommentsController extends Controller
 {
     public function store(ArticleCommentRequest $request, Article $article, ArticleComment $articleComment, ArticleCommentTransformer $articleCommentTransformer)
     {
+        $checkResult = $this->checkText($request->input('content'));
+        if ($checkResult['errcode'] !== 0) {
+            return $checkResult;
+        }
         $articleComment->fill($request->all());
         $articleComment->article()->associate($article);
         $articleComment->user()->associate($this->user());
@@ -29,5 +33,14 @@ class ArticleCommentsController extends Controller
         $articleComment->delete();
 
         return $this->response->noContent();
+    }
+
+    protected function checkText($content)
+    {
+        $miniProgram = \EasyWeChat::miniProgram();
+
+        $result = $miniProgram->content_security->checkText($content);
+
+        return $result;
     }
 }

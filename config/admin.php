@@ -449,6 +449,13 @@ return [
                         'alignCenter',
                         // This represents an image aligned to the right.
                         'alignRight'
+                    ],
+                    'upload' => [
+                        'types' => [
+                            'jpeg',
+                            'png',
+                            'gif'
+                        ]
                     ]
                 ],
 

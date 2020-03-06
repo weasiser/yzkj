@@ -9,8 +9,11 @@ use Illuminate\Http\Request;
 
 class ArticlesController extends Controller
 {
-    public function index(Article $article, ArticleTransformer $articleTransformer)
+    public function index(Request $request, Article $article, ArticleTransformer $articleTransformer)
     {
+        if ($articleCategoryId = $request->input('articleCategoryId')) {
+            $article = $article->where('article_category_id', $articleCategoryId);
+        }
         $articleList = $article->recent()->paginate(10);
         return $this->response->paginator($articleList, $articleTransformer);
     }

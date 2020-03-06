@@ -199,7 +199,7 @@ class ProductsController extends Controller
             $form->currency('promotion_price', '促销优惠')->rules('numeric')->placeholder('促销优惠')->symbol('<i class="fa fa-rmb fa-fw"></i>');
             $form->number('quality_guarantee_period', '保质期（月）')->required()->rules('integer|min:1')->placeholder('保质期（月）')->default(0);
             $form->switch('on_sale', '上下架')->states($this->on_sale)->default(true);
-            $form->image('image', '图片')->required();
+            $form->image('image', '图片')->attribute('accept', 'image/gif, image/jpeg, image/png')->required();
 
         })->tab('日期库存', function ($form) {
 

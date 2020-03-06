@@ -138,12 +138,14 @@ class ArticlesController extends AdminController
             });
             $table->useDiv(true);
         });
-        $form->image('banner', '横幅图片')->required()->move('images/articles/banners/' . date("Y/m/d", time()));
+        $form->image('banner', '横幅图片')->attribute('accept', 'image/gif, image/jpeg, image/png')->required()->move('images/articles/banners/' . date("Y/m/d", time()));
 //        $form->text('author', __('作者'));
 //        $form->select('article_category_id', '分类')->options(ArticleCategory::all()->pluck('name', 'id'))->required();
 //        $form->number('article_category_id', __('Article category id'));
 //        $form->textarea('body', __('Body'));
-        $form->ckeditor('body', '正文');
+        $form->ckeditor('body', '正文')->rules('required', [
+            'required' => '正文不能为空'
+        ]);
 //        $form->number('comment_count', __('Comment count'));
 //        $form->number('visit_count', __('Visit count'));
 

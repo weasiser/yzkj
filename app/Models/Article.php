@@ -27,4 +27,9 @@ class Article extends Model
     {
         return $query->orderBy('id', 'desc');
     }
+
+    public function visits()
+    {
+        return visits($this);
+    }
 }

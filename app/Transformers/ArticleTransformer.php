@@ -22,6 +22,7 @@ class ArticleTransformer extends TransformerAbstract
             'big_banner'              => config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $article->banner . '-article' : Storage::disk(config('admin.upload.disk'))->url($article->banner),
             'body'                => $article->body,
             'comment_count'       => $article->comment_count,
+            'visits' => $article->visits()->count(),
             'visit_count'         => $article->visit_count,
             'created_at'          => (string) $article->created_at,
             'updated_at'          => (string) $article->updated_at,

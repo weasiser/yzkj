@@ -7,7 +7,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Supported Egnines: "redis", "eloquent"
-    | Connection Name: see config/database.php 
+    | Connection Name: see config/database.php
     |
     */
     'engine' => 'redis',
@@ -66,7 +66,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Global Ignore Recording 
+    | Global Ignore Recording
     |--------------------------------------------------------------------------
     |
     | stop recording specifc items (can be any of these: 'country', 'refer', 'periods', 'operatingSystem', 'language')

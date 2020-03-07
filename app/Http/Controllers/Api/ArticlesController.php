@@ -20,6 +20,7 @@ class ArticlesController extends Controller
 
     public function show(Article $article, ArticleTransformer $articleTransformer)
     {
+        $article->visits()->increment();
         return $this->response->item($article, $articleTransformer);
     }
 

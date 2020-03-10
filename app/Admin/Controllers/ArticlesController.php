@@ -78,7 +78,7 @@ class ArticlesController extends AdminController
 //        $grid->column('visit_count', __('阅读数'))->sortable();
         $grid->column('阅读数')->display(function () {
             return $this->visits()->count();
-        })->sortable();
+        });
         $grid->column('created_at', __('创建时间'))->sortable();
         $grid->column('updated_at', __('更新时间'))->sortable();
 

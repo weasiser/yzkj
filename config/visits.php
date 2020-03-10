@@ -62,7 +62,7 @@ return [
     | Ignore counting crawlers visits or not
     |
     */
-    'ignore_crawlers' => true,
+    'ignore_crawlers' => false,
 
     /*
     |--------------------------------------------------------------------------

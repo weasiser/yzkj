@@ -62,7 +62,7 @@ $api->version('v1', [
         $api->get('articles/{article}', 'ArticlesController@show')
             ->name('api.articles.show');
         $api->get('articles/{article}/articleComments', 'ArticlesController@articleCommentsIndex')
-            ->name('api.articles.commnets.index');
+            ->name('api.articles.comment.index');
 
         // 需要 token 验证的接口
         $api->group(['middleware' => 'api.auth'], function($api) {
@@ -120,6 +120,9 @@ $api->version('v1', [
             // 出货状态查询
             $api->get('queryDeliverStatus', 'VMDeliverAndQueryController@queryDeliverStatus')
                 ->name('api.queryDeliverStatus');
+            // 售卖机第三方接口状态查询
+            $api->get('queryVendingMachineApiStatus', 'VMDeliverAndQueryController@queryVendingMachineApiStatus')
+                ->name('api.queryVendingMachineApiStatus');
             // 订单正在出货
 //            $api->post('orders/{order}/delivering', 'OrdersController@delivering')
 //                ->name('api.orders.delivering');

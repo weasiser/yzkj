@@ -76,16 +76,28 @@ class DeliverProductNotificationsController extends Controller
 //                        ]);
 //                    })->delay(now()->addSeconds(5));
 
-                            return app(VendingMachineDeliverAndQuery::class)->deliverProduct($result['machineId'], $orderNo, $result['goodslist'][0]['latticeId'], $result['goodslist'][0]['cabid'], $result['goodslist'][0]['cabtype']);
+//                            return app(VendingMachineDeliverAndQuery::class)->deliverProduct($result['machineId'], $orderNo, $result['goodslist'][0]['latticeId'], $result['goodslist'][0]['cabid'], $result['goodslist'][0]['cabtype']);
+                            $result = app(VendingMachineDeliverAndQuery::class)->deliverProduct($result['machineId'], $orderNo, $result['goodslist'][0]['latticeId'], $result['goodslist'][0]['cabid'], $result['goodslist'][0]['cabtype']);
+                            if ($result['result'] === '200') {
+                                return json_encode(array('result'=>'200', 'resultDesc'=>'Success'));
+                            } else {
+                                $extra = $order->extra;
+                                $extra['deliver_failed_code'] = $result;
+                                $order->update([
+                                    'deliver_status' => Order::DELIVER_STATUS_FAILED,
+                                    'extra' => $extra
+                                ]);
+                                $this->refund($num, $order);
+                            }
                         } else {
                             $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERED]);
                         }
                     } elseif ($result['goodslist'][0]['resultid'] === '2') {
                         $order->update(['deliver_status' => Order::DELIVER_STATUS_TIMEOUT]);
-                        $this->refund($num, $order, $refundService);
+                        $this->refund($num, $order);
                     } elseif ($result['goodslist'][0]['resultid'] === '3') {
                         $order->update(['deliver_status' => Order::DELIVER_STATUS_FAILED]);
-                        $this->refund($num, $order, $refundService);
+                        $this->refund($num, $order);
                     }
                     $vendingMachine = $order->vendingMachine;
                     if ($vendingMachine->is_delivering) {
@@ -104,8 +116,9 @@ class DeliverProductNotificationsController extends Controller
         }
     }
 
-    protected function refund($num, Order $order, RefundService $refundService)
+    protected function refund($num, Order $order)
     {
+        $refundService = app(RefundService::class);
         $refundAmount = $order->amount - $num + 1;
         $refundService->miniappRefund($order, $refundAmount);
     }

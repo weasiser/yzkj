@@ -2448,16 +2448,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.64",
+            "version": "1.0.65",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "d13c43dbd4b791f815215959105a008515d1a2e0"
+                "reference": "8f17b3ba67097aafb8318cd5c553b1acf7c891c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/d13c43dbd4b791f815215959105a008515d1a2e0",
-                "reference": "d13c43dbd4b791f815215959105a008515d1a2e0",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/8f17b3ba67097aafb8318cd5c553b1acf7c891c8",
+                "reference": "8f17b3ba67097aafb8318cd5c553b1acf7c891c8",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2534,7 +2534,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2020-02-05T18:14:17+00:00"
+            "time": "2020-03-08T18:53:20+00:00"
         },
         {
             "name": "league/fractal",
@@ -6850,16 +6850,16 @@
         },
         {
             "name": "yansongda/pay",
-            "version": "v2.9.0",
+            "version": "v2.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yansongda/pay.git",
-                "reference": "e2169c69b2bc9235149991005381fdf06164c7e7"
+                "reference": "5089870215181e5ea6e492debb5b070fc9fb69d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yansongda/pay/zipball/e2169c69b2bc9235149991005381fdf06164c7e7",
-                "reference": "e2169c69b2bc9235149991005381fdf06164c7e7",
+                "url": "https://api.github.com/repos/yansongda/pay/zipball/5089870215181e5ea6e492debb5b070fc9fb69d2",
+                "reference": "5089870215181e5ea6e492debb5b070fc9fb69d2",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -6875,8 +6875,8 @@
                 "ext-openssl": "*",
                 "ext-simplexml": "*",
                 "php": ">=7.1.3",
-                "symfony/event-dispatcher": "^4.0",
-                "symfony/http-foundation": "^4.0",
+                "symfony/event-dispatcher": "^4.0 || ^5.0",
+                "symfony/http-foundation": "^4.0 || ^5.0",
                 "yansongda/supports": "^2.0"
             },
             "require-dev": {
@@ -6906,7 +6906,7 @@
                 "pay",
                 "wechat"
             ],
-            "time": "2020-02-15T04:37:46+00:00"
+            "time": "2020-03-09T07:43:22+00:00"
         },
         {
             "name": "yansongda/supports",

@@ -6,6 +6,7 @@ use App\Events\OrderPaidOrRefunded;
 use App\Handlers\VendingMachineDeliverAndQuery;
 use App\Models\Order;
 use App\Models\VendingMachine;
+use App\Services\RefundService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -38,7 +39,9 @@ class PaymentNotificationsController extends Controller
 
         $this->isDeliveringChange($order->vendingMachine);
 
-        $this->deliverProduct($order);
+        dispatch(function () use ($order) {
+            $this->deliverProduct($order);
+        });
 
         return app('wxpay')->success();
     }
@@ -74,7 +77,9 @@ class PaymentNotificationsController extends Controller
 
         $this->isDeliveringChange($order->vendingMachine);
 
-        $this->deliverProduct($order);
+        dispatch(function () use ($order) {
+            $this->deliverProduct($order);
+        });
 
         return app('alipay')->success();
     }
@@ -116,7 +121,23 @@ class PaymentNotificationsController extends Controller
         $vendingMachine = $order->vendingMachine;
         $ordinal = $order->vendingMachineAisle->ordinal;
         $orderNo = $order->no . '01';
-        app(VendingMachineDeliverAndQuery::class)->deliverProduct($vendingMachine->code, $orderNo, $ordinal, $vendingMachine->cabinet_id, $vendingMachine->cabinet_type);
+        $result = app(VendingMachineDeliverAndQuery::class)->deliverProduct($vendingMachine->code, $orderNo, $ordinal, $vendingMachine->cabinet_id, $vendingMachine->cabinet_type);
+        if ($result['result'] === '200') {
+            return;
+        } else {
+            if ($vendingMachine->is_delivering) {
+                $vendingMachine->is_delivering = false;
+                $vendingMachine->update();
+            }
+            $extra = $order->extra;
+            $extra['deliver_failed_code'] = $result;
+            $order->update([
+                'deliver_status' => Order::DELIVER_STATUS_FAILED,
+                'extra' => $extra
+            ]);
+            $this->refund($order);
+            return;
+        }
     }
 
     protected function isDeliveringChange(VendingMachine $vendingMachine)
@@ -134,5 +155,12 @@ class PaymentNotificationsController extends Controller
     protected function afterPaidOrRefunded(Order $order)
     {
         event(new OrderPaidOrRefunded($order));
+    }
+
+    protected function refund(Order $order)
+    {
+        $refundService = app(RefundService::class);
+        $refundAmount = $order->amount;
+        $refundService->miniappRefund($order, $refundAmount);
     }
 }

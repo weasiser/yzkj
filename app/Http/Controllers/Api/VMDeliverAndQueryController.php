@@ -78,4 +78,9 @@ class VMDeliverAndQueryController extends Controller
             ]);
         }
     }
+
+    public function queryVendingMachineApiStatus()
+    {
+        return app(VendingMachineDeliverAndQuery::class)->getAccessToken();
+    }
 }

@@ -92,8 +92,6 @@ class VendingMachineDeliverAndQuery
 
         $result = json_decode($response->getBody(), true);
 
-        dd($result);
-
         if ($result['result'] === '406') {
             $token = $this->getAccessToken();
             if ($token['result'] === '200') {

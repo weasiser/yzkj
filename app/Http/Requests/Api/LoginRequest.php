@@ -2,16 +2,16 @@
 
 namespace App\Http\Requests\Api;
 
-class VerificationCodeRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     public function rules()
     {
         return [
             'phone' => [
                 'required',
-                'regex:' . config('app.phone_regex'),
-                'unique:users'
-            ]
+                'regex:' . config('app.phone_regex')
+            ],
+            'password' => 'required|string|min:6',
         ];
     }
 
@@ -19,6 +19,7 @@ class VerificationCodeRequest extends FormRequest
     {
         return [
             'phone' => '手机号码',
+            'password' => '密码',
         ];
     }
 }

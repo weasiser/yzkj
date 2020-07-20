@@ -6,6 +6,7 @@ use Alipay\AlipayRequestFactory;
 use Alipay\AopClient;
 use Alipay\Key\AlipayKeyPair;
 use App\Http\Requests\Api\AuthorizationRequest;
+use App\Http\Requests\Api\LoginRequest;
 use App\Models\User;
 use App\Transformers\UserTransformer;
 use Auth;
@@ -76,6 +77,25 @@ class AuthorizationsController extends Controller
     {
         $token = Auth::guard('api')->refresh();
         return $this->respondWithToken($token);
+    }
+
+    public function login(LoginRequest $request)
+    {
+        $credentials['phone'] = $request->phone;
+        $credentials['password'] = $request->password;
+
+        // 验证用户名和密码是否正确
+        if (!auth('api')->once($credentials)) {
+            return $this->response->errorUnauthorized('手机号码或密码错误');
+        }
+
+        // 获取对应的用户
+        $user = auth('api')->getUser();
+
+        // 为对应用户创建 JWT
+        $token = auth('api')->login($user);
+
+        return $this->respondWithToken($token)->setStatusCode(201);
     }
 
 //    public function destroy()

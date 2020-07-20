@@ -158,7 +158,7 @@ return [
         Illuminate\Redis\RedisServiceProvider::class,
         Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
         Illuminate\Session\SessionServiceProvider::class,
-        Illuminate\Translation\TranslationServiceProvider::class,
+        Overtrue\LaravelLang\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
@@ -230,8 +230,8 @@ return [
 
     ],
 
-
-
     'order_ttl' => 60,
+
+    'phone_regex' => '/^(?:\+?86)?1(?:3\d{3}|5[^4\D]\d{2}|8\d{3}|7(?:[235-8]\d{2}|4(?:0\d|1[0-2]|9\d))|9[0-35-9]\d{2}|66\d{2})\d{6}$/',
 
 ];

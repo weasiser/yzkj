@@ -48,6 +48,9 @@ $api->version('v1', [
         // 用户注册
         $api->post('users', 'UsersController@store')
             ->name('api.users.store');
+        // 用户登录
+        $api->post('login', 'AuthorizationsController@login')
+            ->name('api.authorizations.login');
     });
 
     $api->group([
@@ -77,6 +80,8 @@ $api->version('v1', [
             $api->post('authorizations/aliToken', 'AuthorizationsController@aliappReplaceToken')
                 ->name('api.authorizations.aliappReplaceToken');
             // 当前登录用户信息
+            $api->get('user', 'UsersController@userInfo')
+                ->name('api.user.info');
             $api->patch('user', 'UsersController@me')
                 ->name('api.user.patch');
             $api->put('user', 'UsersController@me')

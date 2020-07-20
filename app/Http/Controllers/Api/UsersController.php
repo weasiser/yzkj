@@ -9,6 +9,7 @@ use App\Transformers\UserTransformer;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Auth;
 
 class UsersController extends Controller
 {
@@ -26,6 +27,12 @@ class UsersController extends Controller
         }
 
         $user->update($attributes);
+        return $this->response->item($user, $userTransformer);
+    }
+
+    public function userInfo(UserTransformer $userTransformer)
+    {
+        $user = $this->user();
         return $this->response->item($user, $userTransformer);
     }
 
@@ -64,6 +71,17 @@ class UsersController extends Controller
         // 清除验证码缓存
         Cache::store('redis')->forget($request->verification_key);
 
-        return $this->response->created();
+        $token = Auth::guard('api')->fromUser($user);
+
+        return $this->respondWithToken($token)->setStatusCode(201);
+    }
+
+    protected function respondWithToken($token)
+    {
+        return $this->response->array([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60
+        ]);
     }
 }

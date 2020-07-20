@@ -88,9 +88,9 @@ class UsersController extends Controller
     {
         $grid = new Grid(new User);
 
-        $grid->id('ID');
+        $grid->id('ID')->sortable();
 //        $grid->name('用户名');
-//        $grid->phone('手机号');
+        $grid->column('phone', '手机号码');
 //        $grid->email('邮箱');
         $grid->nick_name('昵称');
         $grid->avatar('头像')->image('', 50, 50);
@@ -130,6 +130,7 @@ class UsersController extends Controller
 
         $grid->filter(function($filter){
             $filter->column(1/2, function ($filter) {
+                $filter->like('phone', '手机号码');
             });
             $filter->column(1/2, function ($filter) {
                 $filter->like('nick_name', '昵称');

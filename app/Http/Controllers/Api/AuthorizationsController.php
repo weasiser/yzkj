@@ -98,11 +98,11 @@ class AuthorizationsController extends Controller
         return $this->respondWithToken($token)->setStatusCode(201);
     }
 
-//    public function destroy()
-//    {
-//        Auth::guard('api')->logout();
-//        return $this->response->noContent();
-//    }
+    public function destroy()
+    {
+        Auth::guard('api')->logout();
+        return $this->response->noContent();
+    }
 
     protected function respondWithToken($token)
     {

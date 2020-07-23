@@ -39,8 +39,8 @@ $api->version('v1', [
         $api->post('authorizations/current', 'AuthorizationsController@update')
             ->name('api.authorizations.update');
         // 删除token
-//        $api->delete('authorizations/current', 'AuthorizationsController@destroy')
-//            ->name('api.authorizations.destroy');
+        $api->delete('authorizations/current', 'AuthorizationsController@destroy')
+            ->name('api.authorizations.destroy');
 
         // 短信验证码
         $api->post('verificationCodes', 'VerificationCodesController@store')

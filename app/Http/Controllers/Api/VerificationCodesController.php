@@ -17,7 +17,7 @@ class VerificationCodesController extends Controller
         if (!app()->environment('production')) {
             $code = '123456';
         } else {
-            // 生成4位随机数，左侧补0
+            // 生成6位随机数，左侧补0
             $code = str_pad(random_int(1, 999999), 6, 0, STR_PAD_LEFT);
 
             try {
@@ -29,7 +29,7 @@ class VerificationCodesController extends Controller
                 ]);
             } catch (\Overtrue\EasySms\Exceptions\NoGatewayAvailableException $exception) {
                 $message = $exception->getException('aliyun')->getMessage();
-                abort(500, $message ?: '短信发送异常');
+                return $this->response->errorInternal($message ?: '短信发送异常');
             }
         }
 

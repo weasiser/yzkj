@@ -12,7 +12,7 @@ class ArticleCommentRequest extends FormRequest
     public function rules()
     {
         return [
-            'content' => 'required|min:1',
+            'content' => 'required|max:140',
         ];
     }
 }

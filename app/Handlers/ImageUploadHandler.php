@@ -13,7 +13,7 @@ class ImageUploadHandler
     // 只允许以下后缀名的图片文件上传
     protected $allowed_ext = ["png", "jpg", "gif", 'jpeg'];
 
-    public function save($file, $folder, $file_prefix, $max_width = false)
+    public function save($user, $file, $folder, $file_prefix, $file_processing_rule_name='', $max_width = false, $delete_path='')
     {
         // 构建存储的文件夹规则，值如：uploads/images/avatars/2017/09/21
         // 文件夹切割能让查找效率更高。
@@ -51,9 +51,13 @@ class ImageUploadHandler
             $path = $oss_folder . '/' . $filename;
             $localFilePathName = $file_path_name;
             $oss_path = $this->uploadToOss($path, $localFilePathName);
+            if ($delete_path) {
+                $this->deleteFromOss($delete_path);
+            }
             unlink($localFilePathName);
             return [
-                'path' => config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $path . '-article' : $oss_path . '-article'
+                'path' => $path,
+                'full_path' => config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $path . $file_processing_rule_name : $oss_path . $file_processing_rule_name
             ];
         }
 
@@ -107,6 +111,12 @@ class ImageUploadHandler
         $disk = Storage::disk('oss');
         $disk->put($path, file_get_contents($file));
         return $disk->getUrl($path);
+    }
+
+    protected function deleteFromOss($path)
+    {
+        $disk = Storage::disk('oss');
+        return $disk->delete($path);
     }
 
 //    protected function tinifyApi($file_path_name, $max_width)

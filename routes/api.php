@@ -177,6 +177,11 @@ $api->version('v1', [
             // 删除评论
             $api->delete('articles/{article}/articleComments/{articleComment}', 'ArticleCommentsController@destroy')
                 ->name('api.articles.comments.destroy');
+
+            $api->patch('users/info', 'UsersController@update')
+                ->name('api.users.info.update');
+            $api->post('users/avatar', 'UsersController@replaceAvatar')
+                ->name('api.users.avatar.replace');
         });
     });
 });

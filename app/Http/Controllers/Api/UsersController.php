@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Handlers\ImageUploadHandler;
+use App\Http\Requests\Api\AvatarRequest;
 use App\Http\Requests\Api\LoginAuthorizationRequest;
 use App\Http\Requests\Api\UserRequest;
 use App\Models\User;
@@ -74,6 +76,30 @@ class UsersController extends Controller
         $token = Auth::guard('api')->fromUser($user);
 
         return $this->respondWithToken($token)->setStatusCode(201);
+    }
+
+    public function update(UserRequest $request, UserTransformer $userTransformer)
+    {
+        $user = $this->user();
+
+        $attributes = $request->only(['nick_name']);
+
+        $user->update($attributes);
+
+        return $this->response->item($user, $userTransformer);
+    }
+
+    public function replaceAvatar(AvatarRequest $request, ImageUploadHandler $imageUploadHandler, UserTransformer $userTransformer)
+    {
+        $user = $this->user();
+
+        if ($file = $request->avatar) {
+            $result = $imageUploadHandler->save($file, 'avatar', $user->id, '', false, $user->avatar);
+            $user->avatar = $result['path'];
+            $user->save();
+        }
+
+        return $this->response->item($user, $userTransformer);
     }
 
     protected function respondWithToken($token)

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 //use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Str;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
@@ -76,5 +77,37 @@ class User extends Authenticatable implements JWTSubject
     public function warehouses()
     {
         return $this->belongsToMany(Warehouse::class, 'warehouse_managers', 'user_id', 'warehouse_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        // 监听模型创建事件，在写入数据库之前触发
+        static::creating(function ($model) {
+            // 如果模型的 nick_name 字段为空
+            if (!$model->nick_name) {
+                // 调用 findAvailableNickName 生成昵称
+                $model->nick_name = static::findAvailableNickName();
+                // 如果生成失败，则终止创建用户
+                if (!$model->nick_name) {
+                    return false;
+                }
+            }
+        });
+    }
+
+    public static function findAvailableNickName()
+    {
+        for ($i = 0; $i < 10; $i++) {
+            // 随机生成 6 位的数字
+            $nickName = uniqid('yz_');
+            // 判断是否已经存在
+            if (!static::query()->where('nick_name', $nickName)->exists()) {
+                return $nickName;
+            }
+        }
+        \Log::warning('find nick name failed');
+
+        return false;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Events\OrderPaidOrRefunded;
 use App\Http\Requests\Admin\RefundRequest;
+use App\Jobs\MoreActionForOrderRefund;
 use App\Models\Order;
 
 class RefundService
@@ -42,14 +43,14 @@ class RefundService
                         'refund_number' => $refundAmount,
                     ]);
                 } else {
+                    $extra = $order->extra;
+                    $extra['return_msg'] = $result->return_msg;
+                    $extra['err_code'] = $result->err_code;
+                    $extra['err_code_des'] = $result->err_code_des;
                     $order->update([
                         'refund_no' => $refundNo,
                         'refund_status' => Order::REFUND_STATUS_FAILED,
-                        'extra' => [
-                            'return_msg' => $result->return_msg,
-                            'err_code' => $result->err_code,
-                            'err_code_des' => $result->err_code_des,
-                        ],
+                        'extra' => $extra,
                     ]);
                 }
                 break;
@@ -65,17 +66,14 @@ class RefundService
                 // 根据支付宝的文档，如果返回值里有 sub_code 字段说明退款失败
                 if ($ret->sub_code) {
                     // 将退款失败的保存存入 extra 字段
-//                    $extra = $order->extra;
-//                    $extra['refund_failed_code'] = $ret->sub_code;
-//                    $extra['refund_failed_msg'] = $ret->sub_msg;
+                    $extra = $order->extra;
+                    $extra['err_code'] = $ret->sub_code;
+                    $extra['err_code_des'] = $ret->sub_msg;
                     // 将订单的退款状态标记为退款失败
                     $order->update([
                         'refund_no' => $refundNo,
                         'refund_status' => Order::REFUND_STATUS_FAILED,
-                        'extra' => [
-                            'err_code' => $ret->sub_code,
-                            'err_code_des' => $ret->sub_msg,
-                        ],
+                        'extra' => $extra,
                     ]);
                 } else {
                     // 将订单的退款状态标记为退款成功并保存退款订单号
@@ -87,6 +85,7 @@ class RefundService
                     ]);
 
                     $this->afterRefunded($order);
+                    MoreActionForOrderRefund::dispatch($order);
                 }
                 break;
             default:

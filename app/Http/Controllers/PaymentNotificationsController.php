@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\OrderPaidOrRefunded;
 use App\Handlers\VendingMachineDeliverAndQuery;
+use App\Jobs\MoreActionForOrderRefund;
 use App\Models\Order;
 use App\Models\VendingMachine;
 use App\Services\RefundService;
@@ -100,6 +101,9 @@ class PaymentNotificationsController extends Controller
             $order->update([
                 'refund_status' => Order::REFUND_STATUS_SUCCESS,
             ]);
+
+            $this->afterPaidOrRefunded($order);
+            MoreActionForOrderRefund::dispatch($order);
         } else {
             // 退款失败，将具体状态存入 extra 字段，并表退款状态改成失败
             $extra = $order->extra;
@@ -109,8 +113,6 @@ class PaymentNotificationsController extends Controller
                 'extra' => $extra
             ]);
         }
-
-        $this->afterPaidOrRefunded($order);
 
         return app('wxpay')->success();
     }

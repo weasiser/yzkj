@@ -213,7 +213,20 @@ class OrdersController extends AdminController
     {
         $refundAmount = $request->input('refundAmount');
 
+        $extra = $order->extra;
+
+        if (in_array('returnToStock', $request->input('moreOptionsForRefund'))) {
+            $extra['return_to_stock'] = true;
+        }
+        if (in_array('disableAisle', $request->input('moreOptionsForRefund'))) {
+            $extra['disable_aisle'] = true;
+        }
+
+        $order->update(['extra' => $extra]);
+
         $refundService->miniappRefund($order, $refundAmount);
+
+
 //        if ($refundAmount > $order->amount) {
 //            throw new \Exception('部分退款数量超过最大值');
 //        } elseif ($refundAmount < $order->amount) {

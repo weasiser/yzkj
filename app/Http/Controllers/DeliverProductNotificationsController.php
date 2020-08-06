@@ -39,14 +39,7 @@ class DeliverProductNotificationsController extends Controller
                 $order = Order::where('no', $orderNo)->first();
                 if ($order) {
                     if ($result['goodslist'][0]['resultid'] === '1') {
-                        $order->vendingMachineAisle->decreaseStock();
-//                    $order->product->productPes->where('stock', '>=', 1)->first()->decrement('stock', 1);
-                        $warehouse_id = $order->vendingMachine->warehouse->id;
-                        $productPes = $order->product->productPesWithoutSoldOutChecked->where([['stock', '>=', 1], ['warehouse_id', $warehouse_id]])->first();
-                        if (!$productPes) {
-                            $productPes = $order->product->productPesWithoutSoldOutChecked->where('warehouse_id', $warehouse_id)->last();
-                        }
-                        $productPes->update(['stock' => $productPes->stock - 1]);
+                        $this->decreaseStock($order);
                         if ($num < $order->amount) {
                             $num += 1;
                             if ($num < 10) {
@@ -124,5 +117,16 @@ class DeliverProductNotificationsController extends Controller
         $refundService = app(RefundService::class);
         $refundAmount = $order->amount - $num + 1;
         $refundService->miniappRefund($order, $refundAmount);
+    }
+
+    protected function decreaseStock($order)
+    {
+        $order->vendingMachineAisle->decreaseStock();
+        $warehouse_id = $order->vendingMachine->warehouse->id;
+        $productPes = $order->product->productPesWithoutSoldOutChecked->where([['stock', '>=', 1], ['warehouse_id', $warehouse_id]])->first();
+        if (!$productPes) {
+            $productPes = $order->product->productPesWithoutSoldOutChecked->where('warehouse_id', $warehouse_id)->last();
+        }
+        $productPes->update(['stock' => $productPes->stock - 1]);
     }
 }

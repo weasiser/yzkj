@@ -25,6 +25,7 @@ class RefundRequest extends Request
     {
         return [
             'refundAmount'  => 'required|integer|min:1|max:23',
+            'moreOptionsForRefund' => 'array'
         ];
     }
 }

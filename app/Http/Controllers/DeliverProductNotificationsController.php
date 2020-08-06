@@ -39,10 +39,13 @@ class DeliverProductNotificationsController extends Controller
                 $order = Order::where('no', $orderNo)->first();
                 if ($order) {
                     if ($result['goodslist'][0]['resultid'] === '1') {
-//                    $order->vendingMachineAisle->decreaseStock();
+                        $order->vendingMachineAisle->decreaseStock();
 //                    $order->product->productPes->where('stock', '>=', 1)->first()->decrement('stock', 1);
                         $warehouse_id = $order->vendingMachine->warehouse->id;
-                        $productPes = $order->product->productPes->where([['stock', '>=', 1], ['warehouse_id', $warehouse_id]])->first();
+                        $productPes = $order->product->productPesWithoutSoldOutChecked->where([['stock', '>=', 1], ['warehouse_id', $warehouse_id]])->first();
+                        if (!$productPes) {
+                            $productPes = $order->product->productPesWithoutSoldOutChecked->where('warehouse_id', $warehouse_id)->last();
+                        }
                         $productPes->update(['stock' => $productPes->stock - 1]);
                         if ($num < $order->amount) {
                             $num += 1;

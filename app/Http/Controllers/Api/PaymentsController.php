@@ -48,6 +48,12 @@ class PaymentsController extends Controller
         if ($user->is_mobile_admin) {
             $refundAmount = $request->input('refundAmount');
             $refundService->miniappRefund($order, $refundAmount);
+            if (in_array('returnToStock', $request->moreOptionsForRefund)) {
+                $this->returnToStock($order);
+            }
+            if (in_array('disableAisle', $request->moreOptionsForRefund)) {
+                $this->disableAisle($order);
+            }
             return $this->response->array([
                 'refund_status' => $order->refund_status
             ]);
@@ -56,5 +62,23 @@ class PaymentsController extends Controller
                 'refund_status' => 'Unauthorized'
             ]);
         }
+    }
+
+    protected function returnToStock($order)
+    {
+        $order->vendingMachineAisle->increaseStock();
+        $warehouse_id = $order->vendingMachine->warehouse->id;
+        $productPes = $order->product->productPesWithoutSoldOutChecked->where([['stock', '<', 0], ['warehouse_id', $warehouse_id]])->first();
+        if (!$productPes) {
+            $productPes = $order->product->productPesWithoutSoldOutChecked->where('warehouse_id', $warehouse_id)->first();
+        }
+        $productPes->update(['stock' => $productPes->stock + 1]);
+    }
+
+    protected function disableAisle($order)
+    {
+        $vendingMachineAisle = $order->vendingMachineAisle;
+        $vendingMachineAisle->is_opened = false;
+        $vendingMachineAisle->update();
     }
 }

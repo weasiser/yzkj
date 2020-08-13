@@ -215,7 +215,7 @@ class VendingMachinesController extends Controller
             $products = Product::all();
 
             $form->hasMany('vendingmachineaisles', '货道列表：', function (Form\NestedForm $form) use ($products) {
-                $form->number('ordinal', '货道号')->required()->rules('integer|min:1|max:54')->placeholder('货道号')->attribute(['min' => '1', 'max' => '54', 'style' => 'width: 50px']);
+                $form->number('ordinal', '货道号')->required()->rules('integer|min:1|max:60')->placeholder('货道号')->attribute(['min' => '1', 'max' => '60', 'style' => 'width: 50px']);
                 $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存')->default(5)->attribute(['style' => 'width: 50px']);
                 $form->number('max_stock', '最大库存')->required()->rules('integer|min:3')->placeholder('最大库存')->default(5)->attribute(['style' => 'width: 50px']);
                 $form->select('product_id', '商品')->options(function ($id) use ($products) {

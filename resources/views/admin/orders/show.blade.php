@@ -86,7 +86,12 @@
     $('#btn-refund-agree').click(function() {
       Swal.fire({
         title: '请确认是否要将款项退还给用户？',
-        html: '<label class="checkbox-inline"><input type="checkbox" name="returnToStock" value="returnToStock" />补回库存</label><label class="checkbox-inline"><input type="checkbox" name="disableAisle" value="disableAisle" />禁用货道</label>',
+        html: '<label class="checkbox-inline" style="font-size: 1.5rem">' +
+                '<input type="checkbox" name="returnToStock" value="returnToStock">补回库存' +
+              '</label>' +
+              '<label class="checkbox-inline" style="font-size: 1.5rem">' +
+                '<input type="checkbox" name="disableAisle" value="disableAisle">禁用货道' +
+              '</label>',
         type: 'warning',
         input: 'select',
         inputOptions: amountOptions,

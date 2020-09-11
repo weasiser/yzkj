@@ -123,7 +123,7 @@ class DeliverProductNotificationsController extends Controller
     {
         $order->vendingMachineAisle->decreaseStock();
         $warehouse_id = $order->vendingMachine->warehouse->id;
-        $productPes = $order->product->productPesWithoutSoldOutChecked->where([['stock', '>=', 1], ['warehouse_id', $warehouse_id]])->first();
+        $productPes = $order->product->productPesWithoutSoldOutChecked->where('stock', '>=', 1)->where('warehouse_id', '=', $warehouse_id)->first();
         if (!$productPes) {
             $productPes = $order->product->productPesWithoutSoldOutChecked->where('warehouse_id', $warehouse_id)->last();
         }

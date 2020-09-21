@@ -44,7 +44,7 @@ class MoreActionForOrderRefund implements ShouldQueue
     {
         $order->vendingMachineAisle->increaseStock();
         $warehouse_id = $order->vendingMachine->warehouse->id;
-        $productPes = $order->product->productPesWithoutSoldOutChecked->where([['stock', '<', 0], ['warehouse_id', $warehouse_id]])->first();
+        $productPes = $order->product->productPesWithoutSoldOutChecked->where('stock', '<', 0)->where('warehouse_id', '=', $warehouse_id)->first();
         if (!$productPes) {
             $productPes = $order->product->productPesWithoutSoldOutChecked->where('warehouse_id', $warehouse_id)->first();
         }

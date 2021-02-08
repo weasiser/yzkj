@@ -56,6 +56,17 @@ return [
         'query_machine_info' => env('HUIYIJIE_QUERY_MACHINE_INFO_API'),
         'user_name' => env('HUIYIJIE_USER_NAME'),
         'password' => env('HUIYIJIE_PASSWORD')
+    ],
+
+    'yiputeng_vending_machine' => [
+        'get_api_token' => env('YIPUTENG_GET_API_TOKEN'),
+        'query_machine_list' => env('YIPUTENG_QUERY_MACHINE_LIST'),
+        'query_goods_list' => env('YIPUTENG_QUERY_GOODS_LIST'),
+        'query_shelf_list' => env('YIPUTENG_QUERY_SHELF_LIST'),
+        'pay_delivery' => env('YIPUTENG_PAY_DELIVERY'),
+        'pay_multi_delivery' => env('YIPUTENG_PAY_MULTI_DELIVERY'),
+        'app_key' => env('YIPUTENG_APP_KEY'),
+        'app_secret' => env('YIPUTENG_APP_SECRET')
     ]
 
 ];

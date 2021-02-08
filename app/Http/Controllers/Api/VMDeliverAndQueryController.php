@@ -83,4 +83,9 @@ class VMDeliverAndQueryController extends Controller
     {
         return app(VendingMachineDeliverAndQuery::class)->getAccessToken();
     }
+
+    public function getApiToken()
+    {
+        return app(VendingMachineDeliverAndQuery::class)->getApiToken();
+    }
 }

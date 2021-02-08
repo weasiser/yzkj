@@ -184,4 +184,11 @@ $api->version('v1', [
                 ->name('api.users.avatar.replace');
         });
     });
+
+    $api->group([
+        'middleware' => 'api.throttle',
+    ], function($api) {
+        $api->get('vendingMachines/yiputeng/getApiToken', 'VMDeliverAndQueryController@getApiToken')
+            ->name('api.vendingMachines.yiputeng.getApiToken');
+    });
 });

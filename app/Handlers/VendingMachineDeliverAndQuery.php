@@ -127,7 +127,7 @@ class VendingMachineDeliverAndQuery
             'password' => $password
         ];
 
-        $response = $http->get($getAccessTokenApi, [
+        $response = $http->post($getAccessTokenApi, [
             'query' => $query
         ]);
 
@@ -136,6 +136,29 @@ class VendingMachineDeliverAndQuery
         if ($result['result'] === '200' && $result['data']) {
             Cache::store('redis')->put('huiyijie_access_token', $result['data'], now()->addDays(7));
         }
+
+        return $result;
+    }
+
+    public function getApiToken()
+    {
+        $http = new Client();
+
+        $getApiTokenApi = config('services.yiputeng_vending_machine.get_api_token');
+        $appKey = config('services.yiputeng_vending_machine.app_key');
+        $appSecret = config('services.yiputeng_vending_machine.app_secret');
+
+        $params = [
+            'app_key' => (string)$appKey,
+            'app_secret' => (string)$appSecret,
+            'version' => '2.0'
+        ];
+
+        $response = $http->post($getApiTokenApi, [
+            'json' => $params
+        ]);
+
+        $result = json_decode($response->getBody(), true);
 
         return $result;
     }

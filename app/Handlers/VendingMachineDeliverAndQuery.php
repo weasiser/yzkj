@@ -242,6 +242,10 @@ class VendingMachineDeliverAndQuery
 
         $params['api_token'] = $api_token;
 
+        $nonce_str = Str::random();
+
+        $params['nonce_str'] = $nonce_str;
+
         $sign = $this->getSign($params);
 
         $params['sign'] = $sign;
@@ -261,13 +265,17 @@ class VendingMachineDeliverAndQuery
 
     protected function getSign($params)
     {
-        $nonce_str = Str::random();
         $str = '';
         ksort($params);
         foreach ($params as $k => $v) {
             //为key/value对生成一个key=value格式的字符串，并拼接到待签名字符串后面
             $str .= "$k=$v&";
         }
-        return md5(substr($str, 0, -1));
+
+        $appSecret = config('services.yiputeng_vending_machine.app_secret');
+
+        $str .= 'key=' . $appSecret;
+
+        return md5($str);
     }
 }

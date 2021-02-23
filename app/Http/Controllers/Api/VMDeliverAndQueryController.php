@@ -101,6 +101,6 @@ class VMDeliverAndQueryController extends Controller
 
     public function payDelivery(Request $request)
     {
-        return app(VendingMachineDeliverAndQuery::class)->payDelivery($request);
+        return app(VendingMachineDeliverAndQuery::class)->payDelivery($request->input());
     }
 }

@@ -190,5 +190,11 @@ $api->version('v1', [
     ], function($api) {
         $api->get('vendingMachines/yiputeng/getApiToken', 'VMDeliverAndQueryController@getApiToken')
             ->name('api.vendingMachines.yiputeng.getApiToken');
+        $api->get('vendingMachines/yiputeng/queryMachineList', 'VMDeliverAndQueryController@queryMachineList')
+            ->name('api.vendingMachines.yiputeng.queryMachineList');
+        $api->get('vendingMachines/yiputeng/queryShelfList', 'VMDeliverAndQueryController@queryShelfList')
+            ->name('api.vendingMachines.yiputeng.queryShelfList');
+        $api->post('vendingMachines/yiputeng/payDelivery', 'VMDeliverAndQueryController@payDelivery')
+            ->name('api.vendingMachines.yiputeng.payDelivery');
     });
 });

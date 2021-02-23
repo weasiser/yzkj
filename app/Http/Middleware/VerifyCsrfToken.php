@@ -22,6 +22,7 @@ class VerifyCsrfToken extends Middleware
         'paymentNotifications/miniapp/wxpay/notify',
         'paymentNotifications/miniapp/alipay/notify',
         'paymentNotifications/miniapp/wxpay/refundNotify',
-        'deliverProductNotifications/notify'
+        'deliverProductNotifications/notify',
+        'yiputeng/deliverProductNotifications/notify'
     ];
 }

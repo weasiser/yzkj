@@ -5,6 +5,7 @@ namespace App\Handlers;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class VendingMachineDeliverAndQuery
 {
@@ -155,11 +156,118 @@ class VendingMachineDeliverAndQuery
         ];
 
         $response = $http->post($getApiTokenApi, [
-            'json' => $params
+            'form_params' => $params
+        ]);
+
+        $result = json_decode($response->getBody(), true);
+
+        if ($result['code'] === 0) {
+            Cache::store('redis')->put('yiputeng_api_token', $result['api_token'], now()->addSeconds(90000));
+        }
+
+        return $result;
+    }
+
+    public function queryMachineList()
+    {
+        if (Cache::store('redis')->has('yiputeng_api_token')) {
+            $api_token = Cache::store('redis')->get('yiputeng_api_token');
+        } else {
+            $token = $this->getApiToken();
+            if ($token['code'] === 0) {
+                $api_token = $token['api_token'];
+            } else {
+                return $token;
+            }
+        }
+
+        $http = new Client();
+
+        $queryMachineListApi = config('services.yiputeng_vending_machine.query_machine_list');
+
+        $response = $http->post($queryMachineListApi, [
+            'form_params' => [
+                'api_token' => $api_token,
+                'version' => '1.0'
+            ]
         ]);
 
         $result = json_decode($response->getBody(), true);
 
         return $result;
+    }
+
+    public function queryShelfList($machine_id)
+    {
+        if (Cache::store('redis')->has('yiputeng_api_token')) {
+            $api_token = Cache::store('redis')->get('yiputeng_api_token');
+        } else {
+            $token = $this->getApiToken();
+            if ($token['code'] === 0) {
+                $api_token = $token['api_token'];
+            } else {
+                return $token;
+            }
+        }
+
+        $http = new Client();
+
+        $queryShelfListApi = config('services.yiputeng_vending_machine.query_shelf_list');
+
+        $response = $http->post($queryShelfListApi, [
+            'form_params' => [
+                'api_token' => $api_token,
+                'version' => '1.0',
+                'machine_id' => $machine_id
+            ]
+        ]);
+
+        $result = json_decode($response->getBody(), true);
+
+        return $result;
+    }
+
+    public function payDelivery($params)
+    {
+        if (Cache::store('redis')->has('yiputeng_api_token')) {
+            $api_token = Cache::store('redis')->get('yiputeng_api_token');
+        } else {
+            $token = $this->getApiToken();
+            if ($token['code'] === 0) {
+                $api_token = $token['api_token'];
+            } else {
+                return $token;
+            }
+        }
+
+        $params['api_token'] = $api_token;
+
+        $sign = $this->getSign($params);
+
+        $params['sign'] = $sign;
+
+        $http = new Client();
+
+        $payDeliveryApi = config('services.yiputeng_vending_machine.pay_delivery');
+
+        $response = $http->post($payDeliveryApi, [
+            'form_params' => $params
+        ]);
+
+        $result = json_decode($response->getBody(), true);
+
+        return $result;
+    }
+
+    protected function getSign($params)
+    {
+        $nonce_str = Str::random();
+        $str = '';
+        ksort($params);
+        foreach ($params as $k => $v) {
+            //为key/value对生成一个key=value格式的字符串，并拼接到待签名字符串后面
+            $str .= "$k=$v&";
+        }
+        return md5(substr($str, 0, -1));
     }
 }

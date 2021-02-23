@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Services\RefundService;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DeliverProductNotificationsController extends Controller
 {
@@ -128,5 +129,11 @@ class DeliverProductNotificationsController extends Controller
             $productPes = $order->product->productPesWithoutSoldOutChecked->where('warehouse_id', $warehouse_id)->last();
         }
         $productPes->update(['stock' => $productPes->stock - 1]);
+    }
+
+    public function yiputengDeliverProductNotify(Request $request)
+    {
+        Log::info($request->input());
+        echo 'success';
     }
 }

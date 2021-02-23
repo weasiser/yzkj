@@ -26,3 +26,5 @@ Route::post('paymentNotifications/miniapp/alipay/notify', 'PaymentNotificationsC
 Route::post('deliverProductNotifications/notify', 'DeliverProductNotificationsController@deliverProductNotify')->name('deliverProductNotifications.deliverProductNotify');
 
 Route::post('paymentNotifications/miniapp/wxpay/refundNotify', 'PaymentNotificationsController@miniappWxpayRefundNotify')->name('paymentNotifications.miniapp.wxpay.refundNotify');
+
+Route::post('yiputeng/deliverProductNotifications/notify', 'DeliverProductNotificationsController@yiputengDeliverProductNotify')->name('deliverProductNotifications.yiputengDeliverProductNotify');

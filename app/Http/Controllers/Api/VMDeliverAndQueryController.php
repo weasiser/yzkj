@@ -88,4 +88,19 @@ class VMDeliverAndQueryController extends Controller
     {
         return app(VendingMachineDeliverAndQuery::class)->getApiToken();
     }
+
+    public function queryMachineList()
+    {
+        return app(VendingMachineDeliverAndQuery::class)->queryMachineList();
+    }
+
+    public function queryShelfList(Request $request)
+    {
+        return app(VendingMachineDeliverAndQuery::class)->queryShelfList($request->input('machine_id'));
+    }
+
+    public function payDelivery(Request $request)
+    {
+        return app(VendingMachineDeliverAndQuery::class)->payDelivery($request);
+    }
 }

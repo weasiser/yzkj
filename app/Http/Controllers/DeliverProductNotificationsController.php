@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Services\RefundService;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
 class DeliverProductNotificationsController extends Controller
@@ -133,7 +134,40 @@ class DeliverProductNotificationsController extends Controller
 
     public function yiputengDeliverProductNotify(Request $request)
     {
-        Log::info($request->input());
-        echo 'success';
+        $params = $request->input();
+        $verifyResult = $this->verifySign($params);
+        if ($verifyResult) {
+            $http = new Client();
+            $http->post('https://www.yzkj01.com/notice/yiputengDeliverResult', [
+                'json' => [
+                    'out_trade_no' => $params['out_trade_no'],
+                    'trade_status' => $params['trade_status']
+                ]
+            ]);
+            echo 'success';
+        } else {
+            echo 'fail';
+        }
+    }
+
+    protected function verifySign($params)
+    {
+        $params['delivery_shelf'] = urlencode($params['delivery_shelf']);
+        $sign = Arr::pull($params, 'sign');
+        $str = '';
+        ksort($params);
+        foreach ($params as $k => $v) {
+            //为key/value对生成一个key=value格式的字符串，并拼接到待签名字符串后面
+            $str .= "$k=$v&";
+        }
+
+        $appSecret = config('services.yiputeng_vending_machine.app_secret');
+
+        $str .= 'key=' . $appSecret;
+        if ($sign === md5($str)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

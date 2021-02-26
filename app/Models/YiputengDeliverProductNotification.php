@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class YipuengDeliverProductNotification extends Model
+class YiputengDeliverProductNotification extends Model
 {
     protected $fillable = [
         'trade_no',

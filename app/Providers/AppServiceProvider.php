@@ -6,10 +6,12 @@ use App\Models\Article;
 use App\Models\ArticleComment;
 use App\Models\ProductPes;
 use App\Models\VendingMachineAisle;
+use App\Models\YipuengDeliverProductNotification;
 use App\Observers\ArticleCommentObserver;
 use App\Observers\ArticleObserver;
 use App\Observers\ProductPesObserver;
 use App\Observers\VendingMachineAisleObserver;
+use App\Observers\YipuengDeliverProductNotificationObserver;
 use Illuminate\Support\ServiceProvider;
 use Monolog\Logger;
 use Yansongda\Pay\Pay;
@@ -68,5 +70,6 @@ class AppServiceProvider extends ServiceProvider
         VendingMachineAisle::observe(VendingMachineAisleObserver::class);
         Article::observe(ArticleObserver::class);
         ArticleComment::observe(ArticleCommentObserver::class);
+        YipuengDeliverProductNotification::observe(YipuengDeliverProductNotificationObserver::class);
     }
 }

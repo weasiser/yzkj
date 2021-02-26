@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\ProductPes;
 use App\Models\VendingMachine;
 use App\Models\VendingMachineAisle;
+use App\Models\YipuengDeliverProductNotification;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
@@ -101,6 +102,18 @@ class VMDeliverAndQueryController extends Controller
 
     public function payDelivery(Request $request)
     {
-        return app(VendingMachineDeliverAndQuery::class)->payDelivery($request->input());
+        $params = $request->input();
+        $result = app(VendingMachineDeliverAndQuery::class)->payDelivery($params);
+        if ($result['code'] === 0) {
+            $notification = new YipuengDeliverProductNotification([
+                'trade_no' => $params['trade_no'],
+                'machine_id' => $params['machine_id'],
+                'shelf_id' => $params['shelf_id'],
+                'result' => 'DELIVERING'
+            ]);
+
+            $notification->save();
+        }
+        return $result;
     }
 }

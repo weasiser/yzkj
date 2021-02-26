@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Handlers\VendingMachineDeliverAndQuery;
 use App\Models\DeliverProductNotification;
 use App\Models\Order;
+use App\Models\YiputengDeliverProductNotification;
 use App\Services\RefundService;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -132,11 +133,12 @@ class DeliverProductNotificationsController extends Controller
         $productPes->update(['stock' => $productPes->stock - 1]);
     }
 
-    public function yiputengDeliverProductNotify(Request $request)
+    public function yiputengDeliverProductNotify(Request $request, YiputengDeliverProductNotification $yiputengDeliverProductNotification)
     {
         $params = $request->input();
         $verifyResult = $this->verifySign($params);
         if ($verifyResult) {
+            $yiputengDeliverProductNotification->where('out_trade_no', $params['out_trade_no'])->update(['result' => $params['trade_status']]);
             $http = new Client();
             $http->post('https://www.yzkj01.com/notice/yiputengDeliverResult', [
                 'json' => [

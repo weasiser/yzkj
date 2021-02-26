@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\YiputengDeliverProductNotification;
+use GuzzleHttp\Client;
 
 class YiputengDeliverProductNotificationObserver
 {
@@ -17,7 +18,14 @@ class YiputengDeliverProductNotificationObserver
             if ($yiputengDeliverProductNotification->result === 'DELIVERING') {
                 $yiputengDeliverProductNotification->result = 'TIMEOUT';
                 $yiputengDeliverProductNotification->update();
+                $http = new Client();
+                $http->post('https://www.yzkj01.com/notice/yiputengDeliverResult', [
+                    'json' => [
+                        'out_trade_no' => $yiputengDeliverProductNotification->out_trade_no,
+                        'trade_status' => 'TIMEOUT'
+                    ]
+                ]);
             }
-        })->delay(now()->addSeconds(30));
+        })->delay(now()->addSeconds(300));
     }
 }

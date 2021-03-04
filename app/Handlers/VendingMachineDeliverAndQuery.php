@@ -128,7 +128,7 @@ class VendingMachineDeliverAndQuery
             'password' => $password
         ];
 
-        $response = $http->post($getAccessTokenApi, [
+        $response = $http->get($getAccessTokenApi, [
             'query' => $query
         ]);
 

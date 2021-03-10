@@ -136,11 +136,9 @@ class DeliverProductNotificationsController extends Controller
     public function yiputengDeliverProductNotify(Request $request, YiputengDeliverProductNotification $yiputengDeliverProductNotification)
     {
         $params = $request->input();
-        Log::info($params);
         $verifyResult = $this->verifySign($params);
-        Log::info($verifyResult);
         if ($verifyResult) {
-            $yiputengDeliverProductNotification->where('out_trade_no', $params['out_trade_no'])->update(['result' => $params['trade_status']]);
+            $yiputengDeliverProductNotification->where('trade_no', $params['out_trade_no'])->update(['result' => $params['trade_status']]);
             $http = new Client();
             $http->post('https://www.yzkj01.com/notice/yiputengDeliverResult', [
                 'json' => [

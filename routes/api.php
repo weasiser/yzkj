@@ -186,7 +186,7 @@ $api->version('v1', [
     });
 
     $api->group([
-        'middleware' => 'api.throttle',
+        'middleware' => ['api.throttle', 'cors']
     ], function($api) {
         $api->get('vendingMachines/yiputeng/getApiToken', 'VMDeliverAndQueryController@getApiToken')
             ->name('api.vendingMachines.yiputeng.getApiToken');

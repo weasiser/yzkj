@@ -21,7 +21,9 @@ class YiputengDeliverProductNotificationObserver
                 $http = new Client();
                 $http->post('https://www.yzkj01.com/notice/yiputengDeliverResult', [
                     'json' => [
-                        'out_trade_no' => $yiputengDeliverProductNotification->out_trade_no,
+                        'out_trade_no' => $yiputengDeliverProductNotification->trade_no,
+                        'machine_id' => $yiputengDeliverProductNotification->machine_id,
+                        'delivery_shelf' => $yiputengDeliverProductNotification->shelf_id,
                         'trade_status' => 'TIMEOUT'
                     ]
                 ]);

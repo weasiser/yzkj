@@ -138,11 +138,15 @@ class DeliverProductNotificationsController extends Controller
         $params = $request->input();
         $verifyResult = $this->verifySign($params);
         if ($verifyResult) {
-            $yiputengDeliverProductNotification->where('trade_no', $params['out_trade_no'])->update(['result' => $params['trade_status']]);
+            $yiputengDeliver = $yiputengDeliverProductNotification->where('trade_no', $params['out_trade_no'])->get();
+            //$yiputengDeliverProductNotification->where('trade_no', $params['out_trade_no'])->update(['result' => $params['trade_status']]);
+            $yiputengDeliver->update(['result' => $params['trade_status']]);
             $http = new Client();
             $http->post('https://www.yzkj01.com/notice/yiputengDeliverResult', [
                 'json' => [
                     'out_trade_no' => $params['out_trade_no'],
+                    'machine_id' => $yiputengDeliver->machine_id,
+                    'shelf_id' => $yiputengDeliver->shelf_id,
                     'trade_status' => $params['trade_status']
                 ]
             ]);

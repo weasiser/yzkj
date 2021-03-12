@@ -103,7 +103,6 @@ class VMDeliverAndQueryController extends Controller
     public function payDelivery(Request $request)
     {
         $params = $request->input();
-        dd($params);
         $result = app(VendingMachineDeliverAndQuery::class)->payDelivery($params);
         if ($result['code'] === 0) {
             $notification = new YiputengDeliverProductNotification([

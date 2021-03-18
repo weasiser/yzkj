@@ -109,6 +109,25 @@ class VMDeliverAndQueryController extends Controller
                 'trade_no' => $params['trade_no'],
                 'machine_id' => $params['machine_id'],
                 'shelf_id' => $params['shelf_id'],
+                'amount' => 1,
+                'result' => 'DELIVERING'
+            ]);
+
+            $notification->save();
+        }
+        return $result;
+    }
+
+    public function payMultiDelivery(Request $request)
+    {
+        $params = $request->input();
+        $result = app(VendingMachineDeliverAndQuery::class)->payDelivery($params);
+        if ($result['code'] === 0) {
+            $notification = new YiputengDeliverProductNotification([
+                'trade_no' => $params['trade_no'],
+                'machine_id' => $params['machine_id'],
+                'shelf_id' => $params['shelf_id'],
+                'amount' => $params['amount'],
                 'result' => 'DELIVERING'
             ]);
 

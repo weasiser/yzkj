@@ -10,6 +10,7 @@ class YiputengDeliverProductNotification extends Model
         'trade_no',
         'machine_id',
         'shelf_id',
+        'amount',
         'result'
     ];
 }

@@ -13,6 +13,7 @@ class VendingMachine extends Model
         'warehouse_id',
         'iot_card_no',
         'aisle_type',
+        'machine_api_type',
         'is_opened',
         'cabinet_id',
         'cabinet_type',

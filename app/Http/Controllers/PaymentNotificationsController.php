@@ -7,6 +7,7 @@ use App\Handlers\VendingMachineDeliverAndQuery;
 use App\Jobs\MoreActionForOrderRefund;
 use App\Models\Order;
 use App\Models\VendingMachine;
+use App\Models\YiputengDeliverProductNotification;
 use App\Services\RefundService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -121,24 +122,57 @@ class PaymentNotificationsController extends Controller
     {
         $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERING]);
         $vendingMachine = $order->vendingMachine;
-        $ordinal = $order->vendingMachineAisle->ordinal;
-        $orderNo = $order->no . '01';
-        $result = app(VendingMachineDeliverAndQuery::class)->deliverProduct($vendingMachine->code, $orderNo, $ordinal, $vendingMachine->cabinet_id, $vendingMachine->cabinet_type);
-        if ($result['result'] === '200') {
-            return;
-        } else {
-            if ($vendingMachine->is_delivering) {
-                $vendingMachine->is_delivering = false;
-                $vendingMachine->update();
+        if ($vendingMachine->machine_api_type === 0) {
+            $ordinal = $order->vendingMachineAisle->ordinal;
+            $orderNo = $order->no . '01';
+            $result = app(VendingMachineDeliverAndQuery::class)->deliverProduct($vendingMachine->code, $orderNo, $ordinal, $vendingMachine->cabinet_id, $vendingMachine->cabinet_type);
+            if ($result['result'] === '200') {
+                return;
+            } else {
+                if ($vendingMachine->is_delivering) {
+                    $vendingMachine->is_delivering = false;
+                    $vendingMachine->update();
+                }
+                $extra = $order->extra;
+                $extra['deliver_failed_code'] = $result;
+                $order->update([
+                    'deliver_status' => Order::DELIVER_STATUS_FAILED,
+                    'extra' => $extra
+                ]);
+                $this->refund($order);
+                return;
             }
-            $extra = $order->extra;
-            $extra['deliver_failed_code'] = $result;
-            $order->update([
-                'deliver_status' => Order::DELIVER_STATUS_FAILED,
-                'extra' => $extra
-            ]);
-            $this->refund($order);
-            return;
+        } elseif ($vendingMachine->machine_api_type === 1) {
+            $params['machine_id'] = $vendingMachine->code;
+            $params['shelf_id'] = $order->vendingMachineAisle->ordinal;
+            $params['trade_no'] = $order->no;
+            $params['pay_price'] = $order->$order->total_amount * 100;
+            $params['pay_person_id'] = $order->user_id;
+            $params['multi_pay'] = '[{' . $order->vendingMachineAisle->ordinal . ':' . $order->amount . '}]';
+            $result = app(VendingMachineDeliverAndQuery::class)->payMultiDelivery($params);
+            if ($result['code'] === 0) {
+                $notification = new YiputengDeliverProductNotification([
+                    'trade_no' => $params['trade_no'],
+                    'machine_id' => $params['machine_id'],
+                    'shelf_id' => $params['shelf_id'],
+                    'amount' => $order->amount,
+                    'result' => 'DELIVERING'
+                ]);
+                $notification->save();
+            } else {
+                if ($vendingMachine->is_delivering) {
+                    $vendingMachine->is_delivering = false;
+                    $vendingMachine->update();
+                }
+                $extra = $order->extra;
+                $extra['deliver_failed_code'] = $result;
+                $order->update([
+                    'deliver_status' => Order::DELIVER_STATUS_FAILED,
+                    'extra' => $extra
+                ]);
+                $this->refund($order);
+                return;
+            }
         }
     }
 

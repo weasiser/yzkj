@@ -66,7 +66,7 @@ class AppServiceProvider extends ServiceProvider
             return new \Dingo\Api\Transformer\Adapter\Fractal($fractal);
         });
 
-        ProductPes::observe(ProductPesObserver::class);
+//        ProductPes::observe(ProductPesObserver::class);
         VendingMachineAisle::observe(VendingMachineAisleObserver::class);
         Article::observe(ArticleObserver::class);
         ArticleComment::observe(ArticleCommentObserver::class);

@@ -114,9 +114,9 @@ class VendingMachinesController extends Controller
         $grid->address('地址')->editable();
         $grid->column('warehouse.name', '仓库')->label('primary');
         $grid->iot_card_no('物联卡号')->editable();
-        $grid->column('aisle_type', '货道类型')->editable();
-        $grid->cabinet_id('机柜 ID')->editable();
-        $grid->cabinet_type('机柜类型')->editable();
+//        $grid->column('aisle_type', '货道类型')->editable();
+//        $grid->cabinet_id('机柜 ID')->editable();
+//        $grid->cabinet_type('机柜类型')->editable();
         $grid->sold_count('销量（件）')->sortable();
         $grid->sold_value('销售额')->sortable();
         $grid->sold_profit('利润')->sortable();
@@ -150,7 +150,7 @@ class VendingMachinesController extends Controller
 //            $filter->expand();
         });
 
-        $grid->paginate(10);
+        $grid->paginate(20);
 
         return $grid;
     }
@@ -204,9 +204,10 @@ class VendingMachinesController extends Controller
             $form->text('code', '机器码')->required()->placeholder('机器码')->icon('fa-braille');
             $form->text('address', '地址')->placeholder('地址')->icon('fa-map-marker');
             $form->text('iot_card_no', '物联卡号')->placeholder('物联卡号')->icon('fa-microchip');
-            $form->number('aisle_type', '货道类型')->required()->default(1)->placeholder('货道类型')->help('0表示一行9条货道，1表示一行10条货道');;
-            $form->number('cabinet_id', '机柜 ID')->required()->default(1)->placeholder('机柜 ID');
-            $form->number('cabinet_type', '机柜类型')->required()->default(1)->placeholder('机柜类型');
+            $form->number('aisle_type', '货道类型')->required()->default(1)->placeholder('货道类型')->help('0表示一行9条货道，1表示一行10条货道');
+            $form->number('machine_api_type', '机器API类型')->required()->default(1)->placeholder('机器API类型')->help('0表示惠逸捷的机器API，1表示新机器的API');
+            $form->number('cabinet_id', '机柜 ID')->default(1)->placeholder('机柜 ID');
+            $form->number('cabinet_type', '机柜类型')->default(1)->placeholder('机柜类型');
             $form->switch('is_delivering', '正在出货')->states($this->is_delivering)->default(false);
             $form->switch('is_opened', '使用状态')->states($this->is_opened)->default(false);
 

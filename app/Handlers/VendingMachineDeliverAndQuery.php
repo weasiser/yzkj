@@ -242,6 +242,10 @@ class VendingMachineDeliverAndQuery
 
         $params['api_token'] = $api_token;
 
+        $params['version'] = '1.0';
+        $params['notify_url'] = 'https://vm.yzkj01.com/yiputeng/deliverProductNotifications/notify';
+        $params['sign_type'] = 'MD5';
+
         $nonce_str = Str::random();
 
         $params['nonce_str'] = $nonce_str;
@@ -263,10 +267,52 @@ class VendingMachineDeliverAndQuery
         return $result;
     }
 
+    public function payMultiDelivery()
+    {
+        if (Cache::store('redis')->has('yiputeng_api_token')) {
+            $api_token = Cache::store('redis')->get('yiputeng_api_token');
+        } else {
+            $token = $this->getApiToken();
+            if ($token['code'] === 0) {
+                $api_token = $token['api_token'];
+            } else {
+                return $token;
+            }
+        }
+
+        $params['api_token'] = $api_token;
+
+        $params['version'] = '1.0';
+        $params['notify_url'] = 'https://vm.yzkj01.com/yiputeng/deliverProductNotifications/notify';
+        $params['sign_type'] = 'MD5';
+        $nonce_str = Str::random();
+
+        $params['nonce_str'] = $nonce_str;
+
+        $sign = $this->getSign($params);
+
+        $params['sign'] = $sign;
+
+        $http = new Client();
+
+        $payMultiDeliveryApi = config('services.yiputeng_vending_machine.pay_multi_delivery');
+
+        $response = $http->post($payMultiDeliveryApi, [
+            'form_params' => $params
+        ]);
+
+        $result = json_decode($response->getBody(), true);
+
+        return $result;
+    }
+
     protected function getSign($params)
     {
         $str = '';
         ksort($params);
+        if ($params['multi_pay']) {
+            $params['multi_pay'] = urlencode($params['multi_pay']);
+        }
         foreach ($params as $k => $v) {
             //为key/value对生成一个key=value格式的字符串，并拼接到待签名字符串后面
             $str .= "$k=$v&";

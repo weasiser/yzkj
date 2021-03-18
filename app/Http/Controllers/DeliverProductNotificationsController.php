@@ -124,13 +124,32 @@ class DeliverProductNotificationsController extends Controller
 
     protected function decreaseStock($order)
     {
-        $order->vendingMachineAisle->decreaseStock();
+        $amount = $order->amount;
+        $product = $order->product;
+        $order->vendingMachineAisle->decreaseStock($amount);
         $warehouse_id = $order->vendingMachine->warehouse->id;
-        $productPes = $order->product->productPesWithoutSoldOutChecked->where('stock', '>=', 1)->where('warehouse_id', '=', $warehouse_id)->first();
-        if (!$productPes) {
-            $productPes = $order->product->productPesWithoutSoldOutChecked->where('warehouse_id', $warehouse_id)->last();
+        $productPes = $product->productPesWithoutSoldOutChecked->where('warehouse_id', '=', $warehouse_id);
+        $negativeProductPes = $productPes->where('stock', '<', 0)->first();
+        if ($negativeProductPes) {
+            $negativeProductPes->stock -= $amount;
+            $negativeProductPes->save();
+        } else {
+            $positiveProductPes = $productPes->where('stock', '>', 0)->first();
+            if ($positiveProductPes) {
+                $positiveProductPes->stock -= $amount;
+                $positiveProductPes->save();
+            } else {
+                $zeroProductPes = $productPes->orderBy('production_date', 'desc')->orderBy('created_at', 'desc')->first();
+                $zeroProductPes->stock -= $amount;
+                $zeroProductPes->save();
+            }
         }
-        $productPes->update(['stock' => $productPes->stock - 1]);
+        $product->total_stock -= $amount;
+        $product->save();
+//        if (!$productPes) {
+//            $productPes = $order->product->productPesWithoutSoldOutChecked->where('warehouse_id', $warehouse_id)->last();
+//        }
+//        $productPes->update(['stock' => $productPes->stock - 1]);
     }
 
     public function yiputengDeliverProductNotify(Request $request, YiputengDeliverProductNotification $yiputengDeliverProductNotification)
@@ -142,15 +161,21 @@ class DeliverProductNotificationsController extends Controller
             //$yiputengDeliverProductNotification->where('trade_no', $params['out_trade_no'])->update(['result' => $params['trade_status']]);
             $yiputengDeliver->result = $params['trade_status'];
             $yiputengDeliver->save();
-            $http = new Client();
-            $http->post('https://www.yzkj01.com/notice/yiputengDeliverResult', [
-                'json' => [
-                    'out_trade_no' => $params['out_trade_no'],
-                    'machine_id' => $yiputengDeliver->machine_id,
-                    'shelf_id' => $yiputengDeliver->shelf_id,
-                    'trade_status' => $params['trade_status']
-                ]
-            ]);
+            $order = Order::where('no', $params['out_trade_no'])->first();
+            if ($params['trade_status'] === 'SUCCESS') {
+                $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERED]);
+            } elseif ($params['trade_status'] === 'FAIL') {
+                $order->update(['deliver_status' => Order::DELIVER_STATUS_FAILED]);
+            }
+//            $http = new Client();
+//            $http->post('https://www.yzkj01.com/notice/yiputengDeliverResult', [
+//                'json' => [
+//                    'out_trade_no' => $params['out_trade_no'],
+//                    'machine_id' => $yiputengDeliver->machine_id,
+//                    'shelf_id' => $yiputengDeliver->shelf_id,
+//                    'trade_status' => $params['trade_status']
+//                ]
+//            ]);
             echo 'success';
         } else {
             echo 'fail';

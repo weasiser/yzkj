@@ -196,5 +196,7 @@ $api->version('v1', [
             ->name('api.vendingMachines.yiputeng.queryShelfList');
         $api->post('vendingMachines/yiputeng/payDelivery', 'VMDeliverAndQueryController@payDelivery')
             ->name('api.vendingMachines.yiputeng.payDelivery');
+        $api->post('vendingMachines/yiputeng/payMultiDelivery', 'VMDeliverAndQueryController@payMultiDelivery')
+            ->name('api.vendingMachines.yiputeng.payMultiDelivery');
     });
 });

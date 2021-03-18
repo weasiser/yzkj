@@ -15,7 +15,7 @@ use Encore\Admin\Show;
 class ProductPesController extends AdminController
 {
     protected $is_sold_out_checked = [
-        'on'  => ['value' => 1, 'text' => '已检查', 'color' => 'success'],
+        'on' => ['value' => 1, 'text' => '已检查', 'color' => 'success'],
         'off' => ['value' => 0, 'text' => '未检查', 'color' => 'danger'],
     ];
 
@@ -77,11 +77,11 @@ class ProductPesController extends AdminController
             $actions->disableView();
         });
 
-        $grid->filter(function($filter){
-            $filter->column(1/2, function ($filter) {
+        $grid->filter(function ($filter) {
+            $filter->column(1 / 2, function ($filter) {
                 $filter->in('warehouse_id', '仓库')->multipleSelect(Warehouse::all()->pluck('name', 'id'));
             });
-            $filter->column(1/2, function ($filter) {
+            $filter->column(1 / 2, function ($filter) {
                 $filter->like('product.title', '商品名称');
                 $filter->in('is_sold_out_checked', '售完过期检查')->checkbox([
                     false => '未检查',
@@ -176,7 +176,7 @@ EOT;
         $form->select('warehouse_id', '仓库')->options(Warehouse::all()->pluck('name', 'id'))->required();
         $form->text('production_date', '生产日期')->icon('fa-calendar')->required()->placeholder('生产日期')->attribute(['type' => 'date', 'style' => 'width: 150px', 'min' => '2000-01-01', 'max' => '2099-12-31']);
         $form->text('expiration_date', '有效日期')->icon('fa-calendar')->required()->placeholder('有效日期')->readonly()->attribute(['type' => 'date', 'style' => 'width: 150px']);
-        $form->number('stock', '库存')->required()->rules('integer|min:0')->placeholder('库存');
+        $form->number('stock', '库存')->required()->rules('integer')->placeholder('库存');
         $form->number('registered_stock', '登记库存')->required()->rules('integer|min:1')->placeholder('登记库存');
         $form->switch('is_sold_out_checked', '售完过期检查')->states($this->is_sold_out_checked)->default(false);
 
@@ -185,21 +185,17 @@ EOT;
             $tools->disableView();
         });
 
-//        $form->saved(function (Form $form) {
-//            $product = $form->model()->product;
-//            $product->min_expiration_date = $product->productPes->min('expiration_date');
-//            $product->total_stock = $product->productPes->sum('stock');
-//            $product->save();
-//        });
+        $form->saved(function (Form $form) {
+            $product = $form->model()->product;
+            $this->offsetStock($product);
+            $this->updateTotalStockAndMinExpirationDate($product);
+        });
 
-//        $form->deleting(function (Form $form) {
-//            dd($form->model()->id);
-////            $product = $form->model()->product;
-////            $productPes = $product->productPes()->where('id', '<>', $form->model()->id)->get();
-////            $product->min_expiration_date = $productPes->min('expiration_date');
-////            $product->total_stock = $productPes->sum('stock');
-////            $product->save();
-//        });
+        $form->deleted(function (Form $form) {
+            $product = $form->model()->product;
+            $this->offsetStock($product);
+            $this->updateTotalStockAndMinExpirationDate($product);
+        });
 
         $form->html(view('admin.utils.product_pes_edit'));
 
@@ -216,5 +212,46 @@ EOT;
         $result = $warehouse->productPes;
 
         return $result;
+    }
+
+    protected function offsetStock(Product $product)
+    {
+        $productPes = $product->productPesWithoutSoldOutChecked;
+        $negative_stock = $productPes->where('stock', '<', 0)->first();
+        if ($negative_stock) {
+            $positive_stock = $productPes->where('stock', '>', 0)->first();
+            if ($positive_stock && abs($negative_stock->stock) <= $positive_stock->stock) {
+                $positive_stock->stock = $negative_stock->stock + $positive_stock->stock;
+                $negative_stock->stock = 0;
+                $positive_stock->save();
+                $negative_stock->save();
+            } elseif (abs($negative_stock->stock) > $positive_stock->stock) {
+                do {
+                    $negative_stock->stock = $negative_stock->stock + $positive_stock->stock;
+                    $positive_stock->stock = 0;
+                    $positive_stock->save();
+                    $negative_stock->save();
+                    $positive_stock = $productPes->where('stock', '>', 0)->first();
+                } while ($positive_stock && abs($negative_stock->stock) > $positive_stock->stock);
+                if ($positive_stock) {
+                    $positive_stock->stock = $negative_stock->stock + $positive_stock->stock;
+                    $negative_stock->stock = 0;
+                    $positive_stock->save();
+                    $negative_stock->save();
+                }
+            }
+        }
+    }
+
+    protected function updateTotalStockAndMinExpirationDate(Product $product)
+    {
+        $productPes = $product->productPesWithoutSoldOutChecked;
+        $product->min_expiration_date = $productPes->min('expiration_date');
+        $total_stock = $productPes->sum('stock');
+        $total_registered_stock = $productPes->sum('registered_stock');
+        $product->total_stock = $total_stock;
+        $product->total_registered_stock = $total_registered_stock;
+        $product->warehouse_stock = $total_stock - $product->vending_machine_stock;
+        $product->save();
     }
 }

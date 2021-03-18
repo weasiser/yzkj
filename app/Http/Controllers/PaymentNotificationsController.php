@@ -143,18 +143,19 @@ class PaymentNotificationsController extends Controller
                 return;
             }
         } elseif ($vendingMachine->machine_api_type === 1) {
+            $shelf_id = $order->vendingMachineAisle->ordinal;
             $params['machine_id'] = $vendingMachine->code;
-            $params['shelf_id'] = $order->vendingMachineAisle->ordinal;
+//            $params['shelf_id'] = $order->vendingMachineAisle->ordinal;
             $params['trade_no'] = $order->no;
-            $params['pay_price'] = $order->$order->total_amount * 100;
+            $params['pay_price'] = $order->total_amount * 100;
             $params['pay_person_id'] = $order->user_id;
-            $params['multi_pay'] = '[{' . $order->vendingMachineAisle->ordinal . ':' . $order->amount . '}]';
+            $params['multi_pay'] = '[{' . $shelf_id . ':' . $order->amount . '}]';
             $result = app(VendingMachineDeliverAndQuery::class)->payMultiDelivery($params);
             if ($result['code'] === 0) {
                 $notification = new YiputengDeliverProductNotification([
                     'trade_no' => $params['trade_no'],
                     'machine_id' => $params['machine_id'],
-                    'shelf_id' => $params['shelf_id'],
+                    'shelf_id' => $shelf_id,
                     'amount' => $order->amount,
                     'result' => 'DELIVERING'
                 ]);

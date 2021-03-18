@@ -123,11 +123,16 @@ class VMDeliverAndQueryController extends Controller
         $params = $request->input();
         $result = app(VendingMachineDeliverAndQuery::class)->payDelivery($params);
         if ($result['code'] === 0) {
+            $multi_pay = json_decode(str_replace(':','":',str_replace('{', '{"', $params['multi_pay'])), true);
+            foreach ($multi_pay[0] as $key => $value) {
+                $shelf_id = $key;
+                $amount = $value;
+            }
             $notification = new YiputengDeliverProductNotification([
                 'trade_no' => $params['trade_no'],
                 'machine_id' => $params['machine_id'],
-                'shelf_id' => $params['shelf_id'],
-                'amount' => $params['amount'],
+                'shelf_id' => $shelf_id,
+                'amount' => $amount,
                 'result' => 'DELIVERING'
             ]);
 

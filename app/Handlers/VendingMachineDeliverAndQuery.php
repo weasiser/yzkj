@@ -310,9 +310,9 @@ class VendingMachineDeliverAndQuery
     {
         $str = '';
         ksort($params);
-        if ($params['multi_pay']) {
-            $params['multi_pay'] = urlencode($params['multi_pay']);
-        }
+//        if (array_key_exists('multi_pay', $params)) {
+//            $params['multi_pay'] = urlencode($params['multi_pay']);
+//        }
         foreach ($params as $k => $v) {
             //为key/value对生成一个key=value格式的字符串，并拼接到待签名字符串后面
             $str .= "$k=$v&";
@@ -321,6 +321,8 @@ class VendingMachineDeliverAndQuery
         $appSecret = config('services.yiputeng_vending_machine.app_secret');
 
         $str .= 'key=' . $appSecret;
+
+//        dd($str);
 
         return md5($str);
     }

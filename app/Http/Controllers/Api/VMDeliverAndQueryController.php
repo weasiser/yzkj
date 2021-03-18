@@ -121,7 +121,7 @@ class VMDeliverAndQueryController extends Controller
     public function payMultiDelivery(Request $request)
     {
         $params = $request->input();
-        $result = app(VendingMachineDeliverAndQuery::class)->payDelivery($params);
+        $result = app(VendingMachineDeliverAndQuery::class)->payMultiDelivery($params);
         if ($result['code'] === 0) {
             $multi_pay = json_decode(str_replace(':','":',str_replace('{', '{"', $params['multi_pay'])), true);
             foreach ($multi_pay[0] as $key => $value) {

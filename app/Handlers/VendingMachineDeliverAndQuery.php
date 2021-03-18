@@ -267,7 +267,7 @@ class VendingMachineDeliverAndQuery
         return $result;
     }
 
-    public function payMultiDelivery()
+    public function payMultiDelivery($params)
     {
         if (Cache::store('redis')->has('yiputeng_api_token')) {
             $api_token = Cache::store('redis')->get('yiputeng_api_token');

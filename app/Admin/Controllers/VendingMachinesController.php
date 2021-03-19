@@ -98,10 +98,13 @@ class VendingMachinesController extends Controller
     protected function grid()
     {
         $vmInfo = app(VendingMachineDeliverAndQuery::class)->queryMachineInfo();
-//        dd($vmInfo);
         $vmNetStat = [];
         foreach ($vmInfo['data'] as $value) {
             $vmNetStat[$value['machineUuid']] = $value['netStat'];
+        }
+        $vmYPTInfo = app(VendingMachineDeliverAndQuery::class)->queryMachineList();
+        foreach ($vmYPTInfo['content'] as $value) {
+            $vmYPTNetStat[$value['machine_id']] = $value['is_online'];
         }
 
         $grid = new Grid(new VendingMachine);
@@ -122,8 +125,12 @@ class VendingMachinesController extends Controller
         $grid->sold_profit('利润')->sortable();
         $grid->is_delivering('正在出货')->switch($this->is_delivering);
         $grid->is_opened('使用状态')->switch($this->is_opened);
-        $grid->column('在离线')->display(function () use ($vmNetStat) {
-            return $vmNetStat[$this->code] === 1 ? '<span class="label label-success">在线</span>' : '<span class="label label-danger">离线</span>';
+        $grid->column('在离线')->display(function () use ($vmNetStat, $vmYPTNetStat) {
+            if ($this->machine_api_type === 0) {
+                return $vmNetStat[$this->code] === 1 ? '<span class="label label-success">在线</span>' : '<span class="label label-danger">离线</span>';
+            } elseif ($this->machine_api_type === 1) {
+                return $vmYPTNetStat[$this->code] === '在线' ? '<span class="label label-success">在线</span>' : '<span class="label label-danger">离线</span>';
+            }
         });
 
         $grid->actions(function ($actions) {

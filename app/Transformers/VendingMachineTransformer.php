@@ -16,6 +16,7 @@ class VendingMachineTransformer extends TransformerAbstract
             'name'         => $vendingMachine->name,
             'code'         => $vendingMachine->code,
             'aisle_type'   => $vendingMachine->aisle_type,
+            'machine_api_type' => $vendingMachine->machine_api_type,
             'cabinet_id'   => $vendingMachine->cabinet_id,
             'cabinet_type' => $vendingMachine->cabinet_type,
             'is_opened'    => $vendingMachine->is_opened,

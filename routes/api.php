@@ -73,6 +73,8 @@ $api->version('v1', [
             ->name('api.articles.show');
         $api->get('articles/{article}/articleComments', 'ArticlesController@articleCommentsIndex')
             ->name('api.articles.comment.index');
+        $api->get('vendingMachines/yiputeng/queryMachineList', 'VMDeliverAndQueryController@queryMachineList')
+            ->name('api.vendingMachines.yiputeng.queryMachineList');
 
         // 需要 token 验证的接口
         $api->group(['middleware' => 'api.auth'], function($api) {
@@ -123,6 +125,8 @@ $api->version('v1', [
             // 出货
             $api->post('vendingMachine/deliver', 'VMDeliverAndQueryController@deliverProduct')
                 ->name('api.VMDeliverAndQuery.deliverProduct');
+            $api->post('vendingMachines/yiputeng/payMultiDelivery', 'VMDeliverAndQueryController@payMultiDelivery')
+                ->name('api.vendingMachines.yiputeng.payMultiDelivery');
             // 仓库列表
             $api->get('warehouses', 'WarehousesController@index')
                 ->name('api.warehouses.index');
@@ -185,18 +189,18 @@ $api->version('v1', [
         });
     });
 
-    $api->group([
-        'middleware' => ['api.throttle', 'cors']
-    ], function($api) {
-        $api->get('vendingMachines/yiputeng/getApiToken', 'VMDeliverAndQueryController@getApiToken')
-            ->name('api.vendingMachines.yiputeng.getApiToken');
-        $api->get('vendingMachines/yiputeng/queryMachineList', 'VMDeliverAndQueryController@queryMachineList')
-            ->name('api.vendingMachines.yiputeng.queryMachineList');
-        $api->get('vendingMachines/yiputeng/queryShelfList', 'VMDeliverAndQueryController@queryShelfList')
-            ->name('api.vendingMachines.yiputeng.queryShelfList');
-        $api->post('vendingMachines/yiputeng/payDelivery', 'VMDeliverAndQueryController@payDelivery')
-            ->name('api.vendingMachines.yiputeng.payDelivery');
-        $api->post('vendingMachines/yiputeng/payMultiDelivery', 'VMDeliverAndQueryController@payMultiDelivery')
-            ->name('api.vendingMachines.yiputeng.payMultiDelivery');
-    });
+//    $api->group([
+//        'middleware' => ['api.throttle', 'cors']
+//    ], function($api) {
+//        $api->get('vendingMachines/yiputeng/getApiToken', 'VMDeliverAndQueryController@getApiToken')
+//            ->name('api.vendingMachines.yiputeng.getApiToken');
+//        $api->get('vendingMachines/yiputeng/queryMachineList', 'VMDeliverAndQueryController@queryMachineList')
+//            ->name('api.vendingMachines.yiputeng.queryMachineList');
+//        $api->get('vendingMachines/yiputeng/queryShelfList', 'VMDeliverAndQueryController@queryShelfList')
+//            ->name('api.vendingMachines.yiputeng.queryShelfList');
+//        $api->post('vendingMachines/yiputeng/payDelivery', 'VMDeliverAndQueryController@payDelivery')
+//            ->name('api.vendingMachines.yiputeng.payDelivery');
+//        $api->post('vendingMachines/yiputeng/payMultiDelivery', 'VMDeliverAndQueryController@payMultiDelivery')
+//            ->name('api.vendingMachines.yiputeng.payMultiDelivery');
+//    });
 });

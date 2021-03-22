@@ -136,6 +136,8 @@ $api->version('v1', [
             // 出货状态查询
             $api->get('queryDeliverStatus', 'VMDeliverAndQueryController@queryDeliverStatus')
                 ->name('api.queryDeliverStatus');
+            $api->get('queryYiputengDeliverStatus', 'VMDeliverAndQueryController@queryYiputengDeliverStatus')
+                ->name('api.queryYiputengDeliverStatus');
             // 售卖机第三方接口状态查询
             $api->get('queryVendingMachineApiStatus', 'VMDeliverAndQueryController@queryVendingMachineApiStatus')
                 ->name('api.queryVendingMachineApiStatus');

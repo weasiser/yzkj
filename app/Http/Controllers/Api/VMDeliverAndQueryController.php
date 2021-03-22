@@ -80,6 +80,17 @@ class VMDeliverAndQueryController extends Controller
         }
     }
 
+    public function queryYiputengDeliverStatus(Request $request)
+    {
+        $trade_no = $request->input('trade_no');
+        $deliverProductNotification = YiputengDeliverProductNotification::where('trade_no', $trade_no)->first();
+        if ($deliverProductNotification) {
+            return $this->response->array([
+                'result' => $deliverProductNotification->result
+            ]);
+        }
+    }
+
     public function queryVendingMachineApiStatus()
     {
         return app(VendingMachineDeliverAndQuery::class)->getAccessToken();

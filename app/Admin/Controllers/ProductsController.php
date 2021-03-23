@@ -195,8 +195,8 @@ class ProductsController extends Controller
             $form->text('title', '名称')->required()->placeholder('名称');
             $form->currency('buying_price', '进货价')->required()->rules('numeric|min:0.01')->placeholder('进货价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
             $form->currency('selling_price', '销售价')->required()->rules('numeric|min:0.01')->placeholder('销售价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
-            $form->currency('market_price', '市场价')->rules('numeric|min:0.00')->placeholder('市场价')->symbol('<i class="fa fa-rmb fa-fw"></i>');
-            $form->currency('promotion_price', '促销优惠')->rules('numeric')->placeholder('促销优惠')->symbol('<i class="fa fa-rmb fa-fw"></i>');
+            $form->currency('market_price', '市场价')->rules('numeric|min:0.00')->placeholder('市场价')->symbol('<i class="fa fa-rmb fa-fw"></i>')->default('0.00');
+            $form->currency('promotion_price', '促销优惠')->rules('numeric')->placeholder('促销优惠')->symbol('<i class="fa fa-rmb fa-fw"></i>')->default('0.00');
             $form->number('quality_guarantee_period', '保质期（月）')->required()->rules('integer|min:1')->placeholder('保质期（月）')->default(0);
             $form->switch('on_sale', '上下架')->states($this->on_sale)->default(true);
             $form->image('image', '图片')->attribute('accept', 'image/gif, image/jpeg, image/png')->required();

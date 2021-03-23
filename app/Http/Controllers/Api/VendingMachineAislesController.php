@@ -67,7 +67,7 @@ class VendingMachineAislesController extends Controller
         $vendingMachineAisles = $product->vendingMachineAisles;
         $vendingMachineStock = $vendingMachineAisles->sum('stock');
         $product->vending_machine_stock = $vendingMachineStock;
-        $product->warehouse_stock = $product->total_stock - $vendingMachineStock;
+//        $product->warehouse_stock = $product->total_stock - $vendingMachineStock;
         $product->save();
     }
 }

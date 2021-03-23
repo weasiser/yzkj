@@ -42,12 +42,14 @@ class UpdateSoldCountValueProfit
             $vendingMachine->sold_count -= $sold_count;
             $vendingMachine->sold_value -= $sold_value;
             $vendingMachine->sold_profit -= $sold_profit;
-            $warehouse->sold_count -= $sold_count;
-            $warehouse->sold_value -= $sold_value;
-            $warehouse->sold_profit -= $sold_profit;
             $product->update();
             $vendingMachine->update();
-            $warehouse->update();
+            if ($warehouse) {
+                $warehouse->sold_count -= $sold_count;
+                $warehouse->sold_value -= $sold_value;
+                $warehouse->sold_profit -= $sold_profit;
+                $warehouse->update();
+            }
         } else {
             $sold_count = $order->amount;
             $sold_value = $order->total_amount;
@@ -58,12 +60,14 @@ class UpdateSoldCountValueProfit
             $vendingMachine->sold_count += $sold_count;
             $vendingMachine->sold_value += $sold_value;
             $vendingMachine->sold_profit += $sold_profit;
-            $warehouse->sold_count += $sold_count;
-            $warehouse->sold_value += $sold_value;
-            $warehouse->sold_profit += $sold_profit;
             $product->update();
             $vendingMachine->update();
-            $warehouse->update();
+            if ($warehouse) {
+                $warehouse->sold_count += $sold_count;
+                $warehouse->sold_value += $sold_value;
+                $warehouse->sold_profit += $sold_profit;
+                $warehouse->update();
+            }
         }
     }
 }

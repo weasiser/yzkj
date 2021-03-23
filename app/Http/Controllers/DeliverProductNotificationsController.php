@@ -124,28 +124,34 @@ class DeliverProductNotificationsController extends Controller
 
     protected function decreaseStock($order)
     {
-        $amount = $order->amount;
-        $product = $order->product;
-        $order->vendingMachineAisle->decreaseStock($amount);
-        $warehouse_id = $order->vendingMachine->warehouse->id;
-        $productPes = $product->productPesWithoutSoldOutChecked->where('warehouse_id', '=', $warehouse_id);
-        $negativeProductPes = $productPes->where('stock', '<', 0)->first();
-        if ($negativeProductPes) {
-            $negativeProductPes->stock -= $amount;
-            $negativeProductPes->save();
-        } else {
-            $positiveProductPes = $productPes->where('stock', '>', 0)->first();
-            if ($positiveProductPes) {
-                $positiveProductPes->stock -= $amount;
-                $positiveProductPes->save();
-            } else {
-                $zeroProductPes = $productPes->orderBy('production_date', 'desc')->orderBy('created_at', 'desc')->first();
-                $zeroProductPes->stock -= $amount;
-                $zeroProductPes->save();
-            }
+        if ($order->vendingMachine->machine_api_type === 0) {
+            $order->vendingMachineAisle->decreaseStock();
+        } elseif ($order->vendingMachine->machine_api_type === 1) {
+            $amount = $order->amount;
+            $order->vendingMachineAisle->decreaseStock($amount);
         }
-        $product->total_stock -= $amount;
-        $product->save();
+//        $product = $order->product;
+
+//        $warehouse_id = $order->vendingMachine->warehouse->id;
+//        $productPes = $product->productPesWithoutSoldOutChecked->where('warehouse_id', '=', $warehouse_id);
+//        $negativeProductPes = $productPes->where('stock', '<', 0)->first();
+//        if ($negativeProductPes) {
+//            $negativeProductPes->stock -= $amount;
+//            $negativeProductPes->save();
+//        } else {
+//            $positiveProductPes = $productPes->where('stock', '>', 0)->first();
+//            if ($positiveProductPes) {
+//                $positiveProductPes->stock -= $amount;
+//                $positiveProductPes->save();
+//            } else {
+//                $zeroProductPes = $productPes->orderBy('production_date', 'desc')->orderBy('created_at', 'desc')->first();
+//                $zeroProductPes->stock -= $amount;
+//                $zeroProductPes->save();
+//            }
+//        }
+//        $product->total_stock -= $amount;
+//        $product->save();
+
 //        if (!$productPes) {
 //            $productPes = $order->product->productPesWithoutSoldOutChecked->where('warehouse_id', $warehouse_id)->last();
 //        }

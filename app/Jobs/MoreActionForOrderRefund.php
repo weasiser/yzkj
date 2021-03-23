@@ -42,13 +42,13 @@ class MoreActionForOrderRefund implements ShouldQueue
 
     protected function returnToStock($order)
     {
-        $order->vendingMachineAisle->increaseStock();
-        $warehouse_id = $order->vendingMachine->warehouse->id;
-        $productPes = $order->product->productPesWithoutSoldOutChecked->where('stock', '<', 0)->where('warehouse_id', '=', $warehouse_id)->first();
-        if (!$productPes) {
-            $productPes = $order->product->productPesWithoutSoldOutChecked->where('warehouse_id', $warehouse_id)->first();
-        }
-        $productPes->update(['stock' => $productPes->stock + $order->refund_number]);
+        $order->vendingMachineAisle->increaseStock($order->refund_number);
+//        $warehouse_id = $order->vendingMachine->warehouse->id;
+//        $productPes = $order->product->productPesWithoutSoldOutChecked->where('stock', '<', 0)->where('warehouse_id', '=', $warehouse_id)->first();
+//        if (!$productPes) {
+//            $productPes = $order->product->productPesWithoutSoldOutChecked->where('warehouse_id', $warehouse_id)->first();
+//        }
+//        $productPes->update(['stock' => $productPes->stock + $order->refund_number]);
     }
 
     protected function disableAisle($order)

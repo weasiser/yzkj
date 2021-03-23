@@ -98,14 +98,14 @@ class ProductsController extends Controller
         $grid->column('market_price', '市场价')->editable();
         $grid->column('promotion_price', '促销优惠')->editable()->sortable();
         $grid->quality_guarantee_period('保质期（月）')->editable()->sortable();
-        $grid->column('warehouse_stock', '仓库库存')->sortable();
+//        $grid->column('warehouse_stock', '仓库库存')->sortable();
         $grid->column('vending_machine_stock', '售卖机库存')->sortable();
-        $grid->total_stock('总库存')->sortable();
-        $grid->column('total_registered_stock', '登记库存')->sortable();
+//        $grid->total_stock('总库存')->sortable();
+//        $grid->column('total_registered_stock', '登记库存')->sortable();
         $grid->sold_count('销量（件）')->sortable();
         $grid->sold_value('销售额')->sortable();
         $grid->sold_profit('利润')->sortable();
-        $grid->min_expiration_date('最小有效日期')->sortable();
+//        $grid->min_expiration_date('最小有效日期')->sortable();
 //            ->expand(function ($model) {
 //                $productPes = $model->productPes()->get()->map(function ($productPes) {
 //                    return $productPes->only(['production_date', 'expiration_date', 'stock', 'created_at']);

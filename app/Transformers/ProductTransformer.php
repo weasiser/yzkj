@@ -20,9 +20,9 @@ class ProductTransformer extends TransformerAbstract
             'market_price'             => (float)$product->market_price,
             'promotion_price'          => (float)$product->promotion_price,
             'quality_guarantee_period' => $product->quality_guarantee_period,
-            'total_stock'              => $product->total_stock,
-            'min_expiration_date'      => $product->min_expiration_date,
-            'days_to_expire'           => Carbon::today()->diffInDays($product->min_expiration_date, false),
+//            'total_stock'              => $product->total_stock,
+//            'min_expiration_date'      => $product->min_expiration_date,
+//            'days_to_expire'           => Carbon::today()->diffInDays($product->min_expiration_date, false),
 //            'created_at' => (string) $product->created_at,
 //            'updated_at' => (string) $product->updated_at,
         ];

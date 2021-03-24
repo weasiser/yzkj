@@ -95,9 +95,9 @@ class OrdersController extends Controller
         if ($warehouseId = $request->warehouseId) {
             $order = $order->leftJoin('vending_machines', 'orders.vending_machine_id', '=', 'vending_machines.id')->where('vending_machines.warehouse_id', $warehouseId);
         }
-        $dailySaleStatistics = $order->selectRaw('date(orders.paid_at) as date, sum(orders.total_amount - orders.refund_amount) as info, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->whereYear('orders.paid_at', $year)->whereMonth('orders.paid_at', $month)->groupBy('date')->get();
+        $dailySaleStatistics = $order->selectRaw('date(orders.paid_at) as date, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->whereYear('orders.paid_at', $year)->whereMonth('orders.paid_at', $month)->groupBy('date')->get();
         foreach ($dailySaleStatistics as $key => $value) {
-            $value['info'] = '￥' . $value['info'];
+            $value['info'] = '￥' . $value['sold_profit'];
             $value['data'] = [
                 'sold_count' => $value['sold_count'],
                 'sold_value' => $value['sold_value'],

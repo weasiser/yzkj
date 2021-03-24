@@ -165,6 +165,9 @@ $api->version('v1', [
             // 月内每天统计
             $api->get('getDailyStatistics', 'OrdersController@getDailyStatistics')
                 ->name('api.orders.getDailyStatistics');
+            // 可补充
+            $api->get('getAvailableProductStock', 'ProductsController@getAvailableProductStock')
+                ->name('api.products.getAvailableProductStock');
             // 信息
             $api->post('information', 'InformationController@store')
                 ->name('api.information.store');

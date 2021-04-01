@@ -13,7 +13,7 @@ class ImageUploadHandler
     // 只允许以下后缀名的图片文件上传
     protected $allowed_ext = ["png", "jpg", "gif", 'jpeg'];
 
-    public function save($user, $file, $folder, $file_prefix, $file_processing_rule_name='', $max_width = false, $delete_path='')
+    public function save($file, $folder, $file_prefix, $file_processing_rule_name='', $max_width = false, $delete_path='')
     {
         // 构建存储的文件夹规则，值如：uploads/images/avatars/2017/09/21
         // 文件夹切割能让查找效率更高。

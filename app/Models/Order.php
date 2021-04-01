@@ -108,6 +108,11 @@ class Order extends Model
         return $this->belongsTo(VendingMachineAisle::class);
     }
 
+    public function refundOrderFeedback()
+    {
+        return $this->hasOne(RefundOrderFeedback::class);
+    }
+
     public static function findAvailableNo()
     {
         // 订单流水号前缀

@@ -95,7 +95,7 @@ $api->version('v1', [
             // 创建订单
             $api->post('orders', 'OrdersController@store')
                 ->name('api.orders.store');
-            // 创建订单
+            // 显示订单
             $api->get('orders/{order}', 'OrdersController@show')
                 ->name('api.orders.show');
             // 删除订单
@@ -104,6 +104,18 @@ $api->version('v1', [
             // 订单申请退款
             $api->post('orders/{order}/applyRefund', 'OrdersController@applyRefund')
                 ->name('api.orders.applyRefund');
+            // 创建退款订单
+            $api->post('refundOrderFeedback', 'RefundOrderFeedbackController@store')
+                ->name('api.refundOrderFeedback.store');
+            // 显示退款订单
+            $api->get('refundOrderFeedback/{refundOrderFeedback}', 'RefundOrderFeedbackController@show')
+                ->name('api.refundOrderFeedback.show');
+            // 创建退款订单
+            $api->post('refundOrderFeedback/uploadPicture', 'RefundOrderFeedbackController@uploadPicture')
+                ->name('api.refundOrderFeedback.uploadPicture');
+            // 退款订单列表
+            $api->get('refundOrderFeedback', 'RefundOrderFeedbackController@index')
+                ->name('api.refundOrderFeedback.index');
             // 更新货道
             $api->put('vendingMachineAisles/{vendingMachineAisle}', 'VendingMachineAislesController@update')
                 ->name('api.vendingMachineAisles.update');

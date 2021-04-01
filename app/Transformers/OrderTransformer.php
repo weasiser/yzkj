@@ -7,7 +7,7 @@ use League\Fractal\TransformerAbstract;
 
 class OrderTransformer extends TransformerAbstract
 {
-    protected $availableIncludes = ['user', 'product', 'vendingMachine', 'vendingMachineAisle'];
+    protected $availableIncludes = ['user', 'product', 'vendingMachine', 'vendingMachineAisle', 'refundOrderFeedback'];
 
     public function transform(Order $order)
     {
@@ -54,5 +54,10 @@ class OrderTransformer extends TransformerAbstract
     public function includeVendingMachineAisle(Order $order)
     {
         return $this->item($order->vendingMachineAisle, new VendingMachineAisleTransformer());
+    }
+
+    public function includeRefundOrderFeedback(Order $order)
+    {
+        return $this->item($order->refundOrderFeedback, new RefundOrderFeedbackTransformer());
     }
 }

@@ -60,6 +60,12 @@ class OrdersController extends Controller
     public function index(Request $request, Order $order, OrderTransformer $orderTransformer)
     {
         if ($request->date) {
+            if ($vendingMachineId = $request->vendingMachineId) {
+                $order = $order->where('vending_machine_id', $vendingMachineId);
+            }
+            if ($warehouseId = $request->warehouseId) {
+                $order = $order->leftJoin('vending_machines', 'orders.vending_machine_id', '=', 'vending_machines.id')->where('vending_machines.warehouse_id', $warehouseId);
+            }
             $orders = $order->whereDate('paid_at', $request->date)->recent()->paginate(5);
             return $this->response->paginator($orders, $orderTransformer);
         } elseif ($request->orderNo) {

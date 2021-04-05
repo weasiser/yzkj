@@ -66,7 +66,7 @@ class OrdersController extends Controller
             if ($warehouseId = $request->warehouseId) {
                 $order = $order->leftJoin('vending_machines', 'orders.vending_machine_id', '=', 'vending_machines.id')->where('vending_machines.warehouse_id', $warehouseId);
             }
-            $orders = $order->whereDate('paid_at', $request->date)->recent()->paginate(5);
+            $orders = $order->whereDate('paid_at', $request->date)->orderBy('orders.id', 'desc')->paginate(5);
             return $this->response->paginator($orders, $orderTransformer);
         } elseif ($request->orderNo) {
             $searchOrder = $order->where('no', $request->orderNo)->first();

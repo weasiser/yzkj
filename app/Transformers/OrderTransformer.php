@@ -58,6 +58,8 @@ class OrderTransformer extends TransformerAbstract
 
     public function includeRefundOrderFeedback(Order $order)
     {
-        return $this->item($order->refundOrderFeedback, new RefundOrderFeedbackTransformer());
+        if ($order->refundOrderFeedback) {
+            return $this->item($order->refundOrderFeedback, new RefundOrderFeedbackTransformer());
+        }
     }
 }

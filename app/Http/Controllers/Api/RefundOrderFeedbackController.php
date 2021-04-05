@@ -37,6 +37,37 @@ class RefundOrderFeedbackController extends Controller
         return $this->response->paginator($refundOrderFeedbackList, $refundOrderFeedbackTransformer);
     }
 
+    public function update(RefundOrderFeedback $refundOrderFeedback, RefundOrderFeedbackRequest $refundOrderFeedbackRequest, RefundOrderFeedbackTransformer $refundOrderFeedbackTransformer)
+    {
+        $this->authorize('own', $refundOrderFeedback);
+        $content = $refundOrderFeedbackRequest->input('content');
+        $refundOrderFeedback->content = $content;
+        $refundOrderFeedback->save();
+        return $this->response->item($refundOrderFeedback, $refundOrderFeedbackTransformer);
+    }
+
+    public function destroy(RefundOrderFeedback $refundOrderFeedback, ImageUploadHandler $imageUploadHandler)
+    {
+        $this->authorize('own', $refundOrderFeedback);
+        foreach ($refundOrderFeedback->picture as $value) {
+            $imageUploadHandler->deleteFromOss($value);
+        }
+        $refundOrderFeedback->order->update([
+            'refund_status' => Order::REFUND_STATUS_PENDING,
+        ]);
+        $refundOrderFeedback->delete();
+        return $this->response->noContent();
+    }
+
+    public function handle(RefundOrderFeedback $refundOrderFeedback)
+    {
+        $refundOrderFeedback->is_handled = true;
+        $refundOrderFeedback->save();
+        return $this->response->array([
+            'handleResult' => true
+        ]);
+    }
+
     public function uploadPicture(Request $request, ImageUploadHandler $imageUploadHandler)
     {
         // 初始化返回数据，默认是失败的
@@ -60,5 +91,21 @@ class RefundOrderFeedbackController extends Controller
             $refundOrderFeedback->save();
         }
         return $data;
+    }
+
+    public function deleteImage(RefundOrderFeedback $refundOrderFeedback, Request $request, ImageUploadHandler $imageUploadHandler)
+    {
+        $pictures = $refundOrderFeedback->picture;
+        $index = $request->input('index');
+        $imagePath = $pictures[$index];
+        $result = $imageUploadHandler->deleteFromOss($imagePath);
+        if ($result) {
+            array_splice($pictures, $index, 1);
+            $refundOrderFeedback->picture = $pictures;
+            $refundOrderFeedback->save();
+        }
+        return $this->response->array([
+            'deleteImageResult' => $result
+        ]);
     }
 }

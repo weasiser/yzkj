@@ -110,7 +110,19 @@ $api->version('v1', [
             // 显示退款订单
             $api->get('refundOrderFeedback/{refundOrderFeedback}', 'RefundOrderFeedbackController@show')
                 ->name('api.refundOrderFeedback.show');
-            // 创建退款订单
+            // 更新退款订单
+            $api->post('refundOrderFeedback/{refundOrderFeedback}/update', 'RefundOrderFeedbackController@update')
+                ->name('api.refundOrderFeedback.update');
+            // 处理退款订单
+            $api->post('refundOrderFeedback/{refundOrderFeedback}/handle', 'RefundOrderFeedbackController@handle')
+                ->name('api.refundOrderFeedback.handle');
+            // 取消退款订单
+            $api->post('refundOrderFeedback/{refundOrderFeedback}/destroy', 'RefundOrderFeedbackController@destroy')
+                ->name('api.refundOrderFeedback.destroy');
+            // 删除图片
+            $api->post('refundOrderFeedback/{refundOrderFeedback}/deleteImage', 'RefundOrderFeedbackController@deleteImage')
+                ->name('api.refundOrderFeedback.deleteImage');
+            // 退款订单上传图片
             $api->post('refundOrderFeedback/uploadPicture', 'RefundOrderFeedbackController@uploadPicture')
                 ->name('api.refundOrderFeedback.uploadPicture');
             // 退款订单列表

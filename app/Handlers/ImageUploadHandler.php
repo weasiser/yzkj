@@ -113,7 +113,7 @@ class ImageUploadHandler
         return $disk->getUrl($path);
     }
 
-    protected function deleteFromOss($path)
+    public function deleteFromOss($path)
     {
         $disk = Storage::disk('oss');
         return $disk->delete($path);

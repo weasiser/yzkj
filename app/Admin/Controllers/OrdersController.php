@@ -81,13 +81,13 @@ class OrdersController extends AdminController
 //        $grid->column('refund_status', __('退款状态'));
         $grid->column('refund_status', __('退款状态'))->display(function($value) {
             return Order::$refundStatusMap[$value];
-        });
+        })->filter(Order::$refundStatusMap);
 //        $grid->column('refund_no', __('Refund no'));
 //        $grid->column('is_closed', __('Is closed'));
 //        $grid->column('deliver_status', __('出货状态'));
         $grid->column('deliver_status', __('出货状态'))->display(function($value) {
             return Order::$deliverStatusMap[$value];
-        });
+        })->filter(Order::$deliverStatusMap);
 //        $grid->column('deliver_data', __('Deliver data'));
 //        $grid->column('extra', __('Extra'));
 //        $grid->column('created_at', __('创建时间'));

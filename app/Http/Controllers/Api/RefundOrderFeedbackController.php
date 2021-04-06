@@ -33,7 +33,7 @@ class RefundOrderFeedbackController extends Controller
 
     public function index(RefundOrderFeedback $refundOrderFeedback, RefundOrderFeedbackTransformer $refundOrderFeedbackTransformer)
     {
-        $refundOrderFeedbackList = $refundOrderFeedback->recent()->paginate(5);
+        $refundOrderFeedbackList = $refundOrderFeedback->recentUnhandled()->paginate(5);
         return $this->response->paginator($refundOrderFeedbackList, $refundOrderFeedbackTransformer);
     }
 

@@ -101,13 +101,14 @@ class OrdersController extends Controller
         if ($warehouseId = $request->warehouseId) {
             $order = $order->leftJoin('vending_machines', 'orders.vending_machine_id', '=', 'vending_machines.id')->where('vending_machines.warehouse_id', $warehouseId);
         }
-        $dailySaleStatistics = $order->selectRaw('date(orders.paid_at) as date, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->whereYear('orders.paid_at', $year)->whereMonth('orders.paid_at', $month)->groupBy('date')->get();
+        $dailySaleStatistics = $order->selectRaw('date(orders.paid_at) as date, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum(round((orders.total_amount - orders.refund_amount) * 0.006, 2)) as transaction_fee, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->whereYear('orders.paid_at', $year)->whereMonth('orders.paid_at', $month)->groupBy('date')->get();
         foreach ($dailySaleStatistics as $key => $value) {
             $value['info'] = '￥' . $value['sold_profit'];
             $value['data'] = [
                 'sold_count' => $value['sold_count'],
                 'sold_value' => $value['sold_value'],
                 'sold_profit' => $value['sold_profit'],
+                'transaction_fee' => $value['transaction_fee']
             ];
             unset($value['sold_count'], $value['sold_value'], $value['sold_profit']);
         }
@@ -174,15 +175,17 @@ class OrdersController extends Controller
 //                $leftjoin->on('vending_machine_aisles.id', '=', 'orders.vending_machine_aisle_id')->on('vending_machine_aisles.product_id', '=', 'orders.product_id');
 //            })->leftJoin('products', 'vending_machine_aisles.product_id', '=', 'products.id')->selectRaw('products.title, products.image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->groupBy('products.id')->orderBy('sold_count', 'desc')->get();
 
-            $productSaleStatistics = $product->where('products.on_sale', true)->selectRaw('products.title, products.image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->groupBy('products.id')->orderBy('sold_count', 'desc')->get();
+            $productSaleStatistics = $product->where('products.on_sale', true)->selectRaw('products.title, products.image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit, sum(round((orders.total_amount - orders.refund_amount) * 0.006, 2)) as transaction_fee')->groupBy('products.id')->orderBy('sold_count', 'desc')->get();
 //        }
 
         foreach ($productSaleStatistics as $value) {
+//            $value['sold_profit'] -= $value['transaction_fee'];
             $value['image'] = config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $value['image'] . '-product' : Storage::disk(config('admin.upload.disk'))->url($value['image']) . '-product';
             if ($value['sold_count'] === null) {
                 $value['sold_count'] = '0';
                 $value['sold_value'] = '0.00';
                 $value['sold_profit'] = '0.00';
+                $value['transaction_fee'] = '0.00';
             }
         }
 
@@ -224,6 +227,12 @@ class OrdersController extends Controller
 
         $orders = $user->orders()->recent()->paginate(5);
 
+        return $this->response->paginator($orders, $orderTransformer);
+    }
+
+    public function refundOrders(Order $order, OrderTransformer $orderTransformer)
+    {
+        $orders = $order->join('refund_order_feedback', 'orders.id', '=', 'refund_order_feedback.order_id')->where('refund_order_feedback.is_handled', false)->paginate(5);
         return $this->response->paginator($orders, $orderTransformer);
     }
 

@@ -70,27 +70,29 @@ class RefundOrderFeedbackController extends Controller
 
     public function uploadPicture(Request $request, ImageUploadHandler $imageUploadHandler)
     {
-        // 初始化返回数据，默认是失败的
-        $data = 'fail';
         // 判断是否有上传文件，并赋值给 $file
         if ($file = $request->upload) {
             $id = $request->input('id');
             // 保存图片到本地
             $result = $imageUploadHandler->save($file, 'refund_order_feedback', $id);
             // 图片保存成功的话
-            if ($result) {
-                $data = $result['path'];
+            if ($path = $result['path']) {
+                $refundOrderFeedback = RefundOrderFeedback::find($id);
+                $pictures = $refundOrderFeedback->picture;
+                if (!$pictures) {
+                    $pictures = [];
+                }
+                array_push($pictures, $path);
+                $refundOrderFeedback->picture = $pictures;
+                $refundOrderFeedback->save();
+                $res = 'success';
+            } else {
+                $res = 'fail';
             }
-            $refundOrderFeedback = RefundOrderFeedback::find($id);
-            $pictures = $refundOrderFeedback->picture;
-            if (!$pictures) {
-                $pictures = [];
-            }
-            array_push($pictures, $result['path']);
-            $refundOrderFeedback->picture = $pictures;
-            $refundOrderFeedback->save();
         }
-        return $data;
+        return $this->response->array([
+            'uploadImageResult' => $res
+        ]);
     }
 
     public function deleteImage(RefundOrderFeedback $refundOrderFeedback, Request $request, ImageUploadHandler $imageUploadHandler)

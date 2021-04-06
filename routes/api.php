@@ -126,8 +126,11 @@ $api->version('v1', [
             $api->post('refundOrderFeedback/uploadPicture', 'RefundOrderFeedbackController@uploadPicture')
                 ->name('api.refundOrderFeedback.uploadPicture');
             // 退款订单列表
-            $api->get('orders/refundOrders', 'OrdersController@refundOrders')
+            $api->get('refundOrders', 'OrdersController@refundOrders')
                 ->name('api.orders.refundOrders');
+            // 退款订单数量
+            $api->get('refundOrdersCount', 'OrdersController@refundOrdersCount')
+                ->name('api.orders.refundOrdersCount');
             // 更新货道
             $api->put('vendingMachineAisles/{vendingMachineAisle}', 'VendingMachineAislesController@update')
                 ->name('api.vendingMachineAisles.update');

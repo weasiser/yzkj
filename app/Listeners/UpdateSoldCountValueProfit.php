@@ -50,6 +50,10 @@ class UpdateSoldCountValueProfit
                 $warehouse->sold_profit -= $sold_profit;
                 $warehouse->update();
             }
+            if ($refundOrderFeedback = $order->refundOrderFeedback) {
+                $refundOrderFeedback->is_handled = true;
+                $refundOrderFeedback->save();
+            }
         } else {
             $sold_count = $order->amount;
             $sold_value = $order->total_amount;

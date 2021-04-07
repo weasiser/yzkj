@@ -168,10 +168,17 @@ class DeliverProductNotificationsController extends Controller
             $yiputengDeliver->result = $params['trade_status'];
             $yiputengDeliver->save();
             $order = Order::where('no', $params['out_trade_no'])->first();
-            if ($params['trade_status'] === 'SUCCESS') {
-                $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERED]);
-            } elseif ($params['trade_status'] === 'FAIL') {
-                $order->update(['deliver_status' => Order::DELIVER_STATUS_FAILED]);
+            if ($order) {
+                if ($params['trade_status'] === 'SUCCESS') {
+                    $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERED]);
+                    $vendingMachine = $order->vendingMachine;
+                    if ($vendingMachine->is_delivering) {
+                        $vendingMachine->is_delivering = false;
+                        $vendingMachine->update();
+                    }
+                } elseif ($params['trade_status'] === 'FAIL') {
+                    $order->update(['deliver_status' => Order::DELIVER_STATUS_FAILED]);
+                }
             }
 //            $http = new Client();
 //            $http->post('https://www.yzkj01.com/notice/yiputengDeliverResult', [

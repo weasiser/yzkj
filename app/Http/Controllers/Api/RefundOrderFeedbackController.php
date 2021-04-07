@@ -20,9 +20,11 @@ class RefundOrderFeedbackController extends Controller
         ]);
         $refundOrderFeedback->order()->associate($order);
         $refundOrderFeedback->save();
-        $order->update([
-            'refund_status' => Order::REFUND_STATUS_APPLIED,
-        ]);
+        if ($order->refund_status === Order::REFUND_STATUS_PENDING) {
+            $order->update([
+                'refund_status' => Order::REFUND_STATUS_APPLIED,
+            ]);
+        }
         return $this->response->item($refundOrderFeedback, $refundOrderFeedbackTransformer)->setStatusCode(201);
     }
 
@@ -52,9 +54,11 @@ class RefundOrderFeedbackController extends Controller
         foreach ($refundOrderFeedback->picture as $value) {
             $imageUploadHandler->deleteFromOss($value);
         }
-        $refundOrderFeedback->order->update([
-            'refund_status' => Order::REFUND_STATUS_PENDING,
-        ]);
+        if ($refundOrderFeedback->order->refund_status === Order::REFUND_STATUS_APPLIED) {
+            $refundOrderFeedback->order->update([
+                'refund_status' => Order::REFUND_STATUS_PENDING,
+            ]);
+        }
         $refundOrderFeedback->delete();
         return $this->response->noContent();
     }

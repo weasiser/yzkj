@@ -171,13 +171,13 @@ class DeliverProductNotificationsController extends Controller
             if ($order) {
                 if ($params['trade_status'] === 'SUCCESS') {
                     $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERED]);
-                    $vendingMachine = $order->vendingMachine;
-                    if ($vendingMachine->is_delivering) {
-                        $vendingMachine->is_delivering = false;
-                        $vendingMachine->update();
-                    }
                 } elseif ($params['trade_status'] === 'FAIL') {
                     $order->update(['deliver_status' => Order::DELIVER_STATUS_FAILED]);
+                }
+                $vendingMachine = $order->vendingMachine;
+                if ($vendingMachine->is_delivering) {
+                    $vendingMachine->is_delivering = false;
+                    $vendingMachine->update();
                 }
             }
 //            $http = new Client();

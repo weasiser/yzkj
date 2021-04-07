@@ -32,10 +32,10 @@ class MoreActionForOrderRefund implements ShouldQueue
      */
     public function handle()
     {
-        if ($this->order->extra['return_to_stock']) {
+        if (isset($this->order->extra['return_to_stock'])) {
             $this->returnToStock($this->order);
         }
-        if ($this->order->extra['disable_aisle']) {
+        if (isset($this->order->extra['disable_aisle'])) {
             $this->disableAisle($this->order);
         }
     }

@@ -19,16 +19,19 @@ class DeliverProductNotificationsController extends Controller
         $result = $request->input();
 
         if ($result) {
-            $notification = new DeliverProductNotification([
-                'no' => $result['orderid'],
-                'code' => $result['machineId'],
-                'ordinal' => $result['goodslist'][0]['latticeId'],
-                'cabid' => $result['goodslist'][0]['cabid'],
-                'cabtype' => $result['goodslist'][0]['cabtype'],
-                'result' => $result['goodslist'][0]['resultid']
-            ]);
+            $notification = DeliverProductNotification::where('no', $result['orderid'])->first();
+            if (!$notification) {
+                $notification = new DeliverProductNotification([
+                    'no' => $result['orderid'],
+                    'code' => $result['machineId'],
+                    'ordinal' => $result['goodslist'][0]['latticeId'],
+                    'cabid' => $result['goodslist'][0]['cabid'],
+                    'cabtype' => $result['goodslist'][0]['cabtype'],
+                    'result' => $result['goodslist'][0]['resultid']
+                ]);
 
-            $notification->save();
+                $notification->save();
+            }
 
 //            $http = new Client();
 //

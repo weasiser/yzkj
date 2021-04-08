@@ -75,6 +75,8 @@ $api->version('v1', [
             ->name('api.articles.comment.index');
         $api->get('vendingMachines/yiputeng/queryMachineList', 'VMDeliverAndQueryController@queryMachineList')
             ->name('api.vendingMachines.yiputeng.queryMachineList');
+        $api->get('vendingMachines/yiputeng/queryShelfList', 'VMDeliverAndQueryController@queryShelfList')
+            ->name('api.vendingMachines.yiputeng.queryShelfList');
 
         // 需要 token 验证的接口
         $api->group(['middleware' => 'api.auth'], function($api) {

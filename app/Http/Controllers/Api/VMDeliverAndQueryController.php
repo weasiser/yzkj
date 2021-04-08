@@ -91,9 +91,62 @@ class VMDeliverAndQueryController extends Controller
         }
     }
 
-    public function queryVendingMachineApiStatus()
+    public function queryVendingMachineApiStatus(Request $request)
     {
-        return app(VendingMachineDeliverAndQuery::class)->getAccessToken();
+        $machine_api_type = (int)$request->input('machine_api_type');
+        $code = $request->input('code');
+        $ordinal = (int)$request->input('ordinal');
+        $status = false;
+        $message = '';
+        if ($machine_api_type === 0) {
+            $result = app(VendingMachineDeliverAndQuery::class)->queryMachineInfo($code);
+            if ($result['result'] === '200') {
+                if ($result['data'][0]['netStat'] === 1) {
+                    $status = true;
+                    $message = '正常';
+                } else {
+                    $status = false;
+                    $message = '机器不在线';
+                }
+            } else {
+                $status = false;
+                $message = '出货接口异常';
+            }
+        } elseif ($machine_api_type === 1) {
+            $result = app(VendingMachineDeliverAndQuery::class)->queryMachineList();
+            if ($result['code'] === 0) {
+                foreach ($result['content'] as $key => $value) {
+                    if ($value['machine_id'] === $code) {
+                        if ($value['is_online'] === '在线') {
+                            $result = app(VendingMachineDeliverAndQuery::class)->queryShelfList($code);
+                            if ($result['code'] === 0) {
+                                if ($result['content'][$ordinal - 1]['is_broken'] === 0) {
+                                    $status = true;
+                                    $message = '正常';
+                                } else {
+                                    $status = false;
+                                    $message = '该货道已损坏';
+                                }
+                            } else {
+                                $status = false;
+                                $message = '出货接口异常';
+                            }
+                        } else {
+                            $status = false;
+                            $message = '机器不在线';
+                        }
+                        break;
+                    }
+                }
+            } else {
+                $status = false;
+                $message = '出货接口异常';
+            }
+        }
+        return $this->response->array([
+            'status' => $status,
+            'message' => $message
+        ]);
     }
 
     public function getApiToken()

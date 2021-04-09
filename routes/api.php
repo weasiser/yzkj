@@ -106,6 +106,7 @@ $api->version('v1', [
             // 订单申请退款
             $api->post('orders/{order}/applyRefund', 'OrdersController@applyRefund')
                 ->name('api.orders.applyRefund');
+
             // 创建退款订单
             $api->post('refundOrderFeedback', 'RefundOrderFeedbackController@store')
                 ->name('api.refundOrderFeedback.store');
@@ -133,6 +134,14 @@ $api->version('v1', [
             // 退款订单数量
             $api->get('refundOrdersCount', 'OrdersController@refundOrdersCount')
                 ->name('api.orders.refundOrdersCount');
+            // 订阅消息
+            $api->post('subscribeMessages', 'SubscribeMessagesController@store')
+                ->name('api.subscribeMessages.store');
+            $api->get('subscribeMessage', 'SubscribeMessagesController@show')
+                ->name('api.subscribeMessages.show');
+            $api->post('cancelSubscribeMessage', 'SubscribeMessagesController@destroy')
+                ->name('api.subscribeMessages.destroy');
+
             // 更新货道
             $api->put('vendingMachineAisles/{vendingMachineAisle}', 'VendingMachineAislesController@update')
                 ->name('api.vendingMachineAisles.update');

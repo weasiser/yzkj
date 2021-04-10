@@ -4,14 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Handlers\ImageUploadHandler;
 use App\Http\Requests\Api\RefundOrderFeedbackRequest;
+use App\Jobs\RefundOrderFeedBackNotification;
 use App\Models\Order;
 use App\Models\RefundOrderFeedback;
+use App\Models\SubscribeMessage;
 use App\Transformers\RefundOrderFeedbackTransformer;
 use Illuminate\Http\Request;
 
 class RefundOrderFeedbackController extends Controller
 {
-    public function store(RefundOrderFeedbackRequest $refundOrderFeedbackRequest, RefundOrderFeedbackTransformer $refundOrderFeedbackTransformer)
+    public function store( RefundOrderFeedbackRequest $refundOrderFeedbackRequest, RefundOrderFeedbackTransformer $refundOrderFeedbackTransformer)
     {
         $content = $refundOrderFeedbackRequest->input('content');
         $order = Order::find($refundOrderFeedbackRequest->input('order_id'));
@@ -24,6 +26,13 @@ class RefundOrderFeedbackController extends Controller
             $order->update([
                 'refund_status' => Order::REFUND_STATUS_APPLIED,
             ]);
+        }
+        $template_id = $refundOrderFeedbackRequest->input('template_id');
+        $subscribers = SubscribeMessage::where('template_id', $template_id)->get();
+        if ($subscribers) {
+            foreach ($subscribers as $subscriber) {
+                RefundOrderFeedBackNotification::dispatch($order, $subscriber->user, $template_id);
+            }
         }
         return $this->response->item($refundOrderFeedback, $refundOrderFeedbackTransformer)->setStatusCode(201);
     }

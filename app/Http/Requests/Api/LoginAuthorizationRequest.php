@@ -12,7 +12,7 @@ class LoginAuthorizationRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_info' => 'required|array',
+            'user_info' => 'array',
         ];
     }
 }

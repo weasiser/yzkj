@@ -68,6 +68,12 @@ class OrdersController extends AdminController
         $grid->column('refund_amount', __('退款金额'))->display(function($value) {
             return $value == 0 ? '' : $value;
         })->totalRow();
+        $grid->column('利润')->display(function () {
+            return ($this->sold_price - $this->purchase_price) * ($this->amount - $this->refund_number);
+        });
+        $grid->column('交易手续费')->display(function () {
+            return round(($this->total_amount - $this->refund_amount) * 0.006, 2) ?: 0.01;
+        });
         $grid->column('paid_at', __('支付时间'));
 //        $grid->column('payment_method', __('支付方式'));
         $grid->column('payment_method', __('支付方式'))->using([
@@ -113,12 +119,20 @@ class OrdersController extends AdminController
             $filter->column(1/2, function ($filter) {
                 $filter->like('no', '订单号');
                 $filter->like('user.name', '用户昵称');
+                $filter->between('paid_at', '支付时间')->datetime();
             });
             $filter->column(1/2, function ($filter) {
                 $filter->like('product.title', '商品名称');
                 $filter->like('vendingMachine.name', '售卖机名称');
             });
 //            $filter->expand();
+        });
+
+        $grid->footer(function ($query) {
+//             查询利润和交易手续费
+            $data = $query->selectRaw('sum((sold_price - purchase_price) * (amount - refund_number)) as sold_profit, sum(if(round((total_amount - refund_amount) * 0.006, 2) = 0.00, 0.01, round((total_amount - refund_amount) * 0.006, 2))) as transaction_fee')->get()->toArray();
+
+            return "<div class='text-center'>利润：" . $data[0]['sold_profit'] . '<span class="margin"></span>' . "交易手续费：" . $data[0]['transaction_fee'] . "</div>";
         });
 
         $grid->paginate(10);

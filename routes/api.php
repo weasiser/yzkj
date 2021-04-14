@@ -65,6 +65,8 @@ $api->version('v1', [
         // 查询是否在线
         $api->get('vendingMachine/query', 'VMDeliverAndQueryController@queryMachineInfo')
             ->name('api.VMDeliverAndQuery.queryMachineInfo');
+        $api->get('vendingMachineAisles/query', 'VMDeliverAndQueryController@queryCommodityInfo')
+            ->name('api.VMDeliverAndQuery.queryCommodityInfo');
         $api->get('articleCategories', 'ArticleCategoriesController@index')
             ->name('api.articleCategories.index');
         $api->get('articles', 'ArticlesController@index')

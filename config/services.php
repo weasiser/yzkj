@@ -54,6 +54,7 @@ return [
         'get_access_token_api' => env('HUIYIJIE_GET_ACCESS_TOKEN_API'),
         'deliver_product_api' => env('HUIYIJIE_DELIVER_PRODUCT_API'),
         'query_machine_info' => env('HUIYIJIE_QUERY_MACHINE_INFO_API'),
+        'query_commodity_info' => env('HUIYIJIE_QUERY_COMMODITY_INFO'),
         'user_name' => env('HUIYIJIE_USER_NAME'),
         'password' => env('HUIYIJIE_PASSWORD')
     ],

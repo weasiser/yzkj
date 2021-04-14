@@ -115,6 +115,53 @@ class VendingMachineDeliverAndQuery
         }
     }
 
+    public function queryCommodityInfo($machineUuid)
+    {
+        if (Cache::store('redis')->has('huiyijie_access_token')) {
+            $access_token = Cache::store('redis')->get('huiyijie_access_token');
+        } else {
+            $token = $this->getAccessToken();
+            if ($token['result'] === '200') {
+                $access_token = $token['data'];
+            } else {
+                return $token;
+            }
+        }
+
+        $http = new Client();
+        $queryCommodityInfoApi = config('services.huiyijie_vending_machine.query_commodity_info');
+
+        $response = $http->get($queryCommodityInfoApi, [
+            'headers' => [
+                'Authorization' => $access_token
+            ],
+            'query' => ['machineUuid' => $machineUuid]
+        ]);
+
+        $result = json_decode($response->getBody(), true);
+
+        if ($result['result'] === '406') {
+            $token = $this->getAccessToken();
+            if ($token['result'] === '200') {
+                $access_token = $token['data'];
+                $response = $http->get($queryCommodityInfoApi, [
+                    'headers' => [
+                        'Authorization' => $access_token
+                    ],
+                    'query' => ['machineUuid' => $machineUuid]
+                ]);
+                $result = json_decode($response->getBody(), true);
+                return $result;
+            } else {
+                return $token;
+            }
+        } elseif ($result['result'] === '200') {
+            return $result;
+        } else {
+            return $result;
+        }
+    }
+
     public function getAccessToken()
     {
         $http = new Client();
@@ -245,6 +292,9 @@ class VendingMachineDeliverAndQuery
         $params['version'] = '1.0';
         $params['notify_url'] = 'https://vm.yzkj01.com/yiputeng/deliverProductNotifications/notify';
         $params['sign_type'] = 'MD5';
+
+        $params['pay_price'] = 1;
+        $params['pay_person_id'] = '1';
 
         $nonce_str = Str::random();
 

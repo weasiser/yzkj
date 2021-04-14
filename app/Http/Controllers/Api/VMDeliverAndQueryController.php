@@ -61,6 +61,11 @@ class VMDeliverAndQueryController extends Controller
         return app(VendingMachineDeliverAndQuery::class)->queryMachineInfo($request->input('code'));
     }
 
+    public function queryCommodityInfo(Request $request)
+    {
+        return app(VendingMachineDeliverAndQuery::class)->queryCommodityInfo($request->input('code'));
+    }
+
     public function queryDeliverStatus(Request $request, VendingMachineAisle $vendingMachineAisle, Product $product)
     {
         $orderNo = $request->input('orderNo');

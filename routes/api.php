@@ -167,6 +167,8 @@ $api->version('v1', [
                 ->name('api.VMDeliverAndQuery.deliverProduct');
             $api->post('vendingMachines/yiputeng/payMultiDelivery', 'VMDeliverAndQueryController@payMultiDelivery')
                 ->name('api.vendingMachines.yiputeng.payMultiDelivery');
+            $api->post('vendingMachines/{vendingMachine}/deliverProductTest', 'VMDeliverAndQueryController@deliverProductTest')
+                ->name('api.VMDeliverAndQuery.deliverProductTest');
             // 仓库列表
             $api->get('warehouses', 'WarehousesController@index')
                 ->name('api.warehouses.index');

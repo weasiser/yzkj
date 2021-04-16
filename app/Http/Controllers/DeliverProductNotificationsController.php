@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Handlers\VendingMachineDeliverAndQuery;
 use App\Models\DeliverProductNotification;
 use App\Models\Order;
+use App\Models\UniDeliverProductNotification;
 use App\Models\YiputengDeliverProductNotification;
 use App\Services\RefundService;
 use GuzzleHttp\Client;
@@ -31,6 +32,11 @@ class DeliverProductNotificationsController extends Controller
                 ]);
 
                 $notification->save();
+            }
+
+            $uniNotification = UniDeliverProductNotification::where('order_no', $result['orderid'])->first();
+            if ($uniNotification) {
+                $uniNotification->update(['result' => $result['goodslist'][0]['resultid']]);
             }
 
 //            $http = new Client();
@@ -170,6 +176,12 @@ class DeliverProductNotificationsController extends Controller
             //$yiputengDeliverProductNotification->where('trade_no', $params['out_trade_no'])->update(['result' => $params['trade_status']]);
             $yiputengDeliver->result = $params['trade_status'];
             $yiputengDeliver->save();
+
+            $uniNotification = UniDeliverProductNotification::where('order_no', $params['out_trade_no'])->first();
+            if ($uniNotification) {
+                $uniNotification->update(['result' => $params['trade_status']]);
+            }
+
             $order = Order::where('no', $params['out_trade_no'])->first();
             if ($order) {
                 if ($params['trade_status'] === 'SUCCESS') {

@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Handlers\VendingMachineDeliverAndQuery;
-use App\Jobs\DeliverProduct;
 use App\Models\DeliverProductNotification;
 use App\Models\Product;
-use App\Models\ProductPes;
+use App\Models\UniDeliverProductNotification;
 use App\Models\VendingMachine;
 use App\Models\VendingMachineAisle;
 use App\Models\YiputengDeliverProductNotification;
@@ -208,5 +207,35 @@ class VMDeliverAndQueryController extends Controller
             $notification->save();
         }
         return $result;
+    }
+
+    public function deliverProductTest(VendingMachine $vendingMachine, Request $request)
+    {
+        $aisle_number = $request->input('aisle_number');
+        $number = (int)$request->input('number');
+        $machine_api_type = $vendingMachine->machine_api_type;
+        $machine_id = $vendingMachine->code;
+        $order_no = date('YmdHis') . str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $params = [
+            'order_no' => $order_no,
+            'machine_id' => $machine_id,
+            'aisle_number' => $aisle_number,
+            'number' => $number,
+            'result' => 'queueing'
+        ];
+        if ($machine_api_type === 0) {
+            for ($i = 1; $i <= $number; $i++) {
+                $params['order_no'] .= 'a' .$i;
+                $params['number'] = 1;
+                if ($i === $number) {
+                    $params['extra']['last'] = true;
+                }
+                $uniDeliverProductNotification = new UniDeliverProductNotification($params);
+                $uniDeliverProductNotification->save();
+            }
+        } elseif ($machine_api_type === 1) {
+            $uniDeliverProductNotification = new UniDeliverProductNotification($params);
+            $uniDeliverProductNotification->save();
+        }
     }
 }

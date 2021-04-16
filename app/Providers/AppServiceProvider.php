@@ -5,11 +5,13 @@ namespace App\Providers;
 use App\Models\Article;
 use App\Models\ArticleComment;
 use App\Models\ProductPes;
+use App\Models\UniDeliverProductNotification;
 use App\Models\VendingMachineAisle;
 use App\Models\YiputengDeliverProductNotification;
 use App\Observers\ArticleCommentObserver;
 use App\Observers\ArticleObserver;
 use App\Observers\ProductPesObserver;
+use App\Observers\UniDeliverProductNotificationObserver;
 use App\Observers\VendingMachineAisleObserver;
 use App\Observers\YiputengDeliverProductNotificationObserver;
 use Illuminate\Support\ServiceProvider;
@@ -71,5 +73,6 @@ class AppServiceProvider extends ServiceProvider
         Article::observe(ArticleObserver::class);
         ArticleComment::observe(ArticleCommentObserver::class);
         YiputengDeliverProductNotification::observe(YiputengDeliverProductNotificationObserver::class);
+        UniDeliverProductNotification::observe(UniDeliverProductNotificationObserver::class);
     }
 }

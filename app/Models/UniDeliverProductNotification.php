@@ -13,4 +13,8 @@ class UniDeliverProductNotification extends Model
         'number',
         'result'
     ];
+
+    protected $casts = [
+        'extra' => 'array',
+    ];
 }

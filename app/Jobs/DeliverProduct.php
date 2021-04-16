@@ -14,7 +14,7 @@ class DeliverProduct implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $uniDeliverProductNotification, $machine_api_type, $number;
+    protected $uniDeliverProductNotification, $machine_api_type;
 
     /**
      * Create a new job instance.
@@ -25,7 +25,6 @@ class DeliverProduct implements ShouldQueue
     {
         $this->uniDeliverProductNotification = $uniDeliverProductNotification;
         $this->machine_api_type = $machine_api_type;
-        $this->number = $number;
     }
 
     /**

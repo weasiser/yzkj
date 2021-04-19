@@ -12,7 +12,7 @@ class UniDeliverProductNotificationObserver
     public function created(UniDeliverProductNotification $uniDeliverProductNotification)
     {
         $vendingMachine = VendingMachine::where('code', $uniDeliverProductNotification->machine_id)->first();
-        DeliverProduct::dispatch($uniDeliverProductNotification, $vendingMachine->machine_api_type);
+        DeliverProduct::dispatch($uniDeliverProductNotification, $vendingMachine->machine_api_type)->onQueue($vendingMachine->code);
     }
 
     public function updated(UniDeliverProductNotification $uniDeliverProductNotification)

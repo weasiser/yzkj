@@ -9,6 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Log;
 
 class DeliverProduct implements ShouldQueue
 {
@@ -43,9 +44,9 @@ class DeliverProduct implements ShouldQueue
                     sleep(1);
                     $this->uniDeliverProductNotification->refresh();
                     if ($this->uniDeliverProductNotification->result === '1') {
-                        $this->delete();
+                        return;
                     } elseif ($this->uniDeliverProductNotification->result === '2' || $this->uniDeliverProductNotification->result === '3') {
-                        $this->delete();
+                        return;
                     }
                 }
             } else {
@@ -58,14 +59,15 @@ class DeliverProduct implements ShouldQueue
             $params['trade_no'] = $this->uniDeliverProductNotification->order_no;
             $params['multi_pay'] = '[{' . $shelf_id . ':' . $this->uniDeliverProductNotification->number . '}]';
             $result = app(VendingMachineDeliverAndQuery::class)->payMultiDelivery($params);
+            Log::info($result);
             if ($result['code'] === 0) {
                 for ($i = 0; $i < 30; $i++) {
                     sleep(1);
                     $this->uniDeliverProductNotification->refresh();
                     if ($this->uniDeliverProductNotification->result === 'SUCCESS') {
-                        $this->delete();
+                        return;
                     } elseif ($this->uniDeliverProductNotification->result === 'FAIL') {
-                        $this->delete();
+                        return;
                     }
                 }
             } else {
@@ -73,6 +75,7 @@ class DeliverProduct implements ShouldQueue
                 $this->uniDeliverProductNotification->save();
             }
         }
-        $this->delete();
+        $this->uniDeliverProductNotification->result = 'timeout';
+        $this->uniDeliverProductNotification->save();
     }
 }

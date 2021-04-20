@@ -68,6 +68,8 @@ return [
         'pay_multi_delivery' => env('YIPUTENG_PAY_MULTI_DELIVERY'),
         'app_key' => env('YIPUTENG_APP_KEY'),
         'app_secret' => env('YIPUTENG_APP_SECRET')
-    ]
+    ],
+
+    'horizon_queue' => explode(',', env('HORIZON_QUEUE'))
 
 ];

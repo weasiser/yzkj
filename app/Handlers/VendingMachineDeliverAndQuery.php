@@ -335,6 +335,10 @@ class VendingMachineDeliverAndQuery
         $params['version'] = '1.0';
         $params['notify_url'] = 'https://vm.yzkj01.com/yiputeng/deliverProductNotifications/notify';
         $params['sign_type'] = 'MD5';
+
+        $params['pay_price'] = 1;
+        $params['pay_person_id'] = '1';
+
         $nonce_str = Str::random();
 
         $params['nonce_str'] = $nonce_str;

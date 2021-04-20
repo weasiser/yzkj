@@ -11,7 +11,8 @@ class UniDeliverProductNotification extends Model
         'machine_id',
         'aisle_number',
         'number',
-        'result'
+        'extra',
+        'result',
     ];
 
     protected $casts = [

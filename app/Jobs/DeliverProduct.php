@@ -21,7 +21,7 @@ class DeliverProduct implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(UniDeliverProductNotification $uniDeliverProductNotification, $machine_api_type, $number)
+    public function __construct(UniDeliverProductNotification $uniDeliverProductNotification, $machine_api_type)
     {
         $this->uniDeliverProductNotification = $uniDeliverProductNotification;
         $this->machine_api_type = $machine_api_type;
@@ -39,7 +39,7 @@ class DeliverProduct implements ShouldQueue
         if ($this->machine_api_type === 0) {
             $result = app(VendingMachineDeliverAndQuery::class)->deliverProduct($this->uniDeliverProductNotification->machine_id, $this->uniDeliverProductNotification->order_no, $this->uniDeliverProductNotification->aisle_number);
             if ($result['result'] === '200') {
-                for ($i = 0; $i < 30; $i++){
+                for ($i = 0; $i < 30; $i++) {
                     sleep(1);
                     $this->uniDeliverProductNotification->refresh();
                     if ($this->uniDeliverProductNotification->result === '1') {
@@ -59,7 +59,7 @@ class DeliverProduct implements ShouldQueue
             $params['multi_pay'] = '[{' . $shelf_id . ':' . $this->uniDeliverProductNotification->number . '}]';
             $result = app(VendingMachineDeliverAndQuery::class)->payMultiDelivery($params);
             if ($result['code'] === 0) {
-                for ($i = 0; $i < 30; $i++){
+                for ($i = 0; $i < 30; $i++) {
                     sleep(1);
                     $this->uniDeliverProductNotification->refresh();
                     if ($this->uniDeliverProductNotification->result === 'SUCCESS') {

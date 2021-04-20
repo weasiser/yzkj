@@ -224,9 +224,9 @@ class VMDeliverAndQueryController extends Controller
             'result' => 'queueing'
         ];
         if ($machine_api_type === 0) {
+            $params['number'] = 1;
             for ($i = 1; $i <= $number; $i++) {
-                $params['order_no'] .= 'a' .$i;
-                $params['number'] = 1;
+                $params['order_no'] = $order_no . 'a' . $i;
                 if ($i === $number) {
                     $params['extra']['last'] = true;
                 }
@@ -237,5 +237,6 @@ class VMDeliverAndQueryController extends Controller
             $uniDeliverProductNotification = new UniDeliverProductNotification($params);
             $uniDeliverProductNotification->save();
         }
+        return $this->response->accepted();
     }
 }

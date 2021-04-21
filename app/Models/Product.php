@@ -44,4 +44,9 @@ class Product extends Model
     {
         return $this->hasMany(VendingMachineAisle::class);
     }
+
+    public function openedVendingMachineAisles()
+    {
+        return $this->hasMany(VendingMachineAisle::class)->leftJoin('vending_machines', 'vending_machine_aisles.vending_machine_id', '=', 'vending_machines.id')->where('vending_machine_aisles.is_opened', true)->where('vending_machines.is_opened', true)->select('vending_machine_aisles.stock');
+    }
 }

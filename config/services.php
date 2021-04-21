@@ -70,6 +70,4 @@ return [
         'app_secret' => env('YIPUTENG_APP_SECRET')
     ],
 
-    'horizon_queue' => explode(',', env('HORIZON_QUEUE'))
-
 ];

@@ -142,7 +142,7 @@ return [
         'production' => [
             'supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => config('services.horizon_queue'),
+                'queue' => explode(',', env('HORIZON_QUEUE')),
                 'balance' => 'simple',
                 'processes' => 10,
                 'tries' => 3,
@@ -152,7 +152,7 @@ return [
         'local' => [
             'supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['default', '114766', '114767', '114768', '114769', '114770', '114774', '114775', '120145', '120146', '120147', '865553050152885', '865553050254814', '866222059696511'],
+                'queue' => explode(',', env('HORIZON_QUEUE')),
                 'balance' => 'simple',
                 'processes' => 3,
                 'tries' => 3,

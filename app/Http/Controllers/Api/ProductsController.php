@@ -24,4 +24,21 @@ class ProductsController extends Controller
             'availableProductStock' => $availableProductStock,
         ]);
     }
+
+    public function getProductSaleStatisticsMonthly(Request $request)
+    {
+        $year = $request->input('year');
+        $month = $request->input('month');
+        $product = Product::join('orders', function ($leftjoin) use ($year, $month) {
+            if ($year) {
+                $leftjoin = $leftjoin->whereYear('orders.paid_at', $year);
+            }
+            if ($month) {
+                $leftjoin = $leftjoin->whereMonth('orders.paid_at', $month);
+            }
+            $leftjoin->on('products.id', '=', 'orders.product_id');
+        });
+        $productSaleStatistics = $product->where('products.on_sale', true)->selectRaw('products.title, sum(orders.amount - orders.refund_number) as sold_count')->groupBy('products.id')->orderBy('sold_count', 'desc')->get();
+        return $productSaleStatistics;
+    }
 }

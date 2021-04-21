@@ -99,7 +99,7 @@ class ProductsController extends Controller
         $grid->column('promotion_price', '促销优惠')->editable()->sortable();
         $grid->quality_guarantee_period('保质期（月）')->editable()->sortable();
 //        $grid->column('warehouse_stock', '仓库库存')->sortable();
-        $grid->column('vending_machine_stock', '售卖机库存')->sortable();
+        $grid->column('vending_machine_stock', '售卖机库存')->sortable()->help('货道已关闭、机器已关闭的库存不计算在内');
 //        $grid->total_stock('总库存')->sortable();
 //        $grid->column('total_registered_stock', '登记库存')->sortable();
         $grid->sold_count('销量（件）')->sortable();

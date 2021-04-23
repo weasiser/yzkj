@@ -32,7 +32,8 @@
         "predis/predis": "^1.1",
         "tymon/jwt-auth": "1.0.0-rc.5",
         "wi1dcard/alipay-sdk": "^1.3",
-        "yansongda/pay": "^2.7"
+        "yansongda/pay": "^2.7",
+        "ext-json": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",

@@ -59,7 +59,6 @@ class DeliverProduct implements ShouldQueue
             $params['trade_no'] = $this->uniDeliverProductNotification->order_no;
             $params['multi_pay'] = '[{' . $shelf_id . ':' . $this->uniDeliverProductNotification->number . '}]';
             $result = app(VendingMachineDeliverAndQuery::class)->payMultiDelivery($params);
-            Log::info($result);
             if ($result['code'] === 0) {
                 for ($i = 0; $i < 30; $i++) {
                     sleep(1);

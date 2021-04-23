@@ -6,6 +6,7 @@ use App\Events\OrderPaidOrRefunded;
 use App\Handlers\VendingMachineDeliverAndQuery;
 use App\Jobs\MoreActionForOrderRefund;
 use App\Models\Order;
+use App\Models\UniDeliverProductNotification;
 use App\Models\VendingMachine;
 use App\Models\YiputengDeliverProductNotification;
 use App\Services\RefundService;
@@ -174,6 +175,37 @@ class PaymentNotificationsController extends Controller
                 $this->refund($order);
                 return;
             }
+        }
+    }
+
+    protected function UniDeliverProduct(Order $order)
+    {
+        $vendingMachine = $order->vendingMachine;
+        $aisle_number = $order->vendingMachineAisle->ordinal;
+        $number = $order->amount;
+        $machine_api_type = $vendingMachine->machine_api_type;
+        $machine_id = $vendingMachine->code;
+        $order_no = $order->no;
+        $params = [
+            'order_no' => $order_no,
+            'machine_id' => $machine_id,
+            'aisle_number' => $aisle_number,
+            'number' => $number,
+            'result' => 'queueing'
+        ];
+        if ($machine_api_type === 0) {
+            $params['number'] = 1;
+            for ($i = 1; $i <= $number; $i++) {
+                $params['order_no'] = $order_no . 'a' . $i;
+                if ($i === $number) {
+                    $params['extra']['last'] = true;
+                }
+                $uniDeliverProductNotification = new UniDeliverProductNotification($params);
+                $uniDeliverProductNotification->save();
+            }
+        } elseif ($machine_api_type === 1) {
+            $uniDeliverProductNotification = new UniDeliverProductNotification($params);
+            $uniDeliverProductNotification->save();
         }
     }
 

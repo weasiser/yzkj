@@ -88,11 +88,18 @@ class VMDeliverAndQueryController extends Controller
     {
         $trade_no = $request->input('trade_no');
         $deliverProductNotification = YiputengDeliverProductNotification::where('trade_no', $trade_no)->first();
-        if ($deliverProductNotification) {
-            return $this->response->array([
-                'result' => $deliverProductNotification->result
-            ]);
-        }
+        return $this->response->array([
+            'result' => $deliverProductNotification->result
+        ]);
+    }
+
+    public function uniQueryDeliverStatus(Request $request)
+    {
+        $order_no = $request->input('order_no');
+        $uniDeliverProductNotification = UniDeliverProductNotification::where('order_no', $order_no)->first();
+        return $this->response->array([
+            'result' => $uniDeliverProductNotification->result
+        ]);
     }
 
     public function queryVendingMachineApiStatus(Request $request)
@@ -191,7 +198,7 @@ class VMDeliverAndQueryController extends Controller
         $params = $request->input();
         $result = app(VendingMachineDeliverAndQuery::class)->payMultiDelivery($params);
         if ($result['code'] === 0) {
-            $multi_pay = json_decode(str_replace(':','":',str_replace('{', '{"', $params['multi_pay'])), true);
+            $multi_pay = json_decode(str_replace(':', '":', str_replace('{', '{"', $params['multi_pay'])), true);
             foreach ($multi_pay[0] as $key => $value) {
                 $shelf_id = $key;
                 $amount = $value;
@@ -237,6 +244,8 @@ class VMDeliverAndQueryController extends Controller
             $uniDeliverProductNotification = new UniDeliverProductNotification($params);
             $uniDeliverProductNotification->save();
         }
-        return $this->response->accepted();
+        return $this->response->array([
+            'order_no' => $order_no
+        ]);
     }
 }

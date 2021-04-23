@@ -173,9 +173,10 @@ class DeliverProductNotificationsController extends Controller
         $verifyResult = $this->verifySign($params);
         if ($verifyResult) {
             $yiputengDeliver = $yiputengDeliverProductNotification->where('trade_no', $params['out_trade_no'])->first();
-            //$yiputengDeliverProductNotification->where('trade_no', $params['out_trade_no'])->update(['result' => $params['trade_status']]);
-            $yiputengDeliver->result = $params['trade_status'];
-            $yiputengDeliver->save();
+            if ($yiputengDeliver) {
+                $yiputengDeliver->result = $params['trade_status'];
+                $yiputengDeliver->save();
+            }
 
             $uniNotification = UniDeliverProductNotification::where('order_no', $params['out_trade_no'])->first();
             if ($uniNotification) {

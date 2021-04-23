@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Product;
 use App\Transformers\ProductTransformer;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,7 +26,7 @@ class ProductsController extends Controller
         ]);
     }
 
-    public function getProductSaleStatisticsMonthly(Request $request)
+    public function updateGoodsDateInfoMonthly(Request $request)
     {
         $year = $request->input('year');
         $month = $request->input('month');
@@ -39,6 +40,10 @@ class ProductsController extends Controller
             $leftjoin->on('products.id', '=', 'orders.product_id');
         });
         $productSaleStatistics = $product->where('products.on_sale', true)->selectRaw('products.title, sum(orders.amount - orders.refund_number) as sold_count')->groupBy('products.id')->orderBy('sold_count', 'desc')->get();
-        return $productSaleStatistics;
+        $http = new Client();
+        $response = $http->post('https://www.yzkj01.com/notice/update_goods_date_info', [
+            'json' => $productSaleStatistics
+        ]);
+        return $response;
     }
 }

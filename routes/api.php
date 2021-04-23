@@ -79,8 +79,8 @@ $api->version('v1', [
             ->name('api.vendingMachines.yiputeng.queryMachineList');
         $api->get('vendingMachines/yiputeng/queryShelfList', 'VMDeliverAndQueryController@queryShelfList')
             ->name('api.vendingMachines.yiputeng.queryShelfList');
-        $api->get('getProductSaleStatisticsMonthly', 'ProductsController@getProductSaleStatisticsMonthly')
-            ->name('api.products.getProductSaleStatisticsMonthly');
+        $api->post('updateGoodsDateInfoMonthly', 'ProductsController@updateGoodsDateInfoMonthly')
+            ->name('api.products.updateGoodsDateInfoMonthly');
 
         // 需要 token 验证的接口
         $api->group(['middleware' => 'api.auth'], function($api) {

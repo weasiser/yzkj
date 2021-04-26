@@ -230,9 +230,13 @@ class OrdersController extends Controller
         return $this->response->paginator($orders, $orderTransformer);
     }
 
-    public function refundOrders(Order $order, OrderTransformer $orderTransformer)
+    public function refundOrders(Order $order, OrderTransformer $orderTransformer, Request $request)
     {
-        $orders = $order->join('refund_order_feedback', 'orders.id', '=', 'refund_order_feedback.order_id')->orderBy('refund_order_feedback.id', 'asc')->select('orders.*')->paginate(5);
+        $orders = $order->join('refund_order_feedback', 'orders.id', '=', 'refund_order_feedback.order_id');
+        if ($request->input('refund_order_type') === 'unhandled') {
+            $orders = $orders->where('is_handled', false);
+        }
+        $orders->orderBy('refund_order_feedback.id', 'asc')->select('orders.*')->paginate(5);
         return $this->response->paginator($orders, $orderTransformer);
     }
 

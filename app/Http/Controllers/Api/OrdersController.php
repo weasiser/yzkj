@@ -232,7 +232,7 @@ class OrdersController extends Controller
 
     public function refundOrders(Order $order, OrderTransformer $orderTransformer)
     {
-        $orders = $order->join('refund_order_feedback', 'orders.id', '=', 'refund_order_feedback.order_id')->where('refund_order_feedback.is_handled', false)->orderBy('refund_order_feedback.id', 'asc')->select('orders.*')->paginate(5);
+        $orders = $order->join('refund_order_feedback', 'orders.id', '=', 'refund_order_feedback.order_id')->orderBy('refund_order_feedback.id', 'asc')->select('orders.*')->paginate(5);
         return $this->response->paginator($orders, $orderTransformer);
     }
 

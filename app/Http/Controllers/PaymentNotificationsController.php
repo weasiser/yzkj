@@ -45,6 +45,7 @@ class PaymentNotificationsController extends Controller
         dispatch(function () use ($order) {
             $this->deliverProduct($order);
         });
+//        $this->uniDeliverProduct($order);
 
         return app('wxpay')->success();
     }
@@ -83,6 +84,7 @@ class PaymentNotificationsController extends Controller
         dispatch(function () use ($order) {
             $this->deliverProduct($order);
         });
+//        $this->uniDeliverProduct($order);
 
         return app('alipay')->success();
     }
@@ -178,7 +180,7 @@ class PaymentNotificationsController extends Controller
         }
     }
 
-    protected function UniDeliverProduct(Order $order)
+    protected function uniDeliverProduct(Order $order)
     {
         $vendingMachine = $order->vendingMachine;
         $aisle_number = $order->vendingMachineAisle->ordinal;

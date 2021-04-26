@@ -236,7 +236,7 @@ class OrdersController extends Controller
         if ($request->input('refund_order_type') === 'unhandled') {
             $orders = $orders->where('is_handled', false);
         }
-        $orders->orderBy('refund_order_feedback.id', 'asc')->select('orders.*')->paginate(5);
+        $orders = $orders->orderBy('refund_order_feedback.id', 'asc')->select('orders.*')->paginate(5);
         return $this->response->paginator($orders, $orderTransformer);
     }
 

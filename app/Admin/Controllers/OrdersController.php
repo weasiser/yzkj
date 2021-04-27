@@ -72,7 +72,7 @@ class OrdersController extends AdminController
             return ($this->sold_price - $this->purchase_price) * ($this->amount - $this->refund_number);
         });
         $grid->column('交易手续费')->display(function () {
-            return round(($this->total_amount - $this->refund_amount) * 0.006, 2) ?: 0.01;
+            return $this->total_amount - $this->refund_amount > 0 ? (round(($this->total_amount - $this->refund_amount) * 0.006, 2) ?: 0.01) : 0;
         });
         $grid->column('paid_at', __('支付时间'));
 //        $grid->column('payment_method', __('支付方式'));

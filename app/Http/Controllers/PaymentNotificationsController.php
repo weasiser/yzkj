@@ -40,12 +40,15 @@ class PaymentNotificationsController extends Controller
 
         $this->afterPaidOrRefunded($order);
 
-        $this->isDeliveringChange($order->vendingMachine);
+        if ($order->user_id === 3) {
+            $this->uniDeliverProduct($order);
+        } else {
+            $this->isDeliveringChange($order->vendingMachine);
 
-        dispatch(function () use ($order) {
-            $this->deliverProduct($order);
-        });
-//        $this->uniDeliverProduct($order);
+            dispatch(function () use ($order) {
+                $this->deliverProduct($order);
+            });
+        }
 
         return app('wxpay')->success();
     }
@@ -79,12 +82,15 @@ class PaymentNotificationsController extends Controller
 
         $this->afterPaidOrRefunded($order);
 
-        $this->isDeliveringChange($order->vendingMachine);
+        if ($order->user_id === 5) {
+            $this->uniDeliverProduct($order);
+        } else {
+            $this->isDeliveringChange($order->vendingMachine);
 
-        dispatch(function () use ($order) {
-            $this->deliverProduct($order);
-        });
-//        $this->uniDeliverProduct($order);
+            dispatch(function () use ($order) {
+                $this->deliverProduct($order);
+            });
+        }
 
         return app('alipay')->success();
     }

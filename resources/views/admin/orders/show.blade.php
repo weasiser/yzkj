@@ -65,6 +65,32 @@
         <td>总价：</td>
         <td class="text-bold">￥ {{ $order->total_amount }}</td>
       </tr>
+      @if ($order->extra)
+        <tr>
+          <td>额外信息：</td>
+          <td colspan="7" class="text-bold">
+              @foreach ($order->extra as $key => $value)
+                <span class="sort-highlight margin-r-5">{{ $key . ': ' . $value }}</span>
+              @endforeach
+          </td>
+        </tr>
+      @endif
+      @if ($feedback = $order->refundOrderFeedback)
+        <tr>
+          <td>退款理由：</td>
+          <td class="text-bold">{{ $feedback->content }}</td>
+        </tr>
+        <tr>
+          <td>照片：</td>
+          @foreach ($feedback->picture as $key => $value)
+            <td>
+              <a href="{{ config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $value : Storage::disk(config('admin.upload.disk'))->url($value) }}" target="_blank">
+                <img src="{{ config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $value . '-refundOrderFeedback' : \Illuminate\Support\Facades\Storage::disk(config('admin.upload.disk'))->url($value) }}"/>
+              </a>
+            </td>
+          @endforeach
+        </tr>
+      @endif
       </tbody>
     </table>
   </div>

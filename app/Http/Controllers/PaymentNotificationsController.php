@@ -40,15 +40,16 @@ class PaymentNotificationsController extends Controller
 
         $this->afterPaidOrRefunded($order);
 
-        if ($order->user_id === 3) {
+//        if ($order->user_id === 3) {
             $this->uniDeliverProduct($order);
-        } else {
-            $this->isDeliveringChange($order->vendingMachine);
-
-            dispatch(function () use ($order) {
-                $this->deliverProduct($order);
-            });
-        }
+            $this->orderTimeoutCheck($order);
+//        } else {
+//            $this->isDeliveringChange($order->vendingMachine);
+//
+//            dispatch(function () use ($order) {
+//                $this->deliverProduct($order);
+//            });
+//        }
 
         return app('wxpay')->success();
     }
@@ -82,15 +83,16 @@ class PaymentNotificationsController extends Controller
 
         $this->afterPaidOrRefunded($order);
 
-        if ($order->user_id === 5) {
+//        if ($order->user_id === 5) {
             $this->uniDeliverProduct($order);
-        } else {
-            $this->isDeliveringChange($order->vendingMachine);
-
-            dispatch(function () use ($order) {
-                $this->deliverProduct($order);
-            });
-        }
+            $this->orderTimeoutCheck($order);
+//        } else {
+//            $this->isDeliveringChange($order->vendingMachine);
+//
+//            dispatch(function () use ($order) {
+//                $this->deliverProduct($order);
+//            });
+//        }
 
         return app('alipay')->success();
     }
@@ -188,6 +190,7 @@ class PaymentNotificationsController extends Controller
 
     protected function uniDeliverProduct(Order $order)
     {
+        $order->update(['deliver_status' => Order::DELIVER_STATUS_DELIVERING]);
         $vendingMachine = $order->vendingMachine;
         $aisle_number = $order->vendingMachineAisle->ordinal;
         $number = $order->amount;
@@ -215,6 +218,18 @@ class PaymentNotificationsController extends Controller
             $uniDeliverProductNotification = new UniDeliverProductNotification($params);
             $uniDeliverProductNotification->save();
         }
+    }
+
+    protected function orderTimeoutCheck(Order $order)
+    {
+        dispatch(function () use ($order) {
+            if ($order->deliver_status === Order::DELIVER_STATUS_DELIVERING) {
+                $extra = $order->extra;
+                $extra['deliver_feedback'] = 'none';
+                $order->update(['deliver_status' => Order::DELIVER_STATUS_TIMEOUT, 'extra' => $extra]);
+            }
+
+        })->delay(now()->addSeconds(300));
     }
 
     protected function isDeliveringChange(VendingMachine $vendingMachine)

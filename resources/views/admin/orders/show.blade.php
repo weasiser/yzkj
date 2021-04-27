@@ -78,7 +78,7 @@
       @if ($feedback = $order->refundOrderFeedback)
         <tr>
           <td>退款理由：</td>
-          <td class="text-bold">{{ $feedback->content }}</td>
+          <td colspan="7" class="text-bold">{{ $feedback->content }}</td>
         </tr>
         <tr>
           <td>照片：</td>

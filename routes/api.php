@@ -81,6 +81,9 @@ $api->version('v1', [
             ->name('api.vendingMachines.yiputeng.queryShelfList');
         $api->post('updateGoodsDateInfoMonthly', 'ProductsController@updateGoodsDateInfoMonthly')
             ->name('api.products.updateGoodsDateInfoMonthly');
+        // 售卖机列表
+        $api->get('vendingMachines', 'VendingMachinesController@index')
+            ->name('api.vendingMachines.index');
 
         // 需要 token 验证的接口
         $api->group(['middleware' => 'api.auth'], function($api) {
@@ -174,9 +177,6 @@ $api->version('v1', [
             // 仓库列表
             $api->get('warehouses', 'WarehousesController@index')
                 ->name('api.warehouses.index');
-            // 售卖机列表
-            $api->get('vendingMachines', 'VendingMachinesController@index')
-                ->name('api.vendingMachines.index');
             // 出货状态查询
             $api->get('queryDeliverStatus', 'VMDeliverAndQueryController@queryDeliverStatus')
                 ->name('api.queryDeliverStatus');

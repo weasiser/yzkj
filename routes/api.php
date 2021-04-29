@@ -240,11 +240,11 @@ $api->version('v1', [
         });
     });
 
-    $api->group([
-        'middleware' => ['api.throttle', 'cors']
-    ], function($api) {
-        $api->get('vendingMachines/yiputeng/getApiToken', 'VMDeliverAndQueryController@getApiToken')
-            ->name('api.vendingMachines.yiputeng.getApiToken');
+//    $api->group([
+//        'middleware' => ['api.throttle', 'cors']
+//    ], function($api) {
+//        $api->get('vendingMachines/yiputeng/getApiToken', 'VMDeliverAndQueryController@getApiToken')
+//            ->name('api.vendingMachines.yiputeng.getApiToken');
 //        $api->get('vendingMachines/yiputeng/queryMachineList', 'VMDeliverAndQueryController@queryMachineList')
 //            ->name('api.vendingMachines.yiputeng.queryMachineList');
 //        $api->get('vendingMachines/yiputeng/queryShelfList', 'VMDeliverAndQueryController@queryShelfList')
@@ -253,5 +253,5 @@ $api->version('v1', [
 //            ->name('api.vendingMachines.yiputeng.payDelivery');
 //        $api->post('vendingMachines/yiputeng/payMultiDelivery', 'VMDeliverAndQueryController@payMultiDelivery')
 //            ->name('api.vendingMachines.yiputeng.payMultiDelivery');
-    });
+//    });
 });

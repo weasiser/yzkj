@@ -182,7 +182,7 @@ class VendingMachineDeliverAndQuery
         $result = json_decode($response->getBody(), true);
 
         if ($result['result'] === '200' && $result['data']) {
-            Cache::store('redis')->put('huiyijie_access_token', $result['data'], now()->addDays(7));
+            Cache::store('redis')->put('huiyijie_access_token', $result['data'], now()->addDays(6));
         }
 
         return $result;
@@ -209,7 +209,7 @@ class VendingMachineDeliverAndQuery
         $result = json_decode($response->getBody(), true);
 
         if ($result['code'] === 0) {
-            Cache::store('redis')->put('yiputeng_api_token', $result['api_token'], now()->addSeconds(90000));
+            Cache::store('redis')->put('yiputeng_api_token', $result['api_token'], now()->addSeconds(86400));
         }
 
         return $result;

@@ -12,7 +12,7 @@ class ProductsController extends Controller
 {
     public function index(Product $product, ProductTransformer $productTransformer)
     {
-        return $this->response->collection($product::where('on_sale', '=', true)->get(), $productTransformer);
+        return $this->response->collection($product::where('on_sale', '=', true)->orderBy('title', 'asc')->get(), $productTransformer);
     }
 
     public function getAvailableProductStock(Product $product)

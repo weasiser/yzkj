@@ -20,15 +20,17 @@ class UsersController extends Controller
         $user = $this->user();
 
         if ($request->user_info) {
-            $attributes['nick_name'] = $request->user_info['nickName'];
-            $http = new Client();
-            $response = $http->get($request->user_info['avatarUrl'], ['http_errors' => false])->getStatusCode();
-            if ($response === 404) {
-                $attributes['avatar'] = 'https://s2.ax1x.com/2019/05/29/Vnuqk4.png';
-            } else {
-                $attributes['avatar'] = $request->user_info['avatarUrl'];
+            if ($request->user_info['nickName'] !== '微信用户') {
+                $attributes['nick_name'] = $request->user_info['nickName'];
+                $http = new Client();
+                $response = $http->get($request->user_info['avatarUrl'], ['http_errors' => false])->getStatusCode();
+                if ($response === 404) {
+                    $attributes['avatar'] = 'https://s2.ax1x.com/2019/05/29/Vnuqk4.png';
+                } else {
+                    $attributes['avatar'] = $request->user_info['avatarUrl'];
+                }
+                $user->update($attributes);
             }
-            $user->update($attributes);
         }
         return $this->response->item($user, $userTransformer);
     }

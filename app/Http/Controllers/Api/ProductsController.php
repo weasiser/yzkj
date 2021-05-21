@@ -17,7 +17,15 @@ class ProductsController extends Controller
 
     public function getAvailableProductStock(Product $product)
     {
-        $availableProductStock = $product->where('products.on_sale', true)->selectRaw('products.title, products.image, products.vending_machine_stock, sum(vending_machine_aisles.max_stock - vending_machine_aisles.stock) as available_product_stock, sum(vending_machine_aisles.stock) as available_machine_product_stock')->leftjoin('vending_machine_aisles', 'products.id', '=', 'vending_machine_aisles.product_id')->leftjoin('vending_machines', 'vending_machine_aisles.vending_machine_id', '=', 'vending_machines.id')->where('vending_machines.is_opened', true)->groupBy('products.id')->orderBy('products.id', 'desc')->get();
+        $user = $this->user();
+
+        $product = $product->where('products.on_sale', true)->selectRaw('products.title, products.image, products.vending_machine_stock, sum(vending_machine_aisles.max_stock - vending_machine_aisles.stock) as available_product_stock, sum(vending_machine_aisles.stock) as available_machine_product_stock')->leftjoin('vending_machine_aisles', 'products.id', '=', 'vending_machine_aisles.product_id')->leftjoin('vending_machines', 'vending_machine_aisles.vending_machine_id', '=', 'vending_machines.id')->where('vending_machines.is_opened', true);
+
+        if (!$user->is_mobile_admin) {
+            $product = $product->leftJoin('warehouse_managers', 'vending_machines.warehouse_id', '=', 'warehouse_managers.warehouse_id')->where('warehouse_managers.user_id', $user->id);
+        }
+        $availableProductStock = $product->groupBy('products.id')->orderBy('products.id', 'desc')->get();
+
         foreach ($availableProductStock as $value) {
             $value['image'] = config('filesystems.disks.oss.cdnDomain') ? config('filesystems.disks.oss.cdnDomain') . '/' . $value['image'] . '-product' : Storage::disk(config('admin.upload.disk'))->url($value['image']) . '-product';
         }

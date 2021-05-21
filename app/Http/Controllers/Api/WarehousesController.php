@@ -10,9 +10,16 @@ class WarehousesController extends Controller
 {
     public function index(Warehouse $warehouse, Request $request, WarehouseTransformer $warehouseTransformer)
     {
+        $user = $this->user();
+
         app(\Dingo\Api\Transformer\Factory::class)->disableEagerLoading();
 
-        $warehouses = $warehouse->all();
+        if ($user->is_mobile_admin) {
+            $warehouses = $warehouse->all();
+        } else {
+            $warehouses = $user->warehouses;
+        }
+
         if ($request->include) {
             $warehouses->load($request->include);
         }

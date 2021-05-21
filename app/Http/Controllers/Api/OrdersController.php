@@ -30,9 +30,9 @@ class OrdersController extends Controller
 
             // 创建一个订单
             $order = new Order([
-                'amount'       => $amount,
+                'amount' => $amount,
                 'purchase_price' => $product->buying_price,
-                'sold_price'   => $sold_price,
+                'sold_price' => $sold_price,
                 'total_amount' => $totalAmount,
             ]);
 
@@ -59,12 +59,15 @@ class OrdersController extends Controller
 
     public function index(Request $request, Order $order, OrderTransformer $orderTransformer)
     {
+        $user = $this->user();
         if ($request->date) {
             if ($vendingMachineId = $request->vendingMachineId) {
                 $order = $order->where('vending_machine_id', $vendingMachineId);
             }
             if ($warehouseId = $request->warehouseId) {
                 $order = $order->leftJoin('vending_machines', 'orders.vending_machine_id', '=', 'vending_machines.id')->where('vending_machines.warehouse_id', $warehouseId);
+            } elseif (!$user->is_mobile_admin) {
+                $order = $order->leftJoin('vending_machines', 'orders.vending_machine_id', '=', 'vending_machines.id')->leftJoin('warehouse_managers', 'vending_machines.warehouse_id', '=', 'warehouse_managers.warehouse_id')->where('warehouse_managers.user_id', $user->id);
             }
             $orders = $order->whereDate('paid_at', $request->date)->orderBy('orders.id', 'desc')->paginate(5);
             return $this->response->paginator($orders, $orderTransformer);
@@ -93,6 +96,7 @@ class OrdersController extends Controller
 
     public function getDailyStatistics(Request $request, Order $order)
     {
+        $user = $this->user();
         $year = $request->year;
         $month = $request->month;
         if ($vendingMachineId = $request->vendingMachineId) {
@@ -100,6 +104,8 @@ class OrdersController extends Controller
         }
         if ($warehouseId = $request->warehouseId) {
             $order = $order->leftJoin('vending_machines', 'orders.vending_machine_id', '=', 'vending_machines.id')->where('vending_machines.warehouse_id', $warehouseId);
+        } elseif (!$user->is_mobile_admin) {
+            $order = $order->leftJoin('vending_machines', 'orders.vending_machine_id', '=', 'vending_machines.id')->leftJoin('warehouse_managers', 'vending_machines.warehouse_id', '=', 'warehouse_managers.warehouse_id')->where('warehouse_managers.user_id', $user->id);
         }
         $dailySaleStatistics = $order->selectRaw('date(orders.paid_at) as date, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum(round((orders.total_amount - orders.refund_amount) * 0.006, 2)) as transaction_fee, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->whereYear('orders.paid_at', $year)->whereMonth('orders.paid_at', $month)->groupBy('date')->get();
         foreach ($dailySaleStatistics as $key => $value) {
@@ -117,65 +123,42 @@ class OrdersController extends Controller
 
     public function getProductSaleStatistics(Request $request, Product $product, VendingMachineAisle $vendingMachineAisle)
     {
+        $user = $this->user();
         $dateRange = $request->dateRange;
         $year = $request->year;
         $month = $request->month;
         $day = $request->day;
         $vendingMachineId = $request->vendingMachineId;
-//        if ($vendingMachineId = $request->vendingMachineId) {
-//            $productSaleStatistics = $vendingMachineAisle->where('vending_machine_aisles.vending_machine_id', $vendingMachineId)->leftJoin('orders', function ($leftjoin) use ($dateRange, $year, $month, $day) {
-//                if ($dateRange) {
-//                    $rangeTime = Carbon::now()->subHours($dateRange * 24);
-//                    $leftjoin = $leftjoin->where('orders.paid_at', '>=', $rangeTime);
-//                } else {
-//                    if ($year) {
-//                        $leftjoin = $leftjoin->whereYear('orders.paid_at', $year);
-//                    }
-//                    if ($month) {
-//                        $leftjoin = $leftjoin->whereMonth('orders.paid_at', $month);
-//                    }
-//                    if ($day) {
-//                        $leftjoin = $leftjoin->whereDay('orders.paid_at', $day);
-//                    }
-//                }
-//                $leftjoin->on('vending_machine_aisles.id', '=', 'orders.vending_machine_aisle_id')->on('vending_machine_aisles.product_id', '=', 'orders.product_id');
-//            })->leftJoin('products', 'vending_machine_aisles.product_id', '=', 'products.id')->selectRaw('vending_machine_aisles.ordinal, any_value(products.title) as title, any_value(products.image) as image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->groupBy('vending_machine_aisles.ordinal')->orderBy('vending_machine_aisles.ordinal')->get();
-//            $product = $product->leftJoin('vending_machine_aisles', function ($leftjoin) use ($vendingMachineId) {
-//                $leftjoin->on('product.id', '=', 'vending_machine_aisles.product_id')->where('vending_machine_aisles.id', $vendingMachineId);
-//            });
-//        } else {
-//            $product = $product->leftJoin('orders', 'products.id', '=', 'orders.product_id');
-            $product = $product->leftJoin('orders', function ($leftjoin) use ($dateRange, $year, $month, $day, $vendingMachineId) {
-                if ($dateRange) {
-                    $rangeTime = Carbon::now()->subHours($dateRange * 24);
-                    $leftjoin = $leftjoin->where('orders.paid_at', '>=', $rangeTime);
-                } else {
-                    if ($year) {
-                        $leftjoin = $leftjoin->whereYear('orders.paid_at', $year);
-                    }
-                    if ($month) {
-                        $leftjoin = $leftjoin->whereMonth('orders.paid_at', $month);
-                    }
-                    if ($day) {
-                        $leftjoin = $leftjoin->whereDay('orders.paid_at', $day);
-                    }
+        $product = $product->leftJoin('orders', function ($leftjoin) use ($dateRange, $year, $month, $day, $vendingMachineId) {
+            if ($dateRange) {
+                $rangeTime = Carbon::now()->subHours($dateRange * 24);
+                $leftjoin = $leftjoin->where('orders.paid_at', '>=', $rangeTime);
+            } else {
+                if ($year) {
+                    $leftjoin = $leftjoin->whereYear('orders.paid_at', $year);
                 }
-                if ($vendingMachineId) {
-                    $leftjoin = $leftjoin->where('orders.vending_machine_id', $vendingMachineId);
+                if ($month) {
+                    $leftjoin = $leftjoin->whereMonth('orders.paid_at', $month);
                 }
-                $leftjoin->on('products.id', '=', 'orders.product_id');
-            });
-            if ($warehouseId = $request->warehouseId) {
-                $product = $product->leftJoin('vending_machines', function ($leftjoin) use ($warehouseId) {
-                    $leftjoin->on('orders.vending_machine_id', '=', 'vending_machines.id')->where('vending_machines.warehouse_id', $warehouseId);
-                });
-//                $vendingMachineAisle = $vendingMachineAisle->leftJoin('vending_machines', 'vending_machine_aisles.vending_machine_id', '=', 'vending_machines.id')->where('vending_machines.warehouse_id', $warehouseId);
+                if ($day) {
+                    $leftjoin = $leftjoin->whereDay('orders.paid_at', $day);
+                }
             }
-//            $productSaleStatistics = $vendingMachineAisle->leftJoin('orders', function ($leftjoin) {
-//                $leftjoin->on('vending_machine_aisles.id', '=', 'orders.vending_machine_aisle_id')->on('vending_machine_aisles.product_id', '=', 'orders.product_id');
-//            })->leftJoin('products', 'vending_machine_aisles.product_id', '=', 'products.id')->selectRaw('products.title, products.image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit')->groupBy('products.id')->orderBy('sold_count', 'desc')->get();
+            if ($vendingMachineId) {
+                $leftjoin = $leftjoin->where('orders.vending_machine_id', $vendingMachineId);
+            }
+            $leftjoin->on('products.id', '=', 'orders.product_id');
+        });
 
-            $productSaleStatistics = $product->where('products.on_sale', true)->selectRaw('products.title, products.image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit, sum(round((orders.total_amount - orders.refund_amount) * 0.006, 2)) as transaction_fee')->groupBy('products.id')->orderBy('sold_count', 'desc')->get();
+        if ($warehouseId = $request->warehouseId) {
+            $product = $product->leftJoin('vending_machines', function ($leftjoin) use ($warehouseId) {
+                $leftjoin->on('orders.vending_machine_id', '=', 'vending_machines.id')->where('vending_machines.warehouse_id', $warehouseId);
+            });
+        } elseif (!$user->is_mobile_admin) {
+            $product = $product->leftJoin('vending_machines', 'orders.vending_machine_id', '=', 'vending_machines.id')->leftJoin('warehouse_managers', 'vending_machines.warehouse_id', '=', 'warehouse_managers.warehouse_id')->where('warehouse_managers.user_id', $user->id);
+        }
+
+        $productSaleStatistics = $product->where('products.on_sale', true)->selectRaw('products.title, products.image, sum(orders.amount - orders.refund_number) as sold_count, sum(orders.total_amount - orders.refund_amount) as sold_value, sum((orders.sold_price - orders.purchase_price) * (orders.amount - orders.refund_number)) as sold_profit, sum(round((orders.total_amount - orders.refund_amount) * 0.006, 2)) as transaction_fee')->groupBy('products.id')->orderBy('sold_count', 'desc')->get();
 //        }
 
         foreach ($productSaleStatistics as $value) {

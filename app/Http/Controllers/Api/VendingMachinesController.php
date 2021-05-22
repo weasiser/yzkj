@@ -21,14 +21,14 @@ class VendingMachinesController extends Controller
 
     public function index(VendingMachine $vendingMachine, Request $request, VendingMachineTransformer $vendingMachineTransformer)
     {
-        $user = $this->user();
+//        $user = $this->user();
         app(\Dingo\Api\Transformer\Factory::class)->disableEagerLoading();
 
-        if ($user->is_mobile_admin) {
+//        if ($user->is_mobile_admin) {
             $vendingMachines = $vendingMachine->all();
-        } else {
-            $vendingMachines = $vendingMachine->leftJoin('warehouse_managers', 'vending_machines.warehouse_id', '=', 'warehouse_managers.warehouse_id')->where('warehouse_managers.user_id', $user->id)->get();
-        }
+//        } else {
+//            $vendingMachines = $vendingMachine->leftJoin('warehouse_managers', 'vending_machines.warehouse_id', '=', 'warehouse_managers.warehouse_id')->where('warehouse_managers.user_id', $user->id)->get();
+//        }
 
         if ($request->include) {
             $vendingMachines->load($request->include);

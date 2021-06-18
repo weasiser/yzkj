@@ -45,7 +45,7 @@ class CloseOrder implements ShouldQueue
         \DB::transaction(function() {
             // 将订单的 closed 字段标记为 true，即关闭订单
 //            $this->order->update(['is_closed' => true]);
-            $this->order->vendingMachineAisle->increaseStock($this->order->amount);
+//            $this->order->vendingMachineAisle->increaseStock($this->order->amount);
             $this->order->delete();
         });
     }

@@ -44,7 +44,7 @@ class OrdersController extends Controller
             // 写入数据库
             $order->save();
 
-            $aisle->decreaseStock($amount);
+//            $aisle->decreaseStock($amount);
 
 //            if ($aisle->decreaseStock($amount) <= 0) {
 //                throw new \Exception('该货道的商品库存不足');
@@ -89,7 +89,7 @@ class OrdersController extends Controller
     public function destroy(Order $order)
     {
         $this->authorize('own', $order);
-        $order->vendingMachineAisle->increaseStock($order->amount);
+//        $order->vendingMachineAisle->increaseStock($order->amount);
         $order->delete();
         return $this->response->noContent();
     }

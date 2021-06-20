@@ -38,7 +38,7 @@ class VendingMachineAisle extends Model
 
     public function decreaseStockAnyway($amount = 1)
     {
-        $vendingMachineAisle = $this->where('id', $this->id)->first();
+        $vendingMachineAisle = $this->where('id', $this->id)->where('stock', '>', 0)->first();
         if ($vendingMachineAisle->stock >= $amount) {
             $vendingMachineAisle->update(['stock' => $vendingMachineAisle->stock - $amount]);
         } else {

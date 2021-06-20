@@ -246,6 +246,7 @@ class PaymentNotificationsController extends Controller
 
     protected function afterPaidOrRefunded(Order $order)
     {
+        $order->vendingMachineAisle->decreaseStockAnyway($order->amount);
         event(new OrderPaidOrRefunded($order));
     }
 

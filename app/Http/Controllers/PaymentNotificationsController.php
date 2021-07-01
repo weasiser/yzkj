@@ -38,6 +38,8 @@ class PaymentNotificationsController extends Controller
             'payment_no'     => $data->transaction_id,
         ]);
 
+        $order->vendingMachineAisle->decreaseStockAnyway($order->amount);
+
         $this->afterPaidOrRefunded($order);
 
 //        if ($order->user_id === 3) {
@@ -80,6 +82,8 @@ class PaymentNotificationsController extends Controller
             'payment_method' => 'alipay', // 支付方式
             'payment_no'     => $data->trade_no, // 支付宝订单号
         ]);
+
+        $order->vendingMachineAisle->decreaseStockAnyway($order->amount);
 
         $this->afterPaidOrRefunded($order);
 
@@ -246,7 +250,6 @@ class PaymentNotificationsController extends Controller
 
     protected function afterPaidOrRefunded(Order $order)
     {
-        $order->vendingMachineAisle->decreaseStockAnyway($order->amount);
         event(new OrderPaidOrRefunded($order));
     }
 
